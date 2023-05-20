@@ -1,0 +1,36 @@
+@import url('./../node_modules/@fortawesome/fontawesome-free/css/all.css');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+@import url('./../node_modules/lion-player/dist/lion-skin.min.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+@layer components {
+    .sl-form input[type="text"], .sl-form input[type="username"], .sl-form input[type="email"], .sl-form input[type="password"], .sl-form  select {
+        @apply text-lg rounded-sm p-2 bg-zinc-100 border-b-2 border-primary-light w-full focus:border-primary-dark focus:outline-none;
+    }
+
+
+    .sl-form {
+        @apply flex flex-col gap-4;
+    }
+    
+
+    .sl-form label {
+        @apply text-xl block mb-2;
+    }
+
+    .sl-form div div label {
+        @apply text-lg block;
+    }
+
+    .btn {
+        @apply text-lg p-2 bg-primary-main w-full text-zinc-100 font-semibold;
+    }
+
+   
+
+}

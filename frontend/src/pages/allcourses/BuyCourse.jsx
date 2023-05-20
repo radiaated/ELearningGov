@@ -1,0 +1,138 @@
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCourse } from "../../features/courseSlice";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import UserContext from "../../context/UserContext";
+
+const BuyCourse = () => {
+  const [bought, setBought] = useState(false);
+
+  let [qs, setQs] = useSearchParams();
+  const userCxt = useContext(UserContext);
+  const dispatch = useDispatch();
+  const params = useParams();
+  const { course } = useSelector((state) => state.course);
+
+  const courseCategories = [
+    { title: "Technology and IT", short: "tech_it" },
+    { title: "Professional Development", short: "prof_dev" },
+    { title: "Creative Arts", short: "creative_arts" },
+    { title: "Health and Wellness", short: "health_wellness" },
+    { title: "Language Learning", short: "language" },
+    { title: "Vocational and Trade Skills", short: "vocational_trade" },
+    { title: "Environmental Studies", short: "environmental_studies" },
+    { title: "Social Sciences", short: "social_sciences" },
+    { title: "Law and Legal Studies", short: "law_studies" },
+  ];
+
+  const buyCourse = async (payload) => {
+    console.log(payload);
+    try {
+      const { data } = await axios({
+        method: "POST",
+        url: `${import.meta.env.VITE_API_URL}/api/user/profilecourses/`,
+        data: payload,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userCxt.auth.access}`,
+        },
+      });
+      console.log(data.payment_url);
+      window.location.href = data.payment_url;
+    } catch {
+      console.log("error");
+    }
+  };
+
+  const checkCourse = async () => {
+    console.log(userCxt.auth.access);
+    await axios({
+      method: "GET",
+      url: `${
+        import.meta.env.VITE_API_URL
+      }/api/user/profilecourse?slug=${qs.get("course")}`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userCxt.auth.access}`,
+      },
+    }).then((res) => {
+      setBought(true);
+    });
+  };
+
+  useEffect(() => {
+    if (fetchCourse(qs.get("type") === "course")) {
+      dispatch(fetchCourse(qs.get("course")));
+    }
+    checkCourse();
+  }, []);
+
+  return (
+    <div>
+      {qs.get("type") === "course" && (
+        <div>
+          {!course.loading ? (
+            <div className="w-[70%] mx-auto">
+              <h3 className="text-3xl font-semi-bold mb-4">Purchase</h3>
+              <div className="flex gap-4 ">
+                <img
+                  src={import.meta.env.VITE_API_URL + course.course.thumbnail}
+                  className="h-32"
+                />
+                <div className="flex flex-col gap-2">
+                  <Link to={bought ? `/takecourse/${course.course.slug}` : "#"}>
+                    <h3 className="text-2xl font-bold">
+                      {course.course.title}
+                    </h3>
+                  </Link>
+
+                  <p>
+                    {course.course.description &&
+                      course.course.description.slice(0, 100)}
+                    ...
+                  </p>
+                  <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
+                    {course.course.category &&
+                      courseCategories.find(
+                        (cat) => cat.short === course.course.category
+                      ).title}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl font-medium text-center mb-2">
+                    Rs. {course.course.price}
+                  </div>
+                  {!bought ? (
+                    <button
+                      className="group border border-green-600 rounded-full w-fit px-5 py-2 hover:bg-green-600 hover:text-zinc-100 duration-100"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        buyCourse({
+                          course_slug: course.course.slug,
+                          price: course.course.price,
+                        });
+                      }}
+                    >
+                      {"Purchase"}
+                    </button>
+                  ) : (
+                    <div className="border border-green-600 rounded-full w-fit px-5 py-2 bg-green-600 text-zinc-100 flex items-center gap-2">
+                      Purchased <i class="fa-solid fa-check"></i>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            "Loading"
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default BuyCourse;

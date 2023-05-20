@@ -1,0 +1,85 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./layout/Layout";
+import CoursesPage from "./pages/allcourses/CoursesPage";
+import CoursePage from "./pages/allcourses/CoursePage";
+import BuyCourse from "./pages/allcourses/BuyCourse";
+import VerifyPayment from "./pages/allcourses/VerifyPayment";
+import TakeCoursePage from "./pages/takecourse/TakeCoursePage";
+import TakeChapter from "./pages/takecourse/TakeChapter";
+import StudyMaterialsPage from "./pages/studymaterials/StudyMaterialsPage";
+import StudyMaterialPage from "./pages/studymaterials/StudyMaterialPage";
+import UserCourses from "./pages/profile/UserCourses";
+import Login from "./pages/login/Login";
+import Signup from "./pages/signup/Signup";
+import Profile from "./pages/profile/Profile";
+import { Provider } from "react-redux";
+import { UserContextProvider } from "./context/UserContext";
+import { store } from "./app/store";
+import "./index.css";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        path: "courses",
+        element: <CoursesPage />,
+      },
+      {
+        path: "course/:courseSlug",
+        element: <CoursePage />,
+      },
+      {
+        path: "buycourse",
+        element: <BuyCourse />,
+      },
+      {
+        path: "verifypay",
+        element: <VerifyPayment />,
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "signup",
+        element: <Signup />,
+      },
+      {
+        path: "takecourse/:courseSlug",
+        element: <TakeCoursePage />,
+      },
+      {
+        path: "takecourse/:courseSlug/:chapterSlug",
+        element: <TakeChapter />,
+      },
+      {
+        path: "studymaterials",
+        element: <StudyMaterialsPage />,
+      },
+      {
+        path: "studymaterial/:smSlug",
+        element: <StudyMaterialPage />,
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+      {
+        path: "yourcourses",
+        element: <UserCourses />,
+      },
+    ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <UserContextProvider>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </UserContextProvider>
+);
