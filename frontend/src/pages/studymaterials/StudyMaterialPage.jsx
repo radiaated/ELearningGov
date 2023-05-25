@@ -3,7 +3,7 @@ import StudyMaterial from "./StudyMaterial";
 
 const StudyMaterialPage = () => {
   return (
-    <div>
+    <div className="w-[90%] mx-auto">
       <StudyMaterial />
     </div>
   );

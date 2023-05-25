@@ -22,15 +22,36 @@ const SyllabusList = () => {
   }, []);
 
   return !boughtCourse.loading ? (
-    <div className="w-[30%] mt-16">
+    <div className="w-[30%]">
+      <div className="mb-14 rounded-sm space-y-1 p-2 border-l-4 border-primary-main bg-zinc-50">
+        <h4 className="font-medium">Current Course</h4>
+        <div className="flex gap-1">
+          <div className="w-[20%]">
+            <img
+              src={`${import.meta.env.VITE_API_URL}${
+                boughtCourse.boughtCourse.thumbnail
+              }`}
+              className="block object-cover rounded-md"
+            />
+          </div>
+          <h5 className="text-sm w-full">
+            <Link
+              to={`/takecourse/${boughtCourse.boughtCourse.slug}`}
+              className="cursor-pointer hover:underline underline-offset-1"
+            >
+              {boughtCourse.boughtCourse.title}
+            </Link>{" "}
+          </h5>
+        </div>
+      </div>
       <h4 className="text-xl font-semibold mb-4">Chapters</h4>
-      <ul className="flex flex-col gap-4 w-fit">
+      <div className="flex flex-col gap-4 w-fit">
         {boughtCourse.boughtCourse.syllabus &&
           boughtCourse.boughtCourse.syllabus.map((syl, index) => {
             console.log(params["chapterSlug"] === syl.slug);
 
             return (
-              <li
+              <div
                 key={index}
                 className={`relative ${
                   params["chapterSlug"] === syl.slug
@@ -41,13 +62,16 @@ const SyllabusList = () => {
                 <Link to={`/takecourse/${params["courseSlug"]}/${syl.slug}`}>
                   {syl.chpt}. {syl.title}
                 </Link>{" "}
-              </li>
+              </div>
             );
           })}
-      </ul>
+      </div>
     </div>
   ) : (
-    "Loading"
+    <div className="w-[30%] animate-pulse space-y-2">
+      <div className="w-[70%] bg-zinc-200 h-20 rounded-md mb-24"></div>
+      <div className="w-[70%] bg-zinc-200 h-[40vh] rounded-md"></div>
+    </div>
   );
 };
 
@@ -66,23 +90,23 @@ const TakeChapter = () => {
     );
   }, [params]);
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-10">
       <SyllabusList />
       {!boughtChapter.loading ? (
         <div className="w-[70%]">
-          <div className="flex gap-4 w-[60%]">
-            <div className="text-4xl font-semibold border border-zinc-700 rounded-full h-10 w-10 p-10 flex items-center justify-center">
-              {boughtChapter.boughtChapter.chpt}
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold ">
-                {boughtChapter.boughtChapter.title}
-              </h3>
-              <p>{boughtChapter.boughtChapter.description}</p>
-            </div>
+          <div className="w-[70%] mb-4">
+            {/* <div className="text-4xl font-semibold border border-zinc-700 rounded-full h-10 w-10 p-10 flex items-center justify-center"> */}
+
+            <h3 className="text-xl font-semibold mb-2">
+              {boughtChapter.boughtChapter.chpt}.{" "}
+              {boughtChapter.boughtChapter.title}
+            </h3>
+            <p className="pl-5 text-[15px]">
+              {boughtChapter.boughtChapter.description}
+            </p>
           </div>
           <hr />
-          <div className="flex items-center gap-2 my-2">
+          <div className="flex items-center gap-2 my-2 text-sm">
             <i class="fa-regular fa-clock"></i>
             {boughtChapter.boughtChapter.duration}
           </div>
@@ -95,19 +119,22 @@ const TakeChapter = () => {
               boughtChapter.boughtChapter.video
             }`}
           /> */}
-          <div className="z-20">
-            <LionPlayer
-              sources={[
-                {
-                  src: `${import.meta.env.VITE_API_URL}${
-                    boughtChapter.boughtChapter.video
-                  }`,
-                  type: "video/mp4",
-                },
-              ]}
-              autoplay={false}
-            />
-          </div>
+          {boughtChapter.boughtChapter.video && (
+            <div className="z-20">
+              <LionPlayer
+                sources={[
+                  {
+                    src: `${import.meta.env.VITE_API_URL}${
+                      boughtChapter.boughtChapter.video
+                    }`,
+                    type: "video/mp4",
+                  },
+                ]}
+                autoplay={false}
+              />
+            </div>
+          )}
+
           {/* <video controls>
             <source
               src={`${import.meta.env.VITE_API_URL}${
@@ -117,7 +144,12 @@ const TakeChapter = () => {
           </video> */}
         </div>
       ) : (
-        "Loading"
+        <div className="w-[70%] animate-pulse space-y-2">
+          <div className="w-[70%] bg-zinc-200 h-8 rounded-md"></div>
+          <div className="w-[70%] bg-zinc-200 h-16 rounded-md"></div>
+          <div className="w-[70%] bg-zinc-200 h-6 rounded-md"></div>
+          <div className="w-[70%] bg-zinc-200 h-[50vh] rounded-md"></div>
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Routes } from "react-router-dom";
+
 import Layout from "./layout/Layout";
 import CoursesPage from "./pages/allcourses/CoursesPage";
 import CoursePage from "./pages/allcourses/CoursePage";
@@ -13,6 +14,7 @@ import StudyMaterialPage from "./pages/studymaterials/StudyMaterialPage";
 import UserCourses from "./pages/profile/UserCourses";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
+import CartPage from "./pages/cart/CartPage";
 import Profile from "./pages/profile/Profile";
 import { Provider } from "react-redux";
 import { UserContextProvider } from "./context/UserContext";
@@ -22,7 +24,11 @@ import "./index.css";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <UserContextProvider>
+        <Layout />
+      </UserContextProvider>
+    ),
     children: [
       {
         path: "courses",
@@ -65,6 +71,10 @@ const router = createBrowserRouter([
         element: <StudyMaterialPage />,
       },
       {
+        path: "cart",
+        element: <CartPage />,
+      },
+      {
         path: "profile",
         element: <Profile />,
       },
@@ -77,9 +87,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <UserContextProvider>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </UserContextProvider>
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>
 );

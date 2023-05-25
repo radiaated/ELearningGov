@@ -12,11 +12,12 @@ import requests
 import uuid
 import json
 from rest_framework import permissions
+
 # from django.views.decorators.csrf import csrf_exempt
 # import jwt
 
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-# from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 # from rest_framework_simplejwt.tokens import RefreshToken
 
 # def get_tokens_for_user(user):
@@ -27,29 +28,17 @@ from rest_framework import permissions
 #         'access': str(refresh.access_token),
 #     }
 
-# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-#     @classmethod
-#     def get_token(cls, user):
-#         token = super().get_token(user)
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # refresh = self.get_token(self.user)
 
-#         return token
+        # Add extra responses here
+        data['username'] = self.user.username
+        return data
     
-# class MyObtainTokenPairView(TokenObtainPairView):
-#     permission_classes = (permissions.AllowAny,)
-#     serializer_class = MyTokenObtainPairSerializer
-    
-#     def post(self, request, *args, **kwargs):
-#         response = super().post(request, *args, **kwargs)
-
-#         access = response.data["access"] # NEW LINE
-#         refresh = response.data["refresh"] # NEW LINE
-#         # print(dict(response))
-
-#         print("uwu")
-
-#         response.set_cookie('access', access, httponly=True)
-#         response.set_cookie('refresh', refresh, httponly=True)
-#         return response
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 
 
@@ -220,13 +209,15 @@ def course_trans_s(request):
 
         trans_id = uuid.uuid1()
 
+
+
         payload = {
             "return_url": 'http://localhost:5173/verifypay',
             "website_url": "http://localhost:5173/",
             "amount": rd["price"],
             "purchase_order_id": "course_" + str(trans_id),
             # "purchase_order_id": 16,
-            "purchase_order_name": rd["course_slug"]
+            "purchase_order_name": "_".join(rd["course_id"])
         }
 
         res = requests.post("https://a.khalti.com/api/v2/epayment/initiate/", data=json.dumps(payload) ,headers={"Content-Type": "application/json", "Authorization": "Key ed5c97d78e1d4473acf4fd5ddabe488f"})
@@ -283,14 +274,121 @@ def verify_payment(request):
         res = json.loads(res.text)
         if request.GET.get("type") == "course":
 
-            online_course = OnlineCourse.objects.get(slug=request.GET.get("slug"))
-            buy_course = BuyCourse.objects.create(user=request.user, online_course=online_course, pidx=res["pidx"], total_amount=res["total_amount"],transaction_id=res["transaction_id"])
+            for xx in request.GET.get("course_id").split("_"):
+                if not BuyCourse.objects.filter(user=request.user, online_course__id = xx).exists():
+                    online_course = OnlineCourse.objects.get(id=xx)
+                    buy_course = BuyCourse.objects.create(user=request.user, online_course=online_course, pidx=res["pidx"], total_amount=res["total_amount"],transaction_id=res["transaction_id"])
 
-            if buy_course and online_course:
-                buy_course.save()
-                serializers = BuyCourseSerializer(buy_course)
+                    if buy_course and online_course:
+                        buy_course.save()
+            
 
-                return Response(serializers.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
+                
     else:
         return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@permission_classes([IsAuthenticated])
+@api_view(["POST"])
+def free_course(request):
+
+    
+  
+    if not BuyCourse.objects.filter(user=request.user, online_course__slug = request.GET.get("course_slug")).exists():
+        oc = OnlineCourse.objects.get(slug = request.GET.get("course_slug"))
+        buy_course = BuyCourse.objects.create(user=request.user, online_course=oc, total_amount=0)
+
+        if buy_course:
+            buy_course.save()
+
+
+        serializers = BuyCourseSerializer(buy_course)
+        return Response(serializers.data, status=status.HTTP_200_OK)
+        
+    else:
+            return Response({"message": "Purchased before."}, status=status.HTTP_404_NOT_FOUND)
+                
+    # else:
+    #     return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@permission_classes([IsAuthenticated])
+@api_view(["GET"])
+def check_course_own(request):
+
+    
+  
+    if BuyCourse.objects.filter(user=request.user, online_course__slug = request.GET.get("course_slug")).exists():
+
+        print("uwu")
+       
+        return Response({"status": True}, status=status.HTTP_200_OK)
+        
+    else:
+        return Response({"status": False}, status=status.HTTP_200_OK)
+                
+    # else:
+    #     return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+    
+
+
+@permission_classes([IsAuthenticated])
+@api_view(["GET", "POST", "PUT", "DELETE"])
+def course_review(request):
+    
+    if request.method == "POST":
+
+        rd = request.data
+
+        oc = OnlineCourse.objects.get(slug = request.GET.get("online_course"))
+
+        review = CourseReview.objects.create(user=request.user, online_course=oc, rating=request.GET.get("rating"), comment=rd['comment'])
+
+        if review:
+            review.save()
+
+            serializers = CourseReviewSerializer(review)
+            return Response(serializers.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+    elif request.method == "PUT":
+
+        rd = request.data
+
+
+
+        review = CourseReview.objects.get(user=request.user, online_course__slug=request.GET.get("online_course"))
+
+        review.rating = rd["rating"]
+        review.comment = rd["comment"]
+
+        if review:
+
+            review.save()
+
+            serializers = CourseReviewSerializer(review)
+            return Response(serializers.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+        
+
+
+    elif request.method == "DELETE":
+
+        rd = request.data
+
+        review = CourseReview.objects.get(user=request.user, id=request.GET.get("review_id"))
+
+        if review:
+            # print(review)
+            review.delete()
+            
+
+            # serializers = CourseReviewSerializer(review)
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
 

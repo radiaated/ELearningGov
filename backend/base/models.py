@@ -24,10 +24,19 @@ course_category = (
 )
 
 
+class Tutor(models.Model):
+    full_name = models.CharField(max_length=200, null=False, blank=False)
+    def __str__(self):
+        return self.full_name
+
 class OnlineCourse(models.Model):
     slug = models.SlugField(max_length=200, null=True, blank=True)
     title = models.CharField(max_length=200, null=False, blank=False)
+    author = models.CharField(max_length=200, null=True, blank=True)
+    language = models.CharField(max_length=100, null=True, blank=True)
+    level = models.CharField(max_length=100, null=True, blank=True)
     description = models.CharField(max_length=5000, null=False, blank=False)
+    requirements = models.CharField(max_length=200, null=True, blank=True)
     category = models.CharField(max_length=100, choices=course_category, null=False, blank=False)
     thumbnail = models.ImageField(upload_to=get_file_path, null=False, blank=False)
     preview_video = models.FileField(upload_to=get_file_path, null=False, blank=False)
@@ -55,6 +64,10 @@ class StudyMaterial(models.Model):
     category = models.CharField(max_length=100, choices=course_category, null=False, blank=False)
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.CharField(max_length=5000, null=False, blank=False)
+    author = models.CharField(max_length=200, null=True, blank=True)
+    language = models.CharField(max_length=100, null=True, blank=True)
+    level = models.CharField(max_length=100, null=True, blank=True)
+    dw_count = models.IntegerField(default=1, null=True, blank=True)
     thumbnail = models.ImageField(upload_to=get_file_path, null=False, blank=False)
     file = models.FileField(upload_to=get_file_path, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)

@@ -14,7 +14,7 @@ export default {
         }
       },
       fontFamily: {
-        // 'Roboto': ['Roboto', 'sans-serif']
+        Montserrat: ['Montserrat', 'sans-serif']
       },
     },
   },

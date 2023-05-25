@@ -7,7 +7,7 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <section className="mt-36 w-[1400px] max-w-[90%] mx-auto">
+      <section className="mt-32 w-[1400px] max-w-[90%] mx-auto">
         <Outlet />
       </section>
 

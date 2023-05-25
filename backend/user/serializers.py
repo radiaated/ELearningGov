@@ -26,9 +26,10 @@ class BuyCourseSerializer(serializers.ModelSerializer):
     thumbnail = serializers.ImageField(source="online_course.thumbnail")
     price = serializers.ReadOnlyField(source="online_course.price")
     category = serializers.ReadOnlyField(source="online_course.category")
+    slug = serializers.ReadOnlyField(source="online_course.slug")
     class Meta:
         model = BuyCourse
-        fields = ['date_created', 'title', 'description', 'thumbnail', 'price', 'category']
+        fields = ['date_created', 'title', 'description', 'thumbnail', 'price', 'category', 'slug']
         
 
 
@@ -37,5 +38,13 @@ class BuyStudyMatSerializer(serializers.ModelSerializer):
     class Meta:
         model = BuyStudyMat
         fields = '__all__'
+
+
+class CourseReviewSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source="user.username")
+   
+    class Meta:
+        model = CourseReview
+        fields = ['id', 'username', 'date_created', 'rating', 'comment']
         
 

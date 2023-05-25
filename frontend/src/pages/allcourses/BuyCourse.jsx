@@ -65,70 +65,79 @@ const BuyCourse = () => {
 
   useEffect(() => {
     if (fetchCourse(qs.get("type") === "course")) {
-      dispatch(fetchCourse(qs.get("course")));
+      dispatch(
+        fetchCourse({ slug: qs.get("course"), access: userCxt.auth.access })
+      );
     }
     checkCourse();
   }, []);
 
   return (
-    <div>
+    <div className="w-[70%] mx-auto">
       {qs.get("type") === "course" && (
         <div>
-          {!course.loading ? (
-            <div className="w-[70%] mx-auto">
-              <h3 className="text-3xl font-semi-bold mb-4">Purchase</h3>
-              <div className="flex gap-4 ">
-                <img
-                  src={import.meta.env.VITE_API_URL + course.course.thumbnail}
-                  className="h-32"
-                />
-                <div className="flex flex-col gap-2">
-                  <Link to={bought ? `/takecourse/${course.course.slug}` : "#"}>
-                    <h3 className="text-2xl font-bold">
-                      {course.course.title}
-                    </h3>
-                  </Link>
+          <div className="">
+            {!course.loading ? (
+              <>
+                <h3 className="text-3xl font-semi-bold mb-4">Purchase</h3>
+                <div className="flex gap-4">
+                  <img
+                    src={import.meta.env.VITE_API_URL + course.course.thumbnail}
+                    className="h-24 rounded-md"
+                  />
+                  <div className="flex flex-col gap-1">
+                    <Link
+                      to={bought ? `/takecourse/${course.course.slug}` : "#"}
+                    >
+                      <h3 className="text-xl font-medium">
+                        {course.course.title}
+                      </h3>
+                    </Link>
 
-                  <p>
+                    {/* <p>
                     {course.course.description &&
                       course.course.description.slice(0, 100)}
                     ...
-                  </p>
-                  <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
-                    {course.course.category &&
-                      courseCategories.find(
-                        (cat) => cat.short === course.course.category
-                      ).title}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-xl font-medium text-center mb-2">
-                    Rs. {course.course.price}
-                  </div>
-                  {!bought ? (
-                    <button
-                      className="group border border-green-600 rounded-full w-fit px-5 py-2 hover:bg-green-600 hover:text-zinc-100 duration-100"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        buyCourse({
-                          course_slug: course.course.slug,
-                          price: course.course.price,
-                        });
-                      }}
-                    >
-                      {"Purchase"}
-                    </button>
-                  ) : (
-                    <div className="border border-green-600 rounded-full w-fit px-5 py-2 bg-green-600 text-zinc-100 flex items-center gap-2">
-                      Purchased <i class="fa-solid fa-check"></i>
+                  </p> */}
+                    <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
+                      {course.course.category &&
+                        courseCategories.find(
+                          (cat) => cat.short === course.course.category
+                        ).title}
                     </div>
-                  )}
+                  </div>
+                  <div>
+                    <div className="text-xl font-medium text-center mb-2">
+                      Rs. {course.course.price / 100}
+                    </div>
+                    {!bought ? (
+                      <button
+                        className="group border border-green-600 rounded-full w-fit px-5 py-2 hover:bg-green-600 hover:text-zinc-100 duration-100"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          buyCourse({
+                            course_id: [String(course.course.id)],
+                            price: course.course.price,
+                          });
+                        }}
+                      >
+                        {"Purchase"}
+                      </button>
+                    ) : (
+                      <div className="border border-green-600 rounded-full w-fit px-5 py-2 bg-green-600 text-zinc-100 flex items-center gap-2">
+                        Purchased <i class="fa-solid fa-check"></i>
+                      </div>
+                    )}
+                  </div>
                 </div>
+              </>
+            ) : (
+              <div className="animate-pulse">
+                <div className="bg-zinc-200 h-6 w-[30%] rounded-md mb-2"></div>
+                <div className="bg-zinc-200 h-28 w-full rounded-md"></div>
               </div>
-            </div>
-          ) : (
-            "Loading"
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>

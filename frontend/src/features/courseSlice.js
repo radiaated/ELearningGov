@@ -2,16 +2,45 @@ import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-export const fetchCourseList = createAsyncThunk("course/fetchCourseList", async (cat) => {
-    console.log("hi");
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${cat ? `?category=${cat}`: "/"}`})
+export const fetchCourseList = createAsyncThunk("course/fetchCourseList", async (pl) => {
+  // console.log(pl.entries());
+  
+  const qs = Object.fromEntries(pl.entries())
+
+  // console.log(qs);
+
+  // Object.fromEntries(pl.entries())
+
+  // Object.entries(qs)
+
+  console.log(pl);
+
+  const x =  Object.entries(qs).map(q => `${q[0]}=${q[1]}`).join("&")
+
+  console.log(x);
+
+  
+
+  // console.log(qs);
+
+    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${pl ? `?${x}`: "/"}`})
     return data
 })
 
-export const fetchCourse = createAsyncThunk("course/fetchCourse", async (slug) => {
+export const fetchCourse = createAsyncThunk("course/fetchCourse", async (pl) => {
     
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/course/${slug}/`})
-    console.log(data);
+    let {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/course/${pl.slug}/`})
+    let data2 = await axios({
+      url: `${
+        import.meta.env.VITE_API_URL
+      }/api/user/checkcourseown/?course_slug=${pl.slug}`,
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${pl.access}`,
+      },
+    })
+    
+    data = {...data, own_status: data2.data}
     
     return data
 })
@@ -47,7 +76,7 @@ export const fetchChapter = createAsyncThunk("course/fetchChapter", async (pl) =
 const initialState = {
   courseList: {
     loading: false,
-    courseList: [],
+    courseList: {},
     msg: ""
   },
   course: {
@@ -75,7 +104,7 @@ export const courseSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchCourseList.pending, (state) => {
         state.courseList.loading = true;
-        state.courseList.courseList = [];
+        state.courseList.courseList = {}
         state.courseList.msg = "";
     })
     builder.addCase(fetchCourseList.fulfilled, (state, action) => {
@@ -85,7 +114,7 @@ export const courseSlice = createSlice({
     })
     builder.addCase(fetchCourseList.rejected, (state) => {
         state.courseList.loading = false;
-        state.courseList.courseList = [];
+        state.courseList.courseList = {};
         state.courseList.msg = "Error";
     })
     // 

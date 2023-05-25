@@ -28,19 +28,20 @@ const UserCourses = () => {
   return (
     <div className="w-[60%] mx-auto">
       <h2 className="text-xl font-semibold">Your Courses</h2>
+      <hr className="my-2" />
       <div className="flex flex-col gap-2 divide-y divide-zinc-300">
         {!userCourses.loading
           ? userCourses.userCourses.length > 0
             ? userCourses.userCourses.map((course, ind) => (
-                <div key={ind} className="flex py-2 gap-4">
+                <div key={ind} className="flex py-2 gap-4 relative">
                   <img
                     className="h-24 w-32 object-cover"
                     src={`${import.meta.env.VITE_API_URL}${course.thumbnail}`}
                     alt=""
                   />
                   <div>
-                    <h3 className="text-xl font-semibold">{course.title}</h3>
-                    <p>
+                    <h3 className="text-xl font-medium">{course.title}</h3>
+                    <p className="text-sm">
                       {course.description && course.description.slice(0, 75)}...
                     </p>
                     <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
@@ -53,7 +54,7 @@ const UserCourses = () => {
 
                   <Link
                     to={`/takecourse/${course.slug}`}
-                    className="group flex border border-primary-dark rounded-lg gap-2 h-fit p-2 items-center hover:bg-primary-main hover:text-zinc-100"
+                    className="flex h-fit items-center gap-2 border border-orange-600 bg-orange-500 px-4 py-2 w-fit rounded-sm text-white hover:bg-orange-400"
                   >
                     Take
                     <i class="fa-solid fa-arrow-right group-hover:text-zinc-50"></i>

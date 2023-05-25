@@ -25,4 +25,7 @@ urlpatterns = [
     path('api/user/', include("user.urls")),
 ]
 
+
+
 urlpatterns += static("uploads", document_root=settings.STATIC_MEDIA)
+
