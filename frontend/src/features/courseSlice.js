@@ -30,17 +30,20 @@ export const fetchCourseList = createAsyncThunk("course/fetchCourseList", async 
 export const fetchCourse = createAsyncThunk("course/fetchCourse", async (pl) => {
     
     let {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/course/${pl.slug}/`})
-    let data2 = await axios({
-      url: `${
-        import.meta.env.VITE_API_URL
-      }/api/user/checkcourseown/?course_slug=${pl.slug}`,
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${pl.access}`,
-      },
-    })
     
-    data = {...data, own_status: data2.data}
+    if (pl.access){
+      let data2 = await axios({
+        url: `${
+          import.meta.env.VITE_API_URL
+        }/api/user/checkcourseown/?course_slug=${pl.slug}`,
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${pl.access}`,
+        },
+      })
+      
+      data = {...data, own_status: data2.data}
+    }
     
     return data
 })

@@ -106,16 +106,16 @@ const StudyMaterialsList = () => {
         {!studyMaterials.loading
           ? studyMaterials.studyMaterials.results &&
             studyMaterials.studyMaterials.results.length > 0
-            ? studyMaterials.studyMaterials.results.map((course) => (
-                <div key={course.id} className="py-2">
-                  <Link to={`/course/${course.slug}`}>
+            ? studyMaterials.studyMaterials.results.map((sm) => (
+                <div key={sm.id} className="py-2">
+                  <Link to={`/studymaterial/${sm.slug}`}>
                     <img
-                      src={import.meta.env.VITE_API_URL + course.thumbnail}
+                      src={import.meta.env.VITE_API_URL + sm.thumbnail}
                       className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
                     />
 
                     <h3 className="font-medium text-[15px] text-primary-dark hover:underline underline-offset-1">
-                      {course.title}
+                      {sm.title}
                     </h3>
                   </Link>
 
@@ -125,7 +125,7 @@ const StudyMaterialsList = () => {
                     <span className="bg-zinc-100 text-xs text px-1 border border-zinc-300">
                       {
                         courseCategories.find(
-                          (cat) => cat.short === course.category
+                          (cat) => cat.short === sm.category
                         ).title
                       }
                     </span>

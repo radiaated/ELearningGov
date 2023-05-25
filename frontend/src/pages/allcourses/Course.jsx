@@ -138,7 +138,10 @@ const Course = () => {
 
   useEffect(() => {
     dispatch(
-      fetchCourse({ slug: params["courseSlug"], access: userCxt.auth.access })
+      fetchCourse({
+        slug: params["courseSlug"],
+        access: userCxt.auth ? userCxt.auth.access : null,
+      })
     );
   }, []);
 

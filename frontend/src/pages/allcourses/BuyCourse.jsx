@@ -66,7 +66,10 @@ const BuyCourse = () => {
   useEffect(() => {
     if (fetchCourse(qs.get("type") === "course")) {
       dispatch(
-        fetchCourse({ slug: qs.get("course"), access: userCxt.auth.access })
+        fetchCourse({
+          slug: qs.get("course"),
+          access: userCxt.auth ? userCxt.auth.access : null,
+        })
       );
     }
     checkCourse();
