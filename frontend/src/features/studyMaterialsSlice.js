@@ -2,9 +2,12 @@ import { createSlice } from '@reduxjs/toolkit'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-export const fetchStudyMaterials = createAsyncThunk("studyMaterials/fetchStudyMaterials", async (cat) => {
+export const fetchStudyMaterials = createAsyncThunk("studyMaterials/fetchStudyMaterials", async (pl) => {
+
+  const x = Object.entries(pl).map((q) => `${q[0]}=${q[1]}`).join("&");
+
   console.log("uwu");
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/studymaterials${cat? `?category=${cat}` : "/"}`,headers: {
+    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/studymaterials${pl ? `?${x}`: "/"}`,headers: {
       "Content-Type": "application/json",  
     }})
 

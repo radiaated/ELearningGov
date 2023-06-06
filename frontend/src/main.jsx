@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Routes } from "react-router-dom";
-
+import PrivateRoute from "./utils/PrivateRoute";
 import Layout from "./layout/Layout";
 import CoursesPage from "./pages/allcourses/CoursesPage";
 import CoursePage from "./pages/allcourses/CoursePage";
@@ -16,6 +16,8 @@ import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import CartPage from "./pages/cart/CartPage";
 import Profile from "./pages/profile/Profile";
+import HomePage from "./pages/home/HomePage";
+import AboutPage from "./pages/about/AboutPage";
 import { Provider } from "react-redux";
 import { UserContextProvider } from "./context/UserContext";
 import { store } from "./app/store";
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        index: true,
+        element: <HomePage />,
+      },
+      {
         path: "courses",
         element: <CoursesPage />,
       },
@@ -40,11 +46,19 @@ const router = createBrowserRouter([
       },
       {
         path: "buycourse",
-        element: <BuyCourse />,
+        element: (
+          <PrivateRoute>
+            <BuyCourse />{" "}
+          </PrivateRoute>
+        ),
       },
       {
         path: "verifypay",
-        element: <VerifyPayment />,
+        element: (
+          <PrivateRoute>
+            <VerifyPayment />
+          </PrivateRoute>
+        ),
       },
       {
         path: "login",
@@ -56,11 +70,19 @@ const router = createBrowserRouter([
       },
       {
         path: "takecourse/:courseSlug",
-        element: <TakeCoursePage />,
+        element: (
+          <PrivateRoute>
+            <TakeCoursePage />
+          </PrivateRoute>
+        ),
       },
       {
         path: "takecourse/:courseSlug/:chapterSlug",
-        element: <TakeChapter />,
+        element: (
+          <PrivateRoute>
+            <TakeChapter />
+          </PrivateRoute>
+        ),
       },
       {
         path: "studymaterials",
@@ -76,11 +98,23 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <Profile />,
+        element: (
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        ),
       },
       {
         path: "yourcourses",
-        element: <UserCourses />,
+        element: (
+          <PrivateRoute>
+            <UserCourses />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "about",
+        element: <AboutPage />,
       },
     ],
   },

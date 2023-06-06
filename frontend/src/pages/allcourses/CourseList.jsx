@@ -4,22 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-
-const SetStarRating = ({ rating }) => {
-  return (
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((item) => (
-        <div className=" text-yellow-500">
-          {item <= parseInt(rating) ? (
-            <i class="fa-solid fa-star"></i>
-          ) : (
-            <i class="fa-regular fa-star"></i>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-};
+import CourseItem from "./CourseItem";
 
 const CourseList = () => {
   const [search, setSearch] = useState("");
@@ -60,7 +45,9 @@ const CourseList = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchCourseList(qs));
+    const qs2 = Object.fromEntries(qs.entries());
+
+    dispatch(fetchCourseList(qs2));
   }, [qs]);
 
   return (
@@ -85,7 +72,7 @@ const CourseList = () => {
           >
             <div className="w-2/3 flex justify-end items-center relative">
               <input
-                placeholder="Pesquisar"
+                placeholder="Search"
                 class="border border-gray-400 rounded-lg p-4 pl-12 w-full"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -131,49 +118,7 @@ const CourseList = () => {
           ? courseList.courseList.results &&
             courseList.courseList.results.length > 0
             ? courseList.courseList.results.map((course) => (
-                <div key={course.id} className="py-2">
-                  <Link to={`/course/${course.slug}`}>
-                    <img
-                      src={import.meta.env.VITE_API_URL + course.thumbnail}
-                      className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
-                    />
-
-                    <h3 className="font-medium text-[15px] text-primary-dark hover:underline underline-offset-1">
-                      {course.title}
-                    </h3>
-                  </Link>
-                  <div className="text-xs flex gap-1 mt-1">
-                    <span className="text-yellow-700 font-medium">
-                      {course.avg_rating}
-                    </span>{" "}
-                    <SetStarRating rating={course.avg_rating} />{" "}
-                    <span className="text-yellow-700">
-                      ({course.reviews_count} Review
-                      {course.reviews_count > 1 && "s"})
-                    </span>
-                  </div>
-                  {/* <p className="truncate text-sm">{course.description}</p> */}
-                  <div>
-                    {/* Category:{" "} */}
-                    <span className="bg-zinc-100 text-xs text px-1 border border-zinc-300">
-                      {
-                        courseCategories.find(
-                          (cat) => cat.short === course.category
-                        ).title
-                      }
-                    </span>
-                  </div>
-                  <div>
-                    {course.price > 0 ? (
-                      <span className="text-lg font-medium">
-                        <span className="text-sm">Rs. </span>
-                        {course.price / 100}
-                      </span>
-                    ) : (
-                      "Free"
-                    )}
-                  </div>
-                </div>
+                <CourseItem course={course} />
               ))
             : "Empty"
           : [1, 2, 3, 4, 5].map((loader) => (
@@ -198,7 +143,7 @@ const CourseList = () => {
             nextLabel="Next"
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
-            pageCount={courseList.courseList.count}
+            pageCount={Math.ceil(courseList.courseList.count / 5)}
             previousLabel="Prev"
             renderOnZeroPageCount={null}
           />

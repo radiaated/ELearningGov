@@ -76,13 +76,14 @@ const BuyCourse = () => {
   }, []);
 
   return (
-    <div className="w-[70%] mx-auto">
+    <div className="w-[50%] mx-auto">
       {qs.get("type") === "course" && (
         <div>
           <div className="">
             {!course.loading ? (
               <>
                 <h3 className="text-3xl font-semi-bold mb-4">Purchase</h3>
+                <hr className="mb-4" />
                 <div className="flex gap-4">
                   <img
                     src={import.meta.env.VITE_API_URL + course.course.thumbnail}

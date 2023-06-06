@@ -39,11 +39,12 @@ const StudyMaterialsList = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchStudyMaterials(qs.get("category")));
+    const qs2 = Object.fromEntries(qs.entries());
+    dispatch(fetchStudyMaterials(qs2));
   }, [qs]);
 
   return (
-    <div className="p-4 flex flex-col gap-2">
+    <div className="p-4 flex flex-col gap-2 my-8">
       <div className="mb-4">
         <h2 className="text-2xl font-medium mb-2">Online Courses</h2>
         <div className="text-xl">
@@ -63,7 +64,7 @@ const StudyMaterialsList = () => {
           >
             <div className="w-2/3 flex justify-end items-center relative">
               <input
-                placeholder="Pesquisar"
+                placeholder="Search"
                 class="border border-gray-400 rounded-lg p-4 pl-12 w-full"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -155,7 +156,7 @@ const StudyMaterialsList = () => {
             nextLabel="Next"
             onPageChange={handlePageClick}
             pageRangeDisplayed={5}
-            pageCount={studyMaterials.studyMaterials.count}
+            pageCount={Math.ceil(studyMaterials.studyMaterials.count / 5)}
             previousLabel="Prev"
             renderOnZeroPageCount={null}
           />

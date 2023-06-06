@@ -80,6 +80,13 @@ def register(request):
     if request.method == "POST":
         rd = request.data
 
+        if User.objects.filter(username = rd["username"]).exists():
+            return Response({"detail": "Username exists"}, status=status.HTTP_403_FORBIDDEN)
+        
+
+        if User.objects.filter(email = rd["email"]).exists():
+            return Response({"detail": "Email exists"}, status=status.HTTP_403_FORBIDDEN)
+
         user = User.objects.create(
             username= rd["username"],
             email= rd["email"],

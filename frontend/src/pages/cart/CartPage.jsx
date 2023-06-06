@@ -53,11 +53,12 @@ const CartPage = () => {
   };
 
   return (
-    <div className="w-[80%] mx-auto">
+    <div className="w-[80%] mx-auto mb-48">
       <h2 className="font-medium text-2xl">Cart</h2>
       <hr className="mt-4 mb-2" />
       <div className="grid grid-cols-4 gap-8">
         <div className="col-span-3 divide-y divide-zinc-200">
+          {cart.length === 0 && "Empty"}
           {cart.map((item, ind) => (
             <div className="flex gap-4 col-span-3 py-4">
               <div className="">

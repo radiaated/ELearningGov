@@ -33,7 +33,7 @@ def get_online_courses(request):
    
 
     paginator = PageNumberPagination()
-    paginator.page_size = 1
+    paginator.page_size = 5
     result_page = paginator.paginate_queryset(online_courses, request)
 
     if online_courses:
@@ -190,7 +190,7 @@ def get_study_materials(request):
         study_materials = study_materials.filter(category = request.GET.get("category"))
     
     paginator = PageNumberPagination()
-    paginator.page_size = 1
+    paginator.page_size = 5
     result_page = paginator.paginate_queryset(study_materials, request)
     
     if study_materials:

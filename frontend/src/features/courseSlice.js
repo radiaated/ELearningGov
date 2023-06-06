@@ -3,25 +3,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 export const fetchCourseList = createAsyncThunk("course/fetchCourseList", async (pl) => {
-  // console.log(pl.entries());
-  
-  const qs = Object.fromEntries(pl.entries())
-
-  // console.log(qs);
-
-  // Object.fromEntries(pl.entries())
-
-  // Object.entries(qs)
-
-  console.log(pl);
-
-  const x =  Object.entries(qs).map(q => `${q[0]}=${q[1]}`).join("&")
-
-  console.log(x);
 
   
 
-  // console.log(qs);
+  const x = Object.entries(pl).map((q) => `${q[0]}=${q[1]}`).join("&");
+
 
     const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${pl ? `?${x}`: "/"}`})
     return data

@@ -1,16 +1,31 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserContext from "../context/UserContext";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Header = () => {
   const { cart } = useSelector((state) => state.app);
 
+  const [headerColor, setHeaderColor] = useState(false);
+
+  const location = useLocation();
+
+  console.log(location);
+
   const userCxt = useContext(UserContext);
 
+  window.addEventListener("scroll", () => {
+    if (window.scrollY >= 200) {
+      setHeaderColor(true);
+    } else {
+      setHeaderColor(false);
+    }
+  });
+  useEffect(() => {}, []);
+
   return (
-    <header className="fixed top-0 left-0 w-full z-40 bg-white">
+    <header className="fixed top-0 left-0 w-full z-[80]">
       <div className="w-full bg-primary-dark text-white flex justify-between text-xs px-2 py-1 items-center">
         <div>01-4444444, 01-4444442</div>
         <div className="flex gap-2 items-center">
@@ -57,7 +72,18 @@ const Header = () => {
           )}
         </div>
       </div>
-      <div className="flex items-center h-16 border-b border-zinc-200 shadow-sm">
+
+      <div
+        className={`flex items-center h-16 ${
+          location.pathname !== "/"
+            ? "bg-white border-b border-zinc-200 shadow-sm"
+            : `text-zinc-50 ${
+                headerColor
+                  ? "bg-white text-zinc-800 transition-all duration-500"
+                  : "transition-all duration-300"
+              }`
+        }`}
+      >
         <div className="w-[1400px] max-w-[90%] mx-auto flex justify-between items-center">
           <div className="text-xl font-semibold">E Learning Government</div>
           <nav>
@@ -80,7 +106,7 @@ const Header = () => {
                   className={({ isActive }) =>
                     isActive
                       ? "border-b-4 border-primary-light/75 pb-5 px-2"
-                      : "px-2"
+                      : "hover:border-b-4 hover:border-zinc-400 pb-5 px-2 transition-all eas ease-in-out"
                   }
                 >
                   Online Courses
@@ -92,31 +118,20 @@ const Header = () => {
                   className={({ isActive }) =>
                     isActive
                       ? "border-b-4 border-primary-light/75 pb-5 px-2"
-                      : "px-2"
+                      : "hover:border-b-4 hover:border-zinc-400 pb-5 px-2 transition-all eas ease-in-out"
                   }
                 >
                   Study Materials
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to="/contact"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-4 border-primary-light/75 pb-5 px-2"
-                      : "px-2"
-                  }
-                >
-                  Contact
-                </NavLink>
-              </li>
+
               <li>
                 <NavLink
                   to="/about"
                   className={({ isActive }) =>
                     isActive
                       ? "border-b-4 border-primary-light/75 pb-5 px-2"
-                      : "px-2"
+                      : "hover:border-b-4 hover:border-zinc-400 pb-5 px-2 transition-all eas ease-in-out"
                   }
                 >
                   About

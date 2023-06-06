@@ -186,24 +186,35 @@ const Course = () => {
                           <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
                             <div className="font-medium text-xl flex justify-between">
                               <div>
-                                {syl.chpt}. {syl.title}
+                                <div className="mb-1">
+                                  {syl.chpt}. {syl.title}
+                                </div>
+                                <div className="align-middle text-xs text-zinc-400">
+                                  <i class="fa-regular fa-clock mr-2"></i>
+                                  <span className="">
+                                    {syl.duration > 60
+                                      ? `${parseInt(syl.duration / 60)} hour${
+                                          parseInt(syl.duration / 60) > 1
+                                            ? "s"
+                                            : ""
+                                        }, ${
+                                          syl.duration -
+                                          parseInt(syl.duration / 60) * 60
+                                        } minute${
+                                          syl.duration -
+                                            parseInt(syl.duration / 60) * 60 >
+                                          1
+                                            ? "s"
+                                            : ""
+                                        }`
+                                      : `${syl.duration} minute${
+                                          syl.duration > 1 ? "s" : ""
+                                        }`}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="align-middle text-xs">
-                                <i class="fa-regular fa-clock mr-2"></i>
-                                <span className="">
-                                  {syl.duration < 60
-                                    ? "00"
-                                    : "0" + String(parseInt(syl.duration / 60))}
-                                  :
-                                  {syl.duration % 60 > 0 &&
-                                  syl.duration % 60 < 10
-                                    ? "0" + (syl.duration % 60)
-                                    : syl.duration % 60 >= 10 &&
-                                      syl.duration % 60 < 60
-                                    ? syl.duration % 60
-                                    : syl.duration % 60 > 60 &&
-                                      syl.duration % 60}
-                                </span>
+                              <div>
+                                <i class="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
                               </div>
                             </div>
                           </AccordionItemButton>
@@ -219,6 +230,7 @@ const Course = () => {
               <div>
                 <h3 className="text-lg font-medium my-3">Reviews</h3>
                 <div className="flex flex-col gap-2">
+                  {course.course.reviews?.length === 0 && "No reviews"}
                   {course.course.reviews &&
                     course.course.reviews.map((rev) => (
                       <CourseReviews rev={rev} deleteReview={deleteReview} />
@@ -283,7 +295,7 @@ const Course = () => {
                       course.course.own_status.status
                     }
                     onClick={() => {
-                      if (course.course.price === 0) {
+                      if (course.course.price === 0 && userCxt.auth !== null) {
                         ownFreeCourse(course.course.slug);
                       } else {
                         navigate(

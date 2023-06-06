@@ -106,10 +106,31 @@ const TakeChapter = () => {
             </p>
           </div>
           <hr />
-          <div className="flex items-center gap-2 my-2 text-sm">
-            <i class="fa-regular fa-clock"></i>
-            {boughtChapter.boughtChapter.duration}
+
+          <div className="align-middle text-sm text-zinc-500 my-3">
+            <i class="fa-regular fa-clock mr-2"></i>
+            <span className="">
+              {boughtChapter.boughtChapter.duration > 60
+                ? `${parseInt(boughtChapter.boughtChapter.duration / 60)} hour${
+                    parseInt(boughtChapter.boughtChapter.duration / 60) > 1
+                      ? "s"
+                      : ""
+                  }, ${
+                    boughtChapter.boughtChapter.duration -
+                    parseInt(boughtChapter.boughtChapter.duration / 60) * 60
+                  } minute${
+                    boughtChapter.boughtChapter.duration -
+                      parseInt(boughtChapter.boughtChapter.duration / 60) * 60 >
+                    1
+                      ? "s"
+                      : ""
+                  }`
+                : `${boughtChapter.boughtChapter.duration} minute${
+                    boughtChapter.boughtChapter.duration > 1 ? "s" : ""
+                  }`}
+            </span>
           </div>
+
           {/* <ReactPlayer
             className="react-player fixed-bottom"
             width="100%"
@@ -148,7 +169,7 @@ const TakeChapter = () => {
           <div className="w-[70%] bg-zinc-200 h-8 rounded-md"></div>
           <div className="w-[70%] bg-zinc-200 h-16 rounded-md"></div>
           <div className="w-[70%] bg-zinc-200 h-6 rounded-md"></div>
-          <div className="w-[70%] bg-zinc-200 h-[50vh] rounded-md"></div>
+          <div className="w-full bg-zinc-200 h-[50vh] rounded-md"></div>
         </div>
       )}
     </div>

@@ -267,27 +267,37 @@ const TakeCoursePage = () => {
                         <AccordionItem>
                           <AccordionItemHeading>
                             <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
-                              <div className="text-xl flex justify-between">
+                              <div className="font-medium text-xl flex justify-between">
                                 <div>
-                                  {syl.chpt}. {syl.title}
+                                  <div className="mb-1">
+                                    {syl.chpt}. {syl.title}
+                                  </div>
+                                  <div className="align-middle text-xs text-zinc-400">
+                                    <i class="fa-regular fa-clock mr-2"></i>
+                                    <span className="">
+                                      {syl.duration > 60
+                                        ? `${parseInt(syl.duration / 60)} hour${
+                                            parseInt(syl.duration / 60) >> 1
+                                              ? "s"
+                                              : ""
+                                          }, ${
+                                            syl.duration -
+                                            parseInt(syl.duration / 60) * 60
+                                          } minute${
+                                            syl.duration -
+                                              parseInt(syl.duration / 60) * 60 >
+                                            1
+                                              ? "s"
+                                              : ""
+                                          }`
+                                        : `${syl.duration} minute${
+                                            syl.duration > 1 ? "s" : ""
+                                          }`}
+                                    </span>
+                                  </div>
                                 </div>
-                                <div className="align-middle text-xs">
-                                  <i class="fa-regular fa-clock mr-2"></i>
-                                  <span className="">
-                                    {syl.duration < 60
-                                      ? "00"
-                                      : "0" +
-                                        String(parseInt(syl.duration / 60))}
-                                    :
-                                    {syl.duration % 60 > 0 &&
-                                    syl.duration % 60 < 10
-                                      ? "0" + (syl.duration % 60)
-                                      : syl.duration % 60 >= 10 &&
-                                        syl.duration % 60 < 60
-                                      ? syl.duration % 60
-                                      : syl.duration % 60 > 60 &&
-                                        syl.duration % 60}
-                                  </span>
+                                <div>
+                                  <i class="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
                                 </div>
                               </div>
                             </AccordionItemButton>
