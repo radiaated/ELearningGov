@@ -57,7 +57,7 @@ const UserCourses = () => {
                     className="flex h-fit items-center gap-2 border border-primary-dark bg-primary-main px-4 py-2 w-fit rounded-sm text-white hover:bg-primary-dark duration-50"
                   >
                     Take
-                    <i class="fa-solid fa-arrow-right group-hover:text-zinc-50"></i>
+                    <i className="fa-solid fa-arrow-right group-hover:text-zinc-50"></i>
                   </Link>
                 </div>
               ))

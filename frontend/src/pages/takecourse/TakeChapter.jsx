@@ -48,8 +48,6 @@ const SyllabusList = () => {
       <div className="flex flex-col gap-4 w-fit">
         {boughtCourse.boughtCourse.syllabus &&
           boughtCourse.boughtCourse.syllabus.map((syl, index) => {
-            console.log(params["chapterSlug"] === syl.slug);
-
             return (
               <div
                 key={index}
@@ -108,7 +106,7 @@ const TakeChapter = () => {
           <hr />
 
           <div className="align-middle text-sm text-zinc-500 my-3">
-            <i class="fa-regular fa-clock mr-2"></i>
+            <i className="fa-regular fa-clock mr-2"></i>
             <span className="">
               {boughtChapter.boughtChapter.duration > 60
                 ? `${parseInt(boughtChapter.boughtChapter.duration / 60)} hour${

@@ -29,7 +29,7 @@ const CourseReviews = ({ rev, deleteReview }) => {
               }}
               className="absolute top-1 right-4 text-zinc-500 text-sm"
             >
-              <i class="fa-solid fa-ellipsis"></i>
+              <i className="fa-solid fa-ellipsis"></i>
             </button>
             {revMenu && (
               <>
@@ -76,12 +76,12 @@ const CourseReviews = ({ rev, deleteReview }) => {
 const SetStarRating = ({ rating }) => {
   return (
     <div className="flex">
-      {[1, 2, 3, 4, 5].map((item) => (
-        <div className=" text-yellow-400">
+      {[1, 2, 3, 4, 5].map((item, ind) => (
+        <div className=" text-yellow-400" key={ind}>
           {item <= parseInt(rating) ? (
-            <i class="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
           ) : (
-            <i class="fa-regular fa-star"></i>
+            <i className="fa-regular fa-star"></i>
           )}
         </div>
       ))}
@@ -168,20 +168,20 @@ const Course = () => {
                   ).title}
               </div>
               <div className="text-xs">
-                by <i class="fa-regular fa-user"></i>{" "}
+                by <i className="fa-regular fa-user"></i>{" "}
                 <span className="text-primary-main">John Smith</span>
               </div>
               <div className="flex text-xs">
                 <div>
-                  <i class="fa-solid fa-globe"></i> English
+                  <i className="fa-solid fa-globe"></i> English
                 </div>
               </div>
               <div className="">
                 <h3 className="text-xl font-medium my-4">Contents:</h3>
                 <Accordion allowMultipleExpanded={false}>
                   {course.course.syllabus &&
-                    course.course.syllabus.map((syl) => (
-                      <AccordionItem>
+                    course.course.syllabus.map((syl, ind) => (
+                      <AccordionItem key={ind}>
                         <AccordionItemHeading>
                           <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
                             <div className="font-medium text-xl flex justify-between">
@@ -190,7 +190,7 @@ const Course = () => {
                                   {syl.chpt}. {syl.title}
                                 </div>
                                 <div className="align-middle text-xs text-zinc-400">
-                                  <i class="fa-regular fa-clock mr-2"></i>
+                                  <i className="fa-regular fa-clock mr-2"></i>
                                   <span className="">
                                     {syl.duration > 60
                                       ? `${parseInt(syl.duration / 60)} hour${
@@ -214,7 +214,7 @@ const Course = () => {
                                 </div>
                               </div>
                               <div>
-                                <i class="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
+                                <i className="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
                               </div>
                             </div>
                           </AccordionItemButton>
@@ -232,8 +232,12 @@ const Course = () => {
                 <div className="flex flex-col gap-2">
                   {course.course.reviews?.length === 0 && "No reviews"}
                   {course.course.reviews &&
-                    course.course.reviews.map((rev) => (
-                      <CourseReviews rev={rev} deleteReview={deleteReview} />
+                    course.course.reviews.map((rev, ind) => (
+                      <CourseReviews
+                        rev={rev}
+                        deleteReview={deleteReview}
+                        key={ind}
+                      />
                     ))}
                 </div>
               </div>
@@ -263,12 +267,12 @@ const Course = () => {
 
                 <div className="text-sm px-6 py-6 space-y-2">
                   <span className="block">
-                    <i class="fa-solid fa-layer-group"></i>{" "}
+                    <i className="fa-solid fa-layer-group"></i>{" "}
                     {course.course.level}
                   </span>
 
                   <span className="block">
-                    <i class="fa-regular fa-clock"></i> Updated: {"  "}
+                    <i className="fa-regular fa-clock"></i> Updated: {"  "}
                     {new Date(course.course.date_created).toLocaleDateString(
                       "en-US",
                       {
@@ -282,7 +286,7 @@ const Course = () => {
                 </div>
                 <div className="text-sm px-6 py-6 space-y-2">
                   <span className="block text-base">
-                    <i class="fa-solid fa-info text-sm"></i> Requirements
+                    <i className="fa-solid fa-info text-sm"></i> Requirements
                   </span>
 
                   <span className="block">{course.course.requirements}</span>
@@ -307,19 +311,18 @@ const Course = () => {
                     {course.course.own_status &&
                     course.course.own_status.status ? (
                       <>
-                        Enrolled{"  "} <i class="fa-solid fa-check"></i>
+                        Enrolled{"  "} <i className="fa-solid fa-check"></i>
                       </>
                     ) : (
                       <>
                         Enroll{"  "}
-                        <i class="fa-solid fa-graduation-cap group-hover:text-zinc-100"></i>
+                        <i className="fa-solid fa-graduation-cap group-hover:text-zinc-100"></i>
                       </>
                     )}
                   </button>
                 </div>
               </div>
-              {course.course.own_status &&
-                !course.course.own_status.status &&
+              {(!course.course.own_status?.status || userCxt.auth == null) &&
                 course.course.price > 0 && (
                   <button
                     className="block w-fit mx-auto text-center px-5 py-4 text-lg text-zinc-700 hover:text-zinc-500 disabled:hover:text-zinc-700"
@@ -330,11 +333,11 @@ const Course = () => {
                   >
                     {cart.find((c) => c.slug === course.course.slug) ? (
                       <>
-                        Added <i class="fa-solid fa-cart-shopping"></i>
+                        Added <i className="fa-solid fa-cart-shopping"></i>
                       </>
                     ) : (
                       <>
-                        Add to cart <i class="fa-solid fa-cart-plus"></i>
+                        Add to cart <i className="fa-solid fa-cart-plus"></i>
                       </>
                     )}
                   </button>

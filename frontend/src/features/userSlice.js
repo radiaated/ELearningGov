@@ -9,7 +9,7 @@ export const fetchProfile = createAsyncThunk("user/fetchProfile", async (access)
       Authorization: `Bearer ${access}`,
     
     }})
-    console.log(data);
+
     
     return data
 })
@@ -21,7 +21,7 @@ export const fetchUserCourses = createAsyncThunk("user/fetchUserCourses", async 
       Authorization: `Bearer ${access}`,
     
     }})
-    console.log(data);
+
     
     return data
 })

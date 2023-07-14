@@ -29,7 +29,6 @@ const BuyCourse = () => {
   ];
 
   const buyCourse = async (payload) => {
-    console.log(payload);
     try {
       const { data } = await axios({
         method: "POST",
@@ -40,20 +39,17 @@ const BuyCourse = () => {
           Authorization: `Bearer ${userCxt.auth.access}`,
         },
       });
-      console.log(data.payment_url);
+
       window.location.href = data.payment_url;
-    } catch {
-      console.log("error");
-    }
+    } catch {}
   };
 
   const checkCourse = async () => {
-    console.log(userCxt.auth.access);
     await axios({
       method: "GET",
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/profilecourse?slug=${qs.get("course")}`,
+      }/api/user/profilecourse/?slug=${qs.get("course")}`,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${userCxt.auth.access}`,
@@ -129,7 +125,7 @@ const BuyCourse = () => {
                       </button>
                     ) : (
                       <div className="border border-green-600 rounded-full w-fit px-5 py-2 bg-green-600 text-zinc-100 flex items-center gap-2">
-                        Purchased <i class="fa-solid fa-check"></i>
+                        Purchased <i className="fa-solid fa-check"></i>
                       </div>
                     )}
                   </div>

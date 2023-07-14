@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import UserContext from "../context/UserContext";
 import { NavLink, useLocation } from "react-router-dom";
+import LogoWhite from "./../assets/images/logo-white.png";
+import LogoBlack from "./../assets/images/logo-black.png";
 
 const Header = () => {
   const { cart } = useSelector((state) => state.app);
@@ -10,8 +12,6 @@ const Header = () => {
   const [headerColor, setHeaderColor] = useState(false);
 
   const location = useLocation();
-
-  console.log(location);
 
   const userCxt = useContext(UserContext);
 
@@ -32,7 +32,7 @@ const Header = () => {
           <div>
             <Link to="/cart">
               Cart
-              <i class="fa-solid fa-cart-shopping"></i> ({cart.length})
+              <i className="fa-solid fa-cart-shopping"></i> ({cart.length})
             </Link>
           </div>
 
@@ -85,7 +85,17 @@ const Header = () => {
         }`}
       >
         <div className="w-[1400px] max-w-[90%] mx-auto flex justify-between items-center">
-          <div className="text-xl font-semibold">E Learning Government</div>
+          <div className="text-xl font-semibold">
+            {location.pathname === "/" ? (
+              headerColor ? (
+                <img src={LogoBlack} className="h-9 w-auto" />
+              ) : (
+                <img src={LogoWhite} className="h-9 w-auto" />
+              )
+            ) : (
+              <img src={LogoBlack} className="h-9 w-auto" />
+            )}
+          </div>
           <nav>
             <ul className="flex gap-8 text-sm font-medium">
               <li>

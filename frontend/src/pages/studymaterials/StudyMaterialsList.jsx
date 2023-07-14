@@ -27,7 +27,6 @@ const StudyMaterialsList = () => {
     { title: "Law and Legal Studies", short: "law_studies" },
   ];
   const handlePageClick = (event) => {
-    console.log(event);
     const temp = Object.fromEntries(qs);
     setQs({ ...temp, page: event.selected + 1 });
 
@@ -65,11 +64,11 @@ const StudyMaterialsList = () => {
             <div className="w-2/3 flex justify-end items-center relative">
               <input
                 placeholder="Search"
-                class="border border-gray-400 rounded-lg p-4 pl-12 w-full"
+                className="border border-gray-400 rounded-lg p-4 pl-12 w-full"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <i class="fa-solid fa-magnifying-glass absolute left-0 ml-4 w-10"></i>
+              <i className="fa-solid fa-magnifying-glass absolute left-0 ml-4 w-10"></i>
               <input
                 type="submit"
                 className="w-fit rounded-r-lg absolute right-0 bg-primary-main h-full text-white px-4 cursor-pointer hover:bg-primary-main/80"

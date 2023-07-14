@@ -29,7 +29,7 @@ const CourseReviews = ({ rev, deleteReview }) => {
               }}
               className="absolute top-1 right-4 text-zinc-500 text-sm"
             >
-              <i class="fa-solid fa-ellipsis"></i>
+              <i className="fa-solid fa-ellipsis"></i>
             </button>
             {revMenu && (
               <>
@@ -79,9 +79,9 @@ const SetStarRating = ({ rating }) => {
       {[1, 2, 3, 4, 5].map((item) => (
         <div className=" text-yellow-500">
           {item <= parseInt(rating) ? (
-            <i class="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
           ) : (
-            <i class="fa-regular fa-star"></i>
+            <i className="fa-regular fa-star"></i>
           )}
         </div>
       ))}
@@ -101,8 +101,9 @@ const StarRating = ({ data }) => {
         }
       }}
     >
-      {[1, 2, 3, 4, 5].map((item) => (
+      {[1, 2, 3, 4, 5].map((item, ind) => (
         <div
+          key={ind}
           onClick={() => setStarRating(item)}
           onMouseOver={() => {
             if (starRating === 0) {
@@ -112,11 +113,11 @@ const StarRating = ({ data }) => {
           className="inline-block cursor-pointer"
         >
           {hover > 0 && item <= hover ? (
-            <i class="fa-solid fa-star opacity-70"></i>
+            <i className="fa-solid fa-star opacity-70"></i>
           ) : starRating > 0 && item <= starRating ? (
-            <i class="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
           ) : (
-            <i class="fa-regular fa-star"></i>
+            <i className="fa-regular fa-star"></i>
           )}
         </div>
       ))}
@@ -197,7 +198,7 @@ const TakeCoursePage = () => {
         access: userCxt.auth.access,
       })
     );
-    setQs({ view: "review" });
+    setQs({ view: "content" });
   }, []);
   return (
     <div>
@@ -224,12 +225,12 @@ const TakeCoursePage = () => {
                   ).title}
               </div>
               <div className="text-xs">
-                by <i class="fa-regular fa-user"></i>{" "}
+                by <i className="fa-regular fa-user"></i>{" "}
                 <span className="text-primary-main">John Smith</span>
               </div>
               <div className="flex text-xs">
                 <div>
-                  <i class="fa-solid fa-globe"></i> English
+                  <i className="fa-solid fa-globe"></i> English
                 </div>
               </div>
               <div className="">
@@ -273,7 +274,7 @@ const TakeCoursePage = () => {
                                     {syl.chpt}. {syl.title}
                                   </div>
                                   <div className="align-middle text-xs text-zinc-400">
-                                    <i class="fa-regular fa-clock mr-2"></i>
+                                    <i className="fa-regular fa-clock mr-2"></i>
                                     <span className="">
                                       {syl.duration > 60
                                         ? `${parseInt(syl.duration / 60)} hour${
@@ -297,7 +298,7 @@ const TakeCoursePage = () => {
                                   </div>
                                 </div>
                                 <div>
-                                  <i class="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
+                                  <i className="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
                                 </div>
                               </div>
                             </AccordionItemButton>
@@ -308,7 +309,7 @@ const TakeCoursePage = () => {
                               to={`/takecourse/${boughtCourse.boughtCourse.slug}/${syl.slug}`}
                               className="block align-middle  text-white bg-orange-500 px-4 py-2 w-fit rounded-sm absolute hover:border-b-4 hover:border-orange-600 bottom-5 right-4"
                             >
-                              Take <i class="fa-solid fa-arrow-right"></i>
+                              Take <i className="fa-solid fa-arrow-right"></i>
                             </Link>
                           </AccordionItemPanel>
                         </AccordionItem>
@@ -379,11 +380,11 @@ const TakeCoursePage = () => {
                 </div>
                 <div className="text-sm px-6 py-6 space-y-2">
                   <span className="block">
-                    <i class="fa-solid fa-layer-group"></i> Intermediate
+                    <i className="fa-solid fa-layer-group"></i> Intermediate
                   </span>
 
                   <span className="block">
-                    <i class="fa-regular fa-clock"></i> Updated: {"  "}
+                    <i className="fa-regular fa-clock"></i> Updated: {"  "}
                     {new Date(
                       boughtCourse.boughtCourse.date_created
                     ).toLocaleDateString("en-US", {
@@ -397,7 +398,7 @@ const TakeCoursePage = () => {
 
                 <div>
                   <div className="block group w-full text-center px-5 py-4 text-zinc-500">
-                    Enrolled <i class="fa-solid fa-graduation-cap"></i>
+                    Enrolled <i className="fa-solid fa-graduation-cap"></i>
                   </div>
                 </div>
               </div>

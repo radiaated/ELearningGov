@@ -35,17 +35,17 @@ const Footer = () => {
             <hr className="my-2" />
             <div className="flex text-2xl gap-4 mb-2">
               <Link to="#">
-                <i class="fa-brands fa-facebook block"></i>
+                <i className="fa-brands fa-facebook block"></i>
               </Link>
               <Link to="#">
-                <i class="fa-brands fa-twitter block"></i>
+                <i className="fa-brands fa-twitter block"></i>
               </Link>
               <Link to="#">
-                <i class="fa-brands fa-instagram block"></i>
+                <i className="fa-brands fa-instagram block"></i>
               </Link>
             </div>
             <div className="text-sm">
-              <i class="fa-regular fa-envelope"></i> elarnnepal@gov.com
+              <i className="fa-regular fa-envelope"></i> elarnnepal@gov.com
             </div>
           </div>
         </div>

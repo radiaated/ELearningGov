@@ -20,8 +20,8 @@ const CoursesForYou = () => {
         {!courseList.loading
           ? courseList.courseList.results &&
             courseList.courseList.results.length > 0
-            ? courseList.courseList.results.map((course) => (
-                <CourseItem course={course} />
+            ? courseList.courseList.results.map((course, ind) => (
+                <CourseItem course={course} key={ind} />
               ))
             : "Empty"
           : [1, 2, 3, 4, 5].map((loader) => (

@@ -16,10 +16,13 @@ from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
 
+
 @api_view(["GET"])
 def get_online_courses(request):
+
+
     
-    request.GET
+
 
     online_courses = OnlineCourse.objects.all().order_by("date_created")
     
@@ -51,32 +54,34 @@ def get_online_courses(request):
         return paginator.get_paginated_response(serializers)
     else:
         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
-    # print(serializers)
+    # # print(serializers)
 
    
     
 
-    if online_courses:
+    # if online_courses:
 
         
-        serializers = OnlineCourseSerializer(online_courses, many=True).data
+    #     serializers = OnlineCourseSerializer(online_courses, many=True).data
 
-        # print(serializers)
+    #     # print(serializers)
 
-        for oc in serializers:
-            avg_rating = CourseReview.objects.filter(online_course__id=oc["id"]).aggregate(Avg("rating"))["rating__avg"] 
+    #     for oc in serializers:
+    #         avg_rating = CourseReview.objects.filter(online_course__id=oc["id"]).aggregate(Avg("rating"))["rating__avg"] 
        
-            oc["avg_rating"] = avg_rating if avg_rating else 0
-            oc["reviews_count"] = len(CourseReview.objects.filter(online_course__id=oc["id"]))
+    #         oc["avg_rating"] = avg_rating if avg_rating else 0
+    #         oc["reviews_count"] = len(CourseReview.objects.filter(online_course__id=oc["id"]))
 
 
-        return Response(serializers, status=status.HTTP_200_OK)
-    else:
-        return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+    #     return Response(serializers, status=status.HTTP_200_OK)
+    # else:
+    #     return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
     
 
 @api_view(["GET"])
 def get_online_course(request,slug):
+
+
 
     online_course = OnlineCourse.objects.get(slug=slug)
 
@@ -139,6 +144,8 @@ def get_bought_online_course(request,slug):
 
 def get_bought_chapter(request, slug):
 
+
+
     online_course = OnlineCourse.objects.get(slug=slug)
 
     course = Course.objects.filter(online_course=online_course, slug=request.GET.get("chapter_slug"))[0]
@@ -165,7 +172,7 @@ def download_studym(request):
 
     sm = StudyMaterial.objects.get(slug=request.GET.get("slug"))
 
-    print(sm.file)
+
 
     sm.dw_count += 1
 
@@ -194,7 +201,7 @@ def get_study_materials(request):
     result_page = paginator.paginate_queryset(study_materials, request)
     
     if study_materials:
-        print(study_materials)
+
         serializers = StudyMaterialSerializer(result_page, many=True).data
 
       

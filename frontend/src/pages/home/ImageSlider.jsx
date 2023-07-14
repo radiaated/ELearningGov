@@ -27,7 +27,7 @@ const ImageSlider = () => {
             to="/signup"
             className="block font-semibold py-1 px-2 text-zinc-50 border-b-2 border-border-zinc-200 w-fit ml-8 text-3xl hover:bg-primary-light/40 hover:border-zinc-300"
           >
-            Get Started <i class="fa-solid fa-chevron-right"></i>
+            Get Started <i className="fa-solid fa-chevron-right"></i>
           </Link>
         </div>
         <Splide
@@ -41,8 +41,8 @@ const ImageSlider = () => {
             cover: true,
           }}
         >
-          {imgs.map((im) => (
-            <SplideSlide className="h-[100vh]">
+          {imgs.map((im, ind) => (
+            <SplideSlide className="h-[100vh]" key={ind}>
               <div className="h-[100vh] w-full absolute bg-black/40 top-0 left-0 z-[39]"></div>
               <img
                 src={im}

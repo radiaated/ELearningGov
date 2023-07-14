@@ -6,8 +6,8 @@ export const fetchStudyMaterials = createAsyncThunk("studyMaterials/fetchStudyMa
 
   const x = Object.entries(pl).map((q) => `${q[0]}=${q[1]}`).join("&");
 
-  console.log("uwu");
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/studymaterials${pl ? `?${x}`: "/"}`,headers: {
+
+    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/studymaterials${pl ? `/?${x}`: "/"}`,headers: {
       "Content-Type": "application/json",  
     }})
 
@@ -15,7 +15,7 @@ export const fetchStudyMaterials = createAsyncThunk("studyMaterials/fetchStudyMa
     return data
 })
 export const fetchStudyMaterial = createAsyncThunk("studyMaterials/fetchStudyMaterial", async (slug) => {
-  console.log("uwu");
+
     const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/studymaterial/${slug}`,headers: {
       "Content-Type": "application/json",  
     }})

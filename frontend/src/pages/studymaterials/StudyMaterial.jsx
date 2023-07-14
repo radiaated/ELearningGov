@@ -25,8 +25,6 @@ const StudyMaterial = () => {
   ];
 
   const dwFile = async (slug) => {
-    console.log(slug);
-
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
@@ -37,7 +35,6 @@ const StudyMaterial = () => {
         Authorization: `Bearer ${userCxt.auth.access}`,
       },
     }).then((res) => {
-      console.log(`${import.meta.env.VITE_API_URL}${res.data.file}`);
       window.open(`${import.meta.env.VITE_API_URL}/${res.data.file}`, "_blank");
     });
   };
@@ -63,7 +60,7 @@ const StudyMaterial = () => {
               </h3>
 
               <div className="text-xs">
-                by <i class="fa-regular fa-user"></i>{" "}
+                by <i className="fa-regular fa-user"></i>{" "}
                 <span className="text-primary-main">
                   {studyMaterial.studyMaterial.author}
                 </span>
@@ -80,7 +77,7 @@ const StudyMaterial = () => {
                 to={`/buycourse?type=course&course=${course.course.slug}`}
               >
                 Enroll{" "}
-                <i class="fa-solid fa-graduation-cap group-hover:text-zinc-100"></i>
+                <i className="fa-solid fa-graduation-cap group-hover:text-zinc-100"></i>
               </Link> */}
             </div>
             <div className="space-y-4 text-sm">
@@ -93,16 +90,16 @@ const StudyMaterial = () => {
               />
 
               <div>
-                <i class="fa-solid fa-globe"></i>{" "}
+                <i className="fa-solid fa-globe"></i>{" "}
                 {studyMaterial.studyMaterial.language}
               </div>
               <div>
-                <i class="fa-solid fa-layer-group"></i>{" "}
+                <i className="fa-solid fa-layer-group"></i>{" "}
                 {studyMaterial.studyMaterial.level}
               </div>
 
               <div className="flex gap-1 items-center">
-                <i class="fa-regular fa-clock"></i>
+                <i className="fa-regular fa-clock"></i>
                 Updated: {"  "}
                 {new Date(
                   studyMaterial.studyMaterial.date_created
@@ -128,7 +125,7 @@ const StudyMaterial = () => {
                   Download
                 </button>
                 <div>
-                  <i class="fa-solid fa-download"></i>
+                  <i className="fa-solid fa-download"></i>
                   {"  "}(
                   <span>
                     <span className="font-medium">
@@ -159,7 +156,7 @@ const StudyMaterial = () => {
                     <div className="text-xl font-bold">{syl.title}</div>
                     <p>{syl.description}</p>
                     <div className="">
-                      <i class="fa-regular fa-clock mr-2"></i>
+                      <i className="fa-regular fa-clock mr-2"></i>
                       {syl.duration < 60
                         ? "00"
                         : "0" + String(parseInt(syl.duration / 60))}

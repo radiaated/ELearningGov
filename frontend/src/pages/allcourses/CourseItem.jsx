@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 const SetStarRating = ({ rating }) => {
   return (
     <div className="flex">
-      {[1, 2, 3, 4, 5].map((item) => (
-        <div className=" text-yellow-500">
+      {[1, 2, 3, 4, 5].map((item, ind) => (
+        <div className=" text-yellow-500" key={ind}>
           {item <= parseInt(rating) ? (
-            <i class="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
           ) : (
-            <i class="fa-regular fa-star"></i>
+            <i className="fa-regular fa-star"></i>
           )}
         </div>
       ))}

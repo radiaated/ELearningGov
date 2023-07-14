@@ -16,6 +16,8 @@ from rest_framework import permissions
 # from django.views.decorators.csrf import csrf_exempt
 # import jwt
 
+
+
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 # from rest_framework_simplejwt.tokens import RefreshToken
@@ -114,6 +116,8 @@ def register(request):
 @permission_classes([IsAuthenticated])
 @api_view(["GET", "PUT", "DELETE"])
 def get_profile(request):
+
+
     
     if request.method == "GET":
 
@@ -148,13 +152,7 @@ def get_profile(request):
                 user.email = rd["email"]
 
         if rd.get("password"):
-            print(rd["oldpassword"])
-            print(rd["password"])
 
-            print("===")
-            print(request.user.password)
-            print("===")
-            print(make_password(rd["oldpassword"]))
             
             if request.user.check_password(rd["oldpassword"]):
 
@@ -219,8 +217,10 @@ def course_trans_s(request):
 
 
         payload = {
-            "return_url": 'http://localhost:5173/verifypay',
-            "website_url": "http://localhost:5173/",
+            "return_url": 'http://127.0.0.1:8000/verifypay',
+            "website_url": "http://127.0.0.1:8000/",
+            # "return_url": 'http://localhost:5173/verifypay',
+            # "website_url": "http://localhost:5173/",
             "amount": rd["price"],
             "purchase_order_id": "course_" + str(trans_id),
             # "purchase_order_id": 16,
@@ -229,9 +229,7 @@ def course_trans_s(request):
 
         res = requests.post("https://a.khalti.com/api/v2/epayment/initiate/", data=json.dumps(payload) ,headers={"Content-Type": "application/json", "Authorization": "Key ed5c97d78e1d4473acf4fd5ddabe488f"})
 
-        print(res.text)
 
-        print("uwu")
         # online_course = OnlineCourse.objects.get(id=request.GET.get("id"))
         # buy_course = BuyCourse.objects.create(user=request.user, online_course=online_course)
 
@@ -247,12 +245,12 @@ def course_trans_s(request):
 @permission_classes([IsAuthenticated])
 @api_view(["GET"])
 def course_trans(request):
-    print(request.user)
+
     if request.method == "GET":
-        print(request.GET.get("slug"))
+ 
         oc = OnlineCourse.objects.get(slug=request.GET.get("slug"))
         buy_course = BuyCourse.objects.filter(user=request.user, online_course=oc)
-        print(buy_course)
+
         if buy_course:
 
             serializers = BuyCourseSerializer(buy_course[0])
@@ -269,7 +267,7 @@ def course_trans(request):
 @api_view(["POST"])
 def verify_payment(request):
     rd = request.data
-    print(rd["pidx"])
+
 
     payload = {
             "pidx": rd["pidx"],
@@ -328,7 +326,7 @@ def check_course_own(request):
   
     if BuyCourse.objects.filter(user=request.user, online_course__slug = request.GET.get("course_slug")).exists():
 
-        print("uwu")
+
        
         return Response({"status": True}, status=status.HTTP_200_OK)
         

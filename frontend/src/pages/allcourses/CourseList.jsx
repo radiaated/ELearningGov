@@ -33,7 +33,6 @@ const CourseList = () => {
   // const endOffset = itemOffset + 1;
 
   const handlePageClick = (event) => {
-    console.log(event);
     const temp = Object.fromEntries(qs);
     setQs({ ...temp, page: event.selected + 1 });
 
@@ -73,11 +72,11 @@ const CourseList = () => {
             <div className="w-2/3 flex justify-end items-center relative">
               <input
                 placeholder="Search"
-                class="border border-gray-400 rounded-lg p-4 pl-12 w-full"
+                className="border border-gray-400 rounded-lg p-4 pl-12 w-full"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <i class="fa-solid fa-magnifying-glass absolute left-0 ml-4 w-10"></i>
+              <i className="fa-solid fa-magnifying-glass absolute left-0 ml-4 w-10"></i>
               <input
                 type="submit"
                 className="w-fit rounded-r-lg absolute right-0 bg-primary-main h-full text-white px-4 cursor-pointer hover:bg-primary-main/80"
@@ -94,7 +93,6 @@ const CourseList = () => {
           className="bg-zinc-100 text-md border border-zinc-200 p-2 rounded-xl mb-1"
           value={cat}
           onChange={(e) => {
-            console.log("helo");
             setCat(e.target.value);
             if (e.target.value !== "none") {
               setQs({ category: e.target.value });
@@ -117,8 +115,8 @@ const CourseList = () => {
         {!courseList.loading
           ? courseList.courseList.results &&
             courseList.courseList.results.length > 0
-            ? courseList.courseList.results.map((course) => (
-                <CourseItem course={course} />
+            ? courseList.courseList.results.map((course, ind) => (
+                <CourseItem course={course} key={ind} />
               ))
             : "Empty"
           : [1, 2, 3, 4, 5].map((loader) => (

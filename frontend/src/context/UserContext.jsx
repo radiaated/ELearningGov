@@ -74,7 +74,6 @@ export const UserContextProvider = ({ children }) => {
       })
       .catch((err) => {
         setErrSignupErrMsg(err.response.data.detail);
-        // console.log(err);
       })
       .finally(() => {
         setSigning(false);

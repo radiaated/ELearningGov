@@ -3,8 +3,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 export const fetchEvents = createAsyncThunk("event/fetchEvents", async (cat) => {
-    console.log("hi");
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${cat ? `?category=${cat}`: "/"}`})
+
+    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${cat ? `/?category=${cat}`: "/"}`})
     return data
 })
 

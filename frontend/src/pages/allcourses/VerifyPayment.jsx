@@ -27,7 +27,6 @@ const VerifyPayment = () => {
       },
     })
       .then((res) => {
-        console.log(qs.get("purchase_order_id").split("_")[0]);
         dispatch(appActions.clearCart());
         navigate(`/yourcourses`);
       })
@@ -37,7 +36,6 @@ const VerifyPayment = () => {
   };
 
   useEffect(() => {
-    console.log("helo");
     verifyPayment();
   }, []);
 
@@ -45,7 +43,7 @@ const VerifyPayment = () => {
     <div className="w-[50%] mx-auto text-center">
       <div className="text-lg">Payment Loading</div>
       <div>
-        <i class="fa-solid fa-spinner animate-spin text-4xl text-primary-main"></i>
+        <i className="fa-solid fa-spinner animate-spin text-4xl text-primary-main"></i>
       </div>
     </div>
   );

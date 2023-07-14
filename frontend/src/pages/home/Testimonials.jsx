@@ -7,12 +7,12 @@ const Testimonial = ({ tes }) => {
     <SplideSlide className="">
       <div className="">
         <div className="italic px-8 pt-8 pb-2 relative border-b border-primary-light mb-1 drop-shadow-xl">
-          <i class="fa-solid fa-quote-left text-4xl absolute top-1 left-0"></i>
+          <i className="fa-solid fa-quote-left text-4xl absolute top-1 left-0"></i>
           <p className="bg-primary-light/25 text tracking-wide ">
             {tes.message}
           </p>
 
-          {/* <i class="fa-solid fa-quote-right text-4xl absolute bottom-0 right-1"></i> */}
+          {/* <i className="fa-solid fa-quote-right text-4xl absolute bottom-0 right-1"></i> */}
         </div>
         <div className="text-right mr-4">- {tes.author}</div>
       </div>
@@ -73,11 +73,11 @@ const Testimonials = () => {
             <div className="custom-wrapper w-[90%] mx-auto my-4">
               <SplideTrack>
                 {testi.map((tes, ind) => (
-                  <Testimonial tes={tes} />
+                  <Testimonial tes={tes} key={ind} />
                 ))}
               </SplideTrack>
             </div>
-            <div class="splide__arrows text-zinc-300"></div>
+            <div className="splide__arrows text-zinc-300"></div>
           </Splide>
         </div>
       </div>

@@ -19,7 +19,7 @@ export const appSlice = createSlice({
     },
     removeCart: (state, action) => {
         
-        state.cart = state.cart.splice(action.payload,1)
+        state.cart.splice(action.payload,1)
         localStorage.setItem("cart", JSON.stringify( state.cart)) 
         
     },

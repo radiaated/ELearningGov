@@ -10,9 +10,9 @@ const SetStarRating = ({ rating }) => {
       {[1, 2, 3, 4, 5].map((item) => (
         <div className=" text-yellow-400">
           {item <= parseInt(rating) ? (
-            <i class="fa-solid fa-star"></i>
+            <i className="fa-solid fa-star"></i>
           ) : (
-            <i class="fa-regular fa-star"></i>
+            <i className="fa-regular fa-star"></i>
           )}
         </div>
       ))}
@@ -37,8 +37,6 @@ const CartPage = () => {
   ];
 
   const buyCourse = async (payload) => {
-    console.log(payload);
-
     const { data } = await axios({
       method: "POST",
       url: `${import.meta.env.VITE_API_URL}/api/user/profilecourses/`,
@@ -48,7 +46,7 @@ const CartPage = () => {
         Authorization: `Bearer ${userCxt.auth.access}`,
       },
     });
-    console.log(data);
+
     window.location.href = data.payment_url;
   };
 
@@ -90,10 +88,8 @@ const CartPage = () => {
                 </div>
               </div>
               <div>
-                <button
-                  onClick={() => dispatch(appActions.removeCart(ind - 1))}
-                >
-                  <i class="fa-regular fa-circle-xmark text-red-500"></i>
+                <button onClick={() => dispatch(appActions.removeCart(ind))}>
+                  <i className="fa-regular fa-circle-xmark text-red-500"></i>
                 </button>
               </div>
             </div>
@@ -114,12 +110,6 @@ const CartPage = () => {
               onClick={() => {
                 const course_id = cart.map((c) => String(c.id));
 
-                console.log(
-                  parseInt(
-                    cart.reduce((total, xx) => total + Number(xx.price), 0)
-                  )
-                );
-
                 buyCourse({
                   course_id: course_id,
                   price: parseInt(
@@ -129,7 +119,7 @@ const CartPage = () => {
                 });
               }}
             >
-              Checkout <i class="fa-solid fa-cart-arrow-down"></i>
+              Checkout <i className="fa-solid fa-cart-arrow-down"></i>
             </button>
           </div>
         )}

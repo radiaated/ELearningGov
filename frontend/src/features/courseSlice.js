@@ -9,7 +9,10 @@ export const fetchCourseList = createAsyncThunk("course/fetchCourseList", async 
   const x = Object.entries(pl).map((q) => `${q[0]}=${q[1]}`).join("&");
 
 
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${pl ? `?${x}`: "/"}`})
+
+
+
+    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/courses${pl ? `/?${x}`: "/"}`})
     return data
 })
 
@@ -36,27 +39,25 @@ export const fetchCourse = createAsyncThunk("course/fetchCourse", async (pl) => 
 
 
 export const fetchBoughtCourse = createAsyncThunk("course/fetchBoughtCourse", async (pl) => {
-  // console.log(access);
-  console.log(pl);
+
     
     const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/takecourse/${pl.slug}/`,headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${pl.access}`,
     },})
-    console.log(data);
+
     
     return data
 })
 
 export const fetchChapter = createAsyncThunk("course/fetchChapter", async (pl) => {
-  // console.log(access);
-  console.log(pl);
+
     
-    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/takechapter/${pl.courseSlug}?chapter_slug=${pl.chapterSlug}`,headers: {
+    const {data} = await axios({method: 'GET', url: `${import.meta.env.VITE_API_URL}/api/base/takechapter/${pl.courseSlug}/?chapter_slug=${pl.chapterSlug}`,headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${pl.access}`,
     },})
-    console.log(data);
+
     
     return data
 })
