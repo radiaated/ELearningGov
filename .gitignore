@@ -1,0 +1,10 @@
+penv
+
+/frontend/node_modules
+
+
+/backend/*.sh
+/backend/*.json
+
+/backend/*.gitignore
+
