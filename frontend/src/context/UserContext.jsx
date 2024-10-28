@@ -47,6 +47,7 @@ export const UserContextProvider = ({ children }) => {
       withCredentials: true,
     }).finally((res) => {
       localStorage.removeItem("auth");
+      localStorage.removeItem("isAdmin");
       window.location.replace("/");
     });
   };

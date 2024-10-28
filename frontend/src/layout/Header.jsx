@@ -38,6 +38,15 @@ const Header = () => {
 
           {userCxt.auth ? (
             <>
+              {localStorage.getItem("isAdmin") &&
+                JSON.parse(localStorage.getItem("isAdmin")) === true && (
+                  <Link
+                    className="bg-primary-dark/50 px-4 py-1 rounded-sm"
+                    to="/admin/dashboard"
+                  >
+                    Dashboard
+                  </Link>
+                )}
               <Link className=" px-4 py-1 rounded-sm" to="/yourcourses">
                 Your Courses
               </Link>
@@ -85,17 +94,19 @@ const Header = () => {
         }`}
       >
         <div className="w-[1400px] max-w-[90%] mx-auto flex justify-between items-center">
-          <div className="text-xl font-semibold">
-            {location.pathname === "/" ? (
-              headerColor ? (
-                <img src={LogoBlack} className="h-9 w-auto" />
+          <Link to="/">
+            <div className="text-xl font-semibold">
+              {location.pathname === "/" ? (
+                headerColor ? (
+                  <img src={LogoBlack} className="h-9 w-auto" />
+                ) : (
+                  <img src={LogoWhite} className="h-9 w-auto" />
+                )
               ) : (
-                <img src={LogoWhite} className="h-9 w-auto" />
-              )
-            ) : (
-              <img src={LogoBlack} className="h-9 w-auto" />
-            )}
-          </div>
+                <img src={LogoBlack} className="h-9 w-auto" />
+              )}
+            </div>
+          </Link>
           <nav>
             <ul className="flex gap-8 text-sm font-medium">
               <li>

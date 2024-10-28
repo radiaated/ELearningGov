@@ -8,6 +8,12 @@ const AdminLogin = () => {
 
   const userCxt = useContext(UserContext);
 
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem("isAdmin")) === true) {
+      window.location.replace("/admin/dashboard");
+    }
+  }, []);
+
   return (
     <div className="w-[30%] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
       <div className="absolute bg-primary-light w-full h-[50%] top-0 left-0 z-[-1]"></div>
@@ -22,7 +28,10 @@ const AdminLogin = () => {
           className="sl-form"
           onSubmit={(e) => {
             e.preventDefault();
-            userCxt.loginUser({ username, password });
+            userCxt.loginUser({ username, password }).finally(() => {
+              localStorage.setItem("isAdmin", JSON.stringify(true));
+              window.location.replace("/admin/dashboard");
+            });
           }}
         >
           <div>

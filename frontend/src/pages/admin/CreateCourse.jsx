@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { courseCategories } from "../allcourses/BuyCourse";
 
 const CreateCourse = () => {
   const schema = yup.object({
@@ -133,7 +134,7 @@ const CreateCourse = () => {
         data: fd,
         withCredentials: true,
       });
-      navigate("/admin/courses");
+      navigate("/admin/dashboard");
     } catch {}
   };
 
@@ -206,7 +207,15 @@ const CreateCourse = () => {
           <label>
             Category<span className="text-red-600 italic">*</span>
           </label>
-          <input type="text" {...register("category")} placeholder="IT" />
+
+          <select {...register("category")}>
+            {courseCategories.map((cat, i) => (
+              <option key={i} value={cat.short}>
+                {cat.title}
+              </option>
+            ))}
+          </select>
+
           <span className="text-red-700 text-sm italic">
             {errors.category?.message}
           </span>
@@ -243,7 +252,7 @@ const CreateCourse = () => {
           <label>
             Price<span className="text-red-600 italic">*</span>
           </label>
-          <input type="number" {...register("price")} placeholder="Title" />
+          <input type="number" {...register("price")} placeholder="Price" />
           <span className="text-red-700 text-sm italic">
             {errors.price?.message}
           </span>

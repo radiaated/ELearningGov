@@ -135,7 +135,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminLogin /> },
       { path: "create-course", element: <CreateCourse /> },
-      { path: "courses", element: <CourseList /> },
+      { path: "dashboard", element: <CourseList /> },
       { path: "update-course/:slug", element: <UpdateCourse /> },
     ],
   },
