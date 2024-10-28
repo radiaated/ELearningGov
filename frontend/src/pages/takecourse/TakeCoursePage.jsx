@@ -141,10 +141,7 @@ const TakeCoursePage = () => {
       }&rating=${starRating}`,
       method: "POST",
       data: { comment: pl.comment },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then((res) => {
       setComment("");
       dispatch(
@@ -178,9 +175,7 @@ const TakeCoursePage = () => {
         import.meta.env.VITE_API_URL
       }/api/user/coursereview/?review_id=${id}`,
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then(() => {
       dispatch(
         fetchBoughtCourse({

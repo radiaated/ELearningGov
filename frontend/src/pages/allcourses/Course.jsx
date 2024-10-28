@@ -102,9 +102,7 @@ const Course = () => {
         import.meta.env.VITE_API_URL
       }/api/user/coursereview/?review_id=${id}`,
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then(() => {
       dispatch(fetchCourse(params["courseSlug"]));
     });
@@ -116,9 +114,7 @@ const Course = () => {
         import.meta.env.VITE_API_URL
       }/api/user/ownfreecourse/?course_slug=${course_slug}`,
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then(() => {
       navigate("/yourcourses");
     });

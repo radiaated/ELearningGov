@@ -16,13 +16,9 @@ from rest_framework.pagination import PageNumberPagination
 
 # Create your views here.
 
-
+# Get a list of courses for public view
 @api_view(["GET"])
 def get_online_courses(request):
-
-
-    
-
 
     online_courses = OnlineCourse.objects.all().order_by("date_created")
     
@@ -33,15 +29,12 @@ def get_online_courses(request):
     elif(request.GET.get("category")):
         online_courses = online_courses.filter(category = request.GET.get("category"))
     
-   
-
     paginator = PageNumberPagination()
     paginator.page_size = 5
     result_page = paginator.paginate_queryset(online_courses, request)
 
     if online_courses:
 
-        
         serializers = OnlineCourseSerializer(result_page, many=True).data
 
         for oc in serializers:
@@ -54,34 +47,10 @@ def get_online_courses(request):
         return paginator.get_paginated_response(serializers)
     else:
         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
-    # # print(serializers)
-
-   
     
-
-    # if online_courses:
-
-        
-    #     serializers = OnlineCourseSerializer(online_courses, many=True).data
-
-    #     # print(serializers)
-
-    #     for oc in serializers:
-    #         avg_rating = CourseReview.objects.filter(online_course__id=oc["id"]).aggregate(Avg("rating"))["rating__avg"] 
-       
-    #         oc["avg_rating"] = avg_rating if avg_rating else 0
-    #         oc["reviews_count"] = len(CourseReview.objects.filter(online_course__id=oc["id"]))
-
-
-    #     return Response(serializers, status=status.HTTP_200_OK)
-    # else:
-    #     return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
-    
-
+# Get course detail
 @api_view(["GET"])
 def get_online_course(request,slug):
-
-
 
     online_course = OnlineCourse.objects.get(slug=slug)
 
@@ -91,9 +60,7 @@ def get_online_course(request,slug):
 
     avg_rating = CourseReview.objects.filter(online_course__slug = slug).aggregate(Avg("rating"))
 
-    # print(avg_rating.values)
-
-
+    
 
     if online_course:
         
@@ -110,9 +77,9 @@ def get_online_course(request,slug):
     else:
         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
+# Gets a chapter
 @permission_classes([IsAuthenticated])
 @api_view(["GET"]) 
-
 def get_bought_online_course(request,slug):
 
     online_course = OnlineCourse.objects.get(slug=slug)
@@ -139,19 +106,16 @@ def get_bought_online_course(request,slug):
         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
     
 
+# Gets a bought chapter
 @permission_classes([IsAuthenticated])
 @api_view(["GET"])
-
 def get_bought_chapter(request, slug):
-
-
 
     online_course = OnlineCourse.objects.get(slug=slug)
 
     course = Course.objects.filter(online_course=online_course, slug=request.GET.get("chapter_slug"))[0]
 
     if online_course:
-        
         
         c_serializers = CourseSerializer(course)
         
@@ -160,30 +124,21 @@ def get_bought_chapter(request, slug):
         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
     
 
+# Downloads study materials
 @permission_classes([IsAuthenticated])
 @api_view(["GET"])
 def download_studym(request):
 
-    
-
-    # media_root = os.path.join(settings.STATIC_MEDIA)
-    # print("hello")
-    # print(dict(request.GET))
-
     sm = StudyMaterial.objects.get(slug=request.GET.get("slug"))
-
-
 
     sm.dw_count += 1
 
     sm.save() 
 
-    # response = FileResponse(open(f'{media_root}/protect/{app}/{author}/{file}', 'rb'))
-
     return Response({"file": str(sm.file)}, status=status.HTTP_200_OK)
 
     
-
+# Gets the student materials
 @api_view(["GET"])
 def get_study_materials(request):
     
@@ -204,13 +159,12 @@ def get_study_materials(request):
 
         serializers = StudyMaterialSerializer(result_page, many=True).data
 
-      
         return paginator.get_paginated_response(serializers)
-        # return Response(serializers.data, status=status.HTTP_200_OK)
+        
     else:
         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
     
-
+# Gets the student material details
 @api_view(["GET"])
 def get_study_material(request,slug):
 
@@ -227,7 +181,6 @@ def get_study_material(request,slug):
 @api_view(["GET"])
 def get_events(request):
     
-
     events = Event.objects.all().order_by("date_created")
     if(request.GET.get("category")):
         events = Event.filter(category = request.GET.get("category"))

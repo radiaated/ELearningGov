@@ -43,10 +43,7 @@ const Profile = () => {
       method: "PUT",
       url: `${import.meta.env.VITE_API_URL}/api/user/profile/`,
       data: payload,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then((res) => {
       console.log("updated");
     });
@@ -62,10 +59,7 @@ const Profile = () => {
       method: "PUT",
       url: `${import.meta.env.VITE_API_URL}/api/user/profile/`,
       data: payload,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then((res) => {
       console.log("updated");
     });

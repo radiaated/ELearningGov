@@ -24,8 +24,8 @@ const CoursesForYou = () => {
                 <CourseItem course={course} key={ind} />
               ))
             : "Empty"
-          : [1, 2, 3, 4, 5].map((loader) => (
-              <div className="animate-pulse">
+          : [1, 2, 3, 4, 5].map((_, i) => (
+              <div className="animate-pulse" key={i}>
                 <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
               </div>
             ))}

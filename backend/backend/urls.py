@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/', include("user.urls")),
     path('api/base/', include("base.urls")),
+    path('api/admins/', include("admins.urls")),
     re_path(
             r'^uploads/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}

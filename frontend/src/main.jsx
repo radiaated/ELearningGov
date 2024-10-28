@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Routes } from "react-router-dom";
 import PrivateRoute from "./utils/PrivateRoute";
 import Layout from "./layout/Layout";
+import AdminLayout from "./layout/AdminLayout";
 import CoursesPage from "./pages/allcourses/CoursesPage";
 import CoursePage from "./pages/allcourses/CoursePage";
 import BuyCourse from "./pages/allcourses/BuyCourse";
@@ -22,6 +23,12 @@ import { Provider } from "react-redux";
 import { UserContextProvider } from "./context/UserContext";
 import { store } from "./app/store";
 import "./index.css";
+import { Outlet } from "react-router-dom";
+import CourseList from "./pages/admin/CourseList";
+
+import AdminLogin from "./pages/admin/AdminLogin";
+import CreateCourse from "./pages/admin/CreateCourse";
+import UpdateCourse from "./pages/admin/UpdateCourse";
 
 const router = createBrowserRouter([
   {
@@ -116,6 +123,20 @@ const router = createBrowserRouter([
         path: "about",
         element: <AboutPage />,
       },
+    ],
+  },
+  {
+    path: "admin",
+    element: (
+      <UserContextProvider>
+        <AdminLayout />
+      </UserContextProvider>
+    ),
+    children: [
+      { index: true, element: <AdminLogin /> },
+      { path: "create-course", element: <CreateCourse /> },
+      { path: "courses", element: <CourseList /> },
+      { path: "update-course/:slug", element: <UpdateCourse /> },
     ],
   },
 ]);

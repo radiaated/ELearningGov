@@ -1,50 +1,47 @@
-@import url('./../node_modules/@fortawesome/fontawesome-free/css/all.css');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
-@import url('./../node_modules/lion-player/dist/lion-skin.min.css');
+@import url("./../node_modules/@fortawesome/fontawesome-free/css/all.css");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap");
+@import url("./../node_modules/lion-player/dist/lion-skin.min.css");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
 @layer components {
-    body {
-        @apply font-Montserrat;
-    }
+  body {
+    @apply font-Montserrat;
+  }
 
-    .sl-form input[type="text"], .sl-form input[type="username"], .sl-form input[type="email"], .sl-form input[type="password"], .sl-form  select {
-        @apply text-base rounded-sm p-2 bg-zinc-50 border-b-[3px] border-b-zinc-500 w-full border border-zinc-400 focus:border-b-zinc-950 focus:outline-1 focus:outline-none;
-    }
+  .sl-form input[type="text"],
+  .sl-form input[type="username"],
+  .sl-form input[type="email"],
+  .sl-form input[type="password"],
+  .sl-form input[type="number"],
+  .sl-form textarea,
+  .sl-form select {
+    @apply text-base rounded-sm p-2 bg-zinc-50 border-b-[3px] border-b-zinc-500 w-full border border-zinc-400 focus:border-b-zinc-950 focus:outline-1 focus:outline-none;
+  }
 
+  .sl-form {
+    @apply flex flex-col gap-4;
+  }
 
-    .sl-form {
-        @apply flex flex-col gap-4;
-    }
-    
+  .sl-form label {
+    @apply text-xl block mb-2;
+  }
 
-    .sl-form label {
-        @apply text-xl block mb-2;
-    }
+  .sl-form div div label {
+    @apply text-lg block;
+  }
 
-    .sl-form div div label {
-        @apply text-lg block;
-    }
+  .btn {
+    @apply text-lg p-2 bg-primary-main w-full text-zinc-100 font-medium border border-primary-main cursor-pointer hover:bg-[#2187ab];
+  }
 
-    .btn {
-        @apply text-lg p-2 bg-primary-main w-full text-zinc-100 font-medium border border-primary-main cursor-pointer hover:bg-[#2187ab];
-        
-    }
+  .section {
+    @apply my-4 w-[1400px] max-w-[90%] mx-auto;
+  }
 
-
-
-    .section  {
-        @apply my-4 w-[1400px] max-w-[90%] mx-auto;
-    }
-
-    .title {
-        @apply text-xl mt-8 mb-4 font-medium ;
-    }
-
-   
-
+  .title {
+    @apply text-xl mt-8 mb-4 font-medium;
+  }
 }

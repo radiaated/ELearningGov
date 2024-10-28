@@ -41,10 +41,7 @@ const CartPage = () => {
       method: "POST",
       url: `${import.meta.env.VITE_API_URL}/api/user/profilecourses/`,
       data: payload,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     });
 
     window.location.href = data.payment_url;
