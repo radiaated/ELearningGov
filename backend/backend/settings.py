@@ -18,7 +18,6 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -28,7 +27,7 @@ SECRET_KEY = 'django-insecure-s3us-ldf4sfh2v#^rts+p77le7xei+r#^d7c&te*#c4#)+0ut(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1"]
 
 
 # Application definition
@@ -69,7 +68,7 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     # ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'user.authentication.CustomAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 
@@ -190,9 +189,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = 'uploads/'
 
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'dist', 'assets'),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'dist', 'assets'),
+# ]
 
 
 # Default primary key field type

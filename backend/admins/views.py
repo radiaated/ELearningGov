@@ -6,12 +6,19 @@ from rest_framework.decorators import APIView, permission_classes
 from rest_framework.permissions import IsAdminUser
 from django.db import transaction
 import json
+from rest_framework import status
 # Create your views here.
 
 class CourseListView(APIView):
 
     @permission_classes(IsAdminUser)
     def get(self, request):
+
+        print(request.user.is_superuser)
+
+        if request.user.is_superuser == False:
+
+            return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
         courses = OnlineCourse.objects.all()[::-1]
 
@@ -22,6 +29,11 @@ class CourseListView(APIView):
     @transaction.atomic
     @permission_classes(IsAdminUser)
     def post(self, request):
+
+        if request.user.is_superuser == False:
+
+            return Response({"detail": "Unauthorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
 
         rd = request.data
 

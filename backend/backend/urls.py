@@ -31,7 +31,7 @@ urlpatterns = [
             r'^uploads/(?P<path>.*)$', serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}
         ),
-    re_path('.*', TemplateView.as_view(template_name='index.html')),
+    # re_path('.*', TemplateView.as_view(template_name='index.html')),
 ] 
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
