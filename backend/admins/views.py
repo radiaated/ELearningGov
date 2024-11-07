@@ -54,6 +54,8 @@ class CourseListView(APIView):
         if oc:
             oc.save()
 
+        print(request.FILES)
+
         for chpt_no, chapter in enumerate(json.loads(rd["chapters"])):
             print("\n\n\he",chapter)
             course_chapter = Course.objects.create(
@@ -63,7 +65,7 @@ class CourseListView(APIView):
                 duration=chapter["duration"],
                 online_course=oc,
                 chpt=chpt_no + 1,
-                video=request.FILES.get(f'chpt_${chpt_no + 1}'),
+                video=request.FILES.get(f'chpt_no{chpt_no + 1}'),
             )
 
             if course_chapter:
@@ -127,7 +129,7 @@ class CourseItemView(APIView):
                 course_chapter.description=chapter["description"]
                 course_chapter.duration=chapter["duration"]
                 course_chapter.chpt_no = chpt_no + 1
-                course_chapter.video=request.FILES.get(f'chpt_${chpt_no + 1}') or course_chapter.video
+                course_chapter.video=request.FILES.get(f'chpt_no{chpt_no + 1}') or course_chapter.video
                 
                 if course_chapter:
                     print(course_chapter)
@@ -140,7 +142,7 @@ class CourseItemView(APIView):
                     duration=chapter["duration"],
                     online_course=oc,
                     chpt=chpt_no + 1,
-                    video=request.FILES.get(f'chpt_${chpt_no + 1}'),
+                    video=request.FILES.get(f'chpt_no{chpt_no + 1}'),
                 )
 
                 if course_chapter:

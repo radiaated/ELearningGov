@@ -49,6 +49,8 @@ const BuyCourse = () => {
         withCredentials: true,
       });
 
+      // console.log(data);
+
       window.location.href = data.payment_url;
     } catch {}
   };
