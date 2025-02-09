@@ -50,25 +50,14 @@ const Testimonials = () => {
   ];
 
   return (
-    <div className="bg-primary-main w-full h-[60vh] p-4 text-zinc-50">
-      <div className="section relative">
+    <div className="bg-primary-main w-full h-[60vh] p-4 text-zinc-50 md:pt-16">
+      <div className="section relative w-full md:w-[75%] mx-auto">
         <h2 className="title text-center ">Testimonials</h2>
         <hr className="opacity-50" />
         <div>
-          {/* <Splide
-            aria-label="My Favorite Images"
-            options={{ perPage: 2, gap: 28, arrows: false, pagination: true }}
-          >
-            <SplideTrack>
-              
-            </SplideTrack>
-
-  
-          </Splide> */}
-
           <Splide
             hasTrack={false}
-            options={{ perPage: 2, gap: 40, arrows: true, pagination: false }}
+            options={{ perPage: 1, gap: 40, arrows: true, pagination: false }}
           >
             <div className="custom-wrapper w-[90%] mx-auto my-4">
               <SplideTrack>

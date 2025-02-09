@@ -22,7 +22,7 @@ const SyllabusList = () => {
   }, []);
 
   return !boughtCourse.loading ? (
-    <div className="w-[30%]">
+    <div className="w-full md:w-[30%]">
       <div className="mb-14 rounded-sm space-y-1 p-2 border-l-4 border-primary-main bg-zinc-50">
         <h4 className="font-medium">Current Course</h4>
         <div className="flex gap-1">
@@ -66,9 +66,8 @@ const SyllabusList = () => {
       </div>
     </div>
   ) : (
-    <div className="w-[30%] animate-pulse space-y-2">
-      <div className="w-[70%] bg-zinc-200 h-20 rounded-md mb-24"></div>
-      <div className="w-[70%] bg-zinc-200 h-[40vh] rounded-md"></div>
+    <div className="animate-pulse w-full">
+      <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
     </div>
   );
 };
@@ -88,10 +87,10 @@ const TakeChapter = () => {
     );
   }, [params]);
   return (
-    <div className="flex gap-10">
+    <div className="flex flex-col-reverse md:flex-row gap-10">
       <SyllabusList />
       {!boughtChapter.loading ? (
-        <div className="w-[70%]">
+        <div className="w-full md:w-[70%]">
           <div className="w-[70%] mb-4">
             {/* <div className="text-4xl font-semibold border border-zinc-700 rounded-full h-10 w-10 p-10 flex items-center justify-center"> */}
 
@@ -99,7 +98,7 @@ const TakeChapter = () => {
               {boughtChapter.boughtChapter.chpt}.{" "}
               {boughtChapter.boughtChapter.title}
             </h3>
-            <p className="pl-5 text-[15px]">
+            <p className="md:pl-5 text-[15px]">
               {boughtChapter.boughtChapter.description}
             </p>
           </div>
@@ -163,11 +162,8 @@ const TakeChapter = () => {
           </video> */}
         </div>
       ) : (
-        <div className="w-[70%] animate-pulse space-y-2">
-          <div className="w-[70%] bg-zinc-200 h-8 rounded-md"></div>
-          <div className="w-[70%] bg-zinc-200 h-16 rounded-md"></div>
-          <div className="w-[70%] bg-zinc-200 h-6 rounded-md"></div>
-          <div className="w-full bg-zinc-200 h-[50vh] rounded-md"></div>
+        <div className="animate-pulse w-full">
+          <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
         </div>
       )}
     </div>

@@ -30,12 +30,11 @@ const StudyMaterial = () => {
         import.meta.env.VITE_API_URL
       }/api/base/download/studymaterial/?slug=${slug}`,
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
     }).then((res) => {
-      window.open(`${import.meta.env.VITE_API_URL}/${res.data.file}`, "_blank");
+      window.open(
+        `${import.meta.env.VITE_API_URL}/uploads/${res.data.file}`,
+        "_blank"
+      );
     });
   };
 

@@ -13,7 +13,7 @@ const ImageSlider = () => {
     <div>
       <div className="h-[100vh] relative">
         <div className="absolute z-[60] top-64 left-16">
-          <h2 className="text-3xl text-zinc-50 mb-8 italic ">
+          <h2 className="text-2xl md:text-3xl text-zinc-50 mb-8 italic ">
             <span className="text-4xl font-black">"</span> Learning is a
             lifelong process.
             <span className="text-4xl font-black">"</span>
@@ -25,7 +25,7 @@ const ImageSlider = () => {
         <div className="block absolute bottom-20 right-0 z-[60] bg-primary-main w-[50%] py-6">
           <Link
             to="/signup"
-            className="block font-semibold py-1 px-2 text-zinc-50 border-b-2 border-border-zinc-200 w-fit ml-8 text-3xl hover:bg-primary-light/40 hover:border-zinc-300"
+            className="block font-semibold py-1 px-2 text-zinc-50 border-b-2 border-border-zinc-200 w-fit ml-8 text-xl md:text-3xl hover:bg-primary-light/40 hover:border-zinc-300"
           >
             Get Started <i className="fa-solid fa-chevron-right"></i>
           </Link>

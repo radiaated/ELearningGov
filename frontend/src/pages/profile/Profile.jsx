@@ -43,10 +43,7 @@ const Profile = () => {
       method: "PUT",
       url: `${import.meta.env.VITE_API_URL}/api/user/profile/`,
       data: payload,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then((res) => {
       console.log("updated");
     });
@@ -62,10 +59,7 @@ const Profile = () => {
       method: "PUT",
       url: `${import.meta.env.VITE_API_URL}/api/user/profile/`,
       data: payload,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     }).then((res) => {
       console.log("updated");
     });
@@ -76,7 +70,7 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="w-[60%] mx-auto ">
+    <div className="w-full md:w-[60%] mx-auto ">
       <h2 className="text-3xl font-semibold mb-4">Profile</h2>
       <h3 className="text-2xl font-semibold mb-4">Details</h3>
       {!profile.profile.loading ? (

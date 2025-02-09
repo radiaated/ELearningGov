@@ -49,7 +49,7 @@ class OnlineCourse(models.Model):
 class Course(models.Model):
     slug = models.SlugField(max_length=200, null=True, blank=True)
     chpt = models.IntegerField(default=1, null=False, blank=False)
-    online_course = models.ForeignKey(OnlineCourse, on_delete=models.CASCADE, null=False, blank=False, related_name="course_onlinecourse")
+    online_course = models.ForeignKey(OnlineCourse, on_delete=models.CASCADE, null=False, blank=False, related_name="course_chapters")
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.CharField(max_length=5000, null=False, blank=False)
     video = models.FileField(upload_to=get_file_path, null=False, blank=False)

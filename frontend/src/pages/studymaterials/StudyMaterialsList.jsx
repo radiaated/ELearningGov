@@ -103,41 +103,42 @@ const StudyMaterialsList = () => {
       </div>
       <hr className="my-2" />
       <div className="grid grid-cols-5 gap-8">
-        {!studyMaterials.loading
-          ? studyMaterials.studyMaterials.results &&
-            studyMaterials.studyMaterials.results.length > 0
-            ? studyMaterials.studyMaterials.results.map((sm) => (
-                <div key={sm.id} className="py-2">
-                  <Link to={`/studymaterial/${sm.slug}`}>
-                    <img
-                      src={import.meta.env.VITE_API_URL + sm.thumbnail}
-                      className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
-                    />
+        {!studyMaterials.loading ? (
+          studyMaterials.studyMaterials.results &&
+          studyMaterials.studyMaterials.results.length > 0 ? (
+            studyMaterials.studyMaterials.results.map((sm) => (
+              <div key={sm.id} className="py-2">
+                <Link to={`/studymaterial/${sm.slug}`}>
+                  <img
+                    src={import.meta.env.VITE_API_URL + sm.thumbnail}
+                    className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
+                  />
 
-                    <h3 className="font-medium text-[15px] text-primary-dark hover:underline underline-offset-1">
-                      {sm.title}
-                    </h3>
-                  </Link>
+                  <h3 className="font-medium text-[15px] text-primary-dark hover:underline underline-offset-1">
+                    {sm.title}
+                  </h3>
+                </Link>
 
-                  {/* <p className="truncate text-sm">{course.description}</p> */}
-                  <div>
-                    {/* Category:{" "} */}
-                    <span className="bg-zinc-100 text-xs text px-1 border border-zinc-300">
-                      {
-                        courseCategories.find(
-                          (cat) => cat.short === sm.category
-                        ).title
-                      }
-                    </span>
-                  </div>
+                {/* <p className="truncate text-sm">{course.description}</p> */}
+                <div>
+                  {/* Category:{" "} */}
+                  <span className="bg-zinc-100 text-xs text px-1 border border-zinc-300">
+                    {
+                      courseCategories.find((cat) => cat.short === sm.category)
+                        .title
+                    }
+                  </span>
                 </div>
-              ))
-            : "Empty"
-          : [1, 2, 3, 4, 5].map((loader) => (
-              <div className="animate-pulse">
-                <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
               </div>
-            ))}
+            ))
+          ) : (
+            "Empty"
+          )
+        ) : (
+          <div className="animate-pulse w-full">
+            <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
+          </div>
+        )}
       </div>
 
       {studyMaterials.studyMaterials.results &&

@@ -21,10 +21,7 @@ const VerifyPayment = () => {
       data: {
         pidx: qs.get("pidx"),
       },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userCxt.auth.access}`,
-      },
+      withCredentials: true,
     })
       .then((res) => {
         dispatch(appActions.clearCart());

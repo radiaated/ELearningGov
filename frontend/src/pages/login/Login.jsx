@@ -9,7 +9,7 @@ const Login = () => {
   const userCxt = useContext(UserContext);
 
   return (
-    <div className="w-[60%] mx-auto mb-24">
+    <div className="w-full md:w-[60%] mx-auto mb-24">
       <div className="absolute bg-primary-light w-full h-[50%] top-0 left-0 z-[-1]"></div>
       <div className="bg-white shadow-lg py-10 pb-12 px-12 rounded-md relative">
         <div className="absolute bottom-5 left-10 text-xs text-red-500">

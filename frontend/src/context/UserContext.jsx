@@ -25,11 +25,12 @@ export const UserContextProvider = ({ children }) => {
       method: "POST",
       url: `${import.meta.env.VITE_API_URL}/api/user/token/`,
       data: payload,
+      withCredentials: true,
     })
       .then((res) => {
         localStorage.setItem("auth", JSON.stringify(res.data));
         setAuth(res.data);
-        navigate("/yourcourses");
+        window.location.replace("/");
       })
       .catch((err) => {
         setLoginErrMsg(err.response.data.detail);
@@ -40,25 +41,15 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    const authLS = JSON.parse(localStorage.getItem("auth"));
-
     await axios({
-      url: `${import.meta.env.VITE_API_URL}/api/user/token/refresh/`,
+      url: `${import.meta.env.VITE_API_URL}/api/user/logout/`,
       method: "POST",
-      data: { refresh: authLS.refresh },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authLS.access}`,
-      },
-    })
-      .then((res) => {
-        localStorage.removeItem("auth");
-        window.location.href = "/";
-      })
-      .catch((err) => {
-        localStorage.removeItem("auth");
-        window.location.href = "/";
-      });
+      withCredentials: true,
+    }).finally((res) => {
+      localStorage.removeItem("auth");
+      localStorage.removeItem("isAdmin");
+      window.location.replace("/");
+    });
   };
 
   const registerUser = async (payload) => {
@@ -81,25 +72,14 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const refresh = async () => {
-    const authLS = JSON.parse(localStorage.getItem("auth"));
-
     await axios({
       url: `${import.meta.env.VITE_API_URL}/api/user/token/refresh/`,
       method: "POST",
-      data: { refresh: authLS.refresh },
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authLS.access}`,
-      },
-    })
-      .then((res) => {
-        setAuth(res.data);
-        localStorage.setItem("auth", JSON.stringify(res.data));
-      })
-      .catch((err) => {
-        logout();
-        // navigate("/");
-      });
+      withCredentials: true,
+    }).then((res) => {
+      setAuth(res.data);
+      localStorage.setItem("auth", JSON.stringify(res.data));
+    });
   };
 
   const ucData = {
@@ -114,8 +94,9 @@ export const UserContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("auth")) {
-      let t = setInterval(() => {
+    let t;
+    if (auth) {
+      t = setInterval(() => {
         refresh();
       }, 1000 * 15);
     }
