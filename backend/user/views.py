@@ -16,6 +16,7 @@ import requests
 import json
 from django.db import transaction
 import uuid
+import os
 
 
 # Create your views here.
@@ -300,8 +301,8 @@ def course_trans_s(request):
         trans_id = uuid.uuid1()
 
         payload = {
-            "return_url": 'http://127.0.0.1:5173/verifypay',
-            "website_url": "http://127.0.0.1:5173/", 
+            "return_url": "{prod_url}/verifypay".format(prod_url=os.environ.get("PROD_URL")),
+            "website_url": "{prod_url}/".format(prod_url=os.environ.get("PROD_URL")),
             "amount": rd["price"],
             "purchase_order_id": "course_" + str(trans_id),
             "purchase_order_name": "_".join(rd["course_id"])

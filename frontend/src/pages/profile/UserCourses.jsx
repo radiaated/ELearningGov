@@ -26,20 +26,23 @@ const UserCourses = () => {
   }, []);
 
   return (
-    <div className="w-[60%] mx-auto mb-60">
+    <div className="w-full md:w-[60%] mx-auto mb-60">
       <h2 className="text-xl font-semibold">Your Courses</h2>
       <hr className="my-2" />
       <div className="flex flex-col gap-2 divide-y divide-zinc-300">
         {!userCourses.loading
           ? userCourses.userCourses.length > 0
             ? userCourses.userCourses.map((course, ind) => (
-                <div key={ind} className="grid grid-cols-5 relative py-4">
+                <div
+                  key={ind}
+                  className="flex flex-col md:flex-row gap-2 relative py-4"
+                >
                   <img
-                    className="block h-24 w-32 object-cover col-span-1 mr-2"
+                    className="block h-24 w-full md:w-32 object-cover mr-2"
                     src={`${import.meta.env.VITE_API_URL}${course.thumbnail}`}
                     alt=""
                   />
-                  <div className="col-span-3">
+                  <div>
                     <h3 className="text-xl font-medium">{course.title}</h3>
                     <p className="text-sm">
                       {course.description && course.description.slice(0, 75)}...

@@ -13,7 +13,7 @@ const Layout = () => {
       <section
         className={`${
           location.pathname !== "/" ? "mt-32 w-[1400px] max-w-[90%]" : ""
-        } mx-auto`}
+        } min-h-[70vh] mx-auto`}
       >
         <Outlet />
       </section>

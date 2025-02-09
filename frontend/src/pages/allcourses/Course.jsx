@@ -142,11 +142,11 @@ const Course = () => {
   }, []);
 
   return (
-    <div className="text-zinc-800 w-[90%] mx-auto">
+    <div className="text-zinc-800 md:w-[90%] md:mx-auto">
       {!course.loading ? (
         <>
-          <div className="grid grid-cols-2 gap-8">
-            <div className="flex flex-col gap-2">
+          <div className="grid grid-cols-12 gap-8">
+            <div className="flex flex-col gap-2 col-span-12 md:col-span-6">
               <h3 className="text-2xl font-bold">{course.course.title}</h3>
               <p>{course.course.description}</p>
               <div className="flex gap-2 my-2">
@@ -238,8 +238,8 @@ const Course = () => {
                 </div>
               </div>
             </div>
-            <div className="">
-              <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-[70%] mx-auto right-[15%] shadow-lg">
+            <div className="col-span-12 md:col-span-6">
+              <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-full md:w-[70%] mx-auto right-[15%] shadow-lg">
                 <div>
                   <img
                     src={import.meta.env.VITE_API_URL + course.course.thumbnail}
@@ -347,16 +347,8 @@ const Course = () => {
           {/* <hr /> */}
         </>
       ) : (
-        <div className="grid grid-cols-2 gap-8 animate-pulse">
-          <div className="space-y-2">
-            <div className="h-8 w-1/2 bg-zinc-200 rounded-md"></div>
-            <div className="h-44 w-full bg-zinc-200 rounded-md"></div>
-            <div className="h-8 w-1/2 bg-zinc-200 rounded-md"></div>
-            <div className="h-[70vh] w-full bg-zinc-200 rounded-md"></div>
-            <div className="h-8 w-1/2 bg-zinc-200 rounded-md"></div>
-            <div className="h-[70vh] w-full bg-zinc-200 rounded-md"></div>
-          </div>
-          <div className="h-[70vh] w-[70%] bg-zinc-200 rounded-md mx-auto"></div>
+        <div className="animate-pulse w-full">
+          <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
         </div>
       )}
     </div>

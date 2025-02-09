@@ -80,18 +80,20 @@ const BuyCourse = () => {
   }, []);
 
   return (
-    <div className="w-[50%] mx-auto">
+    <div className="w-full md:w-[50%] mx-auto">
       {qs.get("type") === "course" && (
         <div>
           <div className="">
             {!course.loading ? (
               <>
-                <h3 className="text-3xl font-semi-bold mb-4">Purchase</h3>
+                <h3 className="text-xl md:text-3xl font-semi-bold mb-4">
+                  Purchase
+                </h3>
                 <hr className="mb-4" />
-                <div className="flex gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
                   <img
                     src={import.meta.env.VITE_API_URL + course.course.thumbnail}
-                    className="h-24 rounded-md"
+                    className="h-36 md:-*24 rounded-md object-cover"
                   />
                   <div className="flex flex-col gap-1">
                     <Link
@@ -120,7 +122,7 @@ const BuyCourse = () => {
                     </div>
                     {!bought ? (
                       <button
-                        className="group border border-green-600 rounded-full w-fit px-5 py-2 hover:bg-green-600 hover:text-zinc-100 duration-100"
+                        className="group border border-green-600 rounded-full w-full px-5 py-2 hover:bg-green-600 hover:text-zinc-100 duration-100 md:w-fit"
                         onClick={(e) => {
                           e.preventDefault();
                           buyCourse({
@@ -140,9 +142,8 @@ const BuyCourse = () => {
                 </div>
               </>
             ) : (
-              <div className="animate-pulse">
-                <div className="bg-zinc-200 h-6 w-[30%] rounded-md mb-2"></div>
-                <div className="bg-zinc-200 h-28 w-full rounded-md"></div>
+              <div className="animate-pulse w-full">
+                <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
               </div>
             )}
           </div>

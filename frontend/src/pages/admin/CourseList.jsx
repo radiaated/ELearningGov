@@ -47,7 +47,7 @@ const CourseList = () => {
           <div className="grid grid-cols-12 pt-4" key={i}>
             <div className="col-span-1">
               <img
-                src={`http://127.0.0.1:8000${course.thumbnail}`}
+                src={import.meta.env.VITE_API_URL + course.course.thumbnail}
                 className="h-16 w-16 object-cover"
               />
             </div>

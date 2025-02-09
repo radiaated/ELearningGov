@@ -17,18 +17,22 @@ const CoursesForYou = () => {
       <h2 className="title">Courses For you</h2>
       <hr className="mb-4" />
       <div className="grid grid-cols-5 gap-8">
-        {!courseList.loading
-          ? courseList.courseList.results &&
-            courseList.courseList.results.length > 0
-            ? courseList.courseList.results.map((course, ind) => (
-                <CourseItem course={course} key={ind} />
-              ))
-            : "Empty"
-          : [1, 2, 3, 4, 5].map((_, i) => (
-              <div className="animate-pulse" key={i}>
-                <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
+        {!courseList.loading ? (
+          courseList.courseList.results &&
+          courseList.courseList.results.length > 0 ? (
+            courseList.courseList.results.map((course, ind) => (
+              <div key={ind} className="col-span-5 md:col-span-1">
+                <CourseItem course={course} />
               </div>
-            ))}
+            ))
+          ) : (
+            "Empty"
+          )
+        ) : (
+          <div className="animate-pulse w-full">
+            <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
+          </div>
+        )}
       </div>
     </div>
   );

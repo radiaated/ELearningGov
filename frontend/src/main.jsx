@@ -91,10 +91,10 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      {
-        path: "studymaterials",
-        element: <StudyMaterialsPage />,
-      },
+      // {
+      //   path: "studymaterials",
+      //   element: <StudyMaterialsPage />,
+      // },
       {
         path: "studymaterial/:smSlug",
         element: <StudyMaterialPage />,

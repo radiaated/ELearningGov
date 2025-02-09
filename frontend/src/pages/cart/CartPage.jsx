@@ -48,11 +48,11 @@ const CartPage = () => {
   };
 
   return (
-    <div className="w-[80%] mx-auto mb-48">
+    <div className="w-full md:w-[80%] mx-auto mb-48">
       <h2 className="font-medium text-2xl">Cart</h2>
       <hr className="mt-4 mb-2" />
       <div className="grid grid-cols-4 gap-8">
-        <div className="col-span-3 divide-y divide-zinc-200">
+        <div className="col-span-4 md:col-span-1 divide-y divide-zinc-200">
           {cart.length === 0 && "Empty"}
           {cart.map((item, ind) => (
             <div className="flex gap-4 col-span-3 py-4">
@@ -94,7 +94,7 @@ const CartPage = () => {
         </div>
 
         {localStorage.getItem("cart") && (
-          <div className="col-span-1">
+          <div className="col-span-4 md:col-span-1">
             <div className="pb-2 w-full">
               <span className="block text-xl">Total</span>
               <span className="block text-4xl">

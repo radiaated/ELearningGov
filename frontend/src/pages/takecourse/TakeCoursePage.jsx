@@ -77,7 +77,7 @@ const SetStarRating = ({ rating }) => {
   return (
     <div className="flex">
       {[1, 2, 3, 4, 5].map((item) => (
-        <div className=" text-yellow-500">
+        <div className=" text-yellow-500" key={item}>
           {item <= parseInt(rating) ? (
             <i className="fa-solid fa-star"></i>
           ) : (
@@ -199,8 +199,8 @@ const TakeCoursePage = () => {
     <div>
       {!boughtCourse.loading ? (
         <>
-          <div className="grid grid-cols-2 gap-8">
-            <div className="flex flex-col gap-2">
+          <div className="grid grid-cols-12 gap-8">
+            <div className="flex flex-col gap-2 col-span-12 md:col-span-6">
               <h3 className="text-2xl font-bold">
                 {boughtCourse.boughtCourse.title}
               </h3>
@@ -259,8 +259,8 @@ const TakeCoursePage = () => {
                 {qs.get("view") === "content" && (
                   <Accordion allowMultipleExpanded={false}>
                     {boughtCourse.boughtCourse.syllabus &&
-                      boughtCourse.boughtCourse.syllabus.map((syl) => (
-                        <AccordionItem>
+                      boughtCourse.boughtCourse.syllabus.map((syl, idx) => (
+                        <AccordionItem key={idx}>
                           <AccordionItemHeading>
                             <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
                               <div className="font-medium text-xl flex justify-between">
@@ -362,8 +362,9 @@ const TakeCoursePage = () => {
               </div>
               {/* <hr /> */}
             </div>
-            <div className="">
-              <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-[70%] mx-auto right-[15%] shadow-lg">
+            <div className="col-span-12 md:col-span-6">
+              <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-full md:w-[70%] mx-auto right-[15%] shadow-lg">
+                {" "}
                 <div>
                   <img
                     src={
@@ -390,7 +391,6 @@ const TakeCoursePage = () => {
                     })}
                   </span>
                 </div>
-
                 <div>
                   <div className="block group w-full text-center px-5 py-4 text-zinc-500">
                     Enrolled <i className="fa-solid fa-graduation-cap"></i>
@@ -406,16 +406,8 @@ const TakeCoursePage = () => {
           {/* <hr /> */}
         </>
       ) : (
-        <div className="grid grid-cols-2 gap-8 animate-pulse">
-          <div className="space-y-2">
-            <div className="h-8 w-1/2 bg-zinc-200 rounded-md"></div>
-            <div className="h-44 w-full bg-zinc-200 rounded-md"></div>
-            <div className="h-8 w-1/2 bg-zinc-200 rounded-md"></div>
-            <div className="h-[70vh] w-full bg-zinc-200 rounded-md"></div>
-            <div className="h-8 w-1/2 bg-zinc-200 rounded-md"></div>
-            <div className="h-[70vh] w-full bg-zinc-200 rounded-md"></div>
-          </div>
-          <div className="h-[70vh] w-[70%] bg-zinc-200 rounded-md mx-auto"></div>
+        <div className="animate-pulse w-full">
+          <div className="w-full h-28 bg-zinc-100 rounded-sm "></div>
         </div>
       )}
     </div>
