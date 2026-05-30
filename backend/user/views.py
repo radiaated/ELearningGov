@@ -325,9 +325,11 @@ def course_trans_s(request):
 
         payload = {
             "return_url": "{prod_url}/verifypay".format(
-                prod_url=os.environ.get("PROD_URL")
+                prod_url=os.environ.get("PRODUCTION_URL")
             ),
-            "website_url": "{prod_url}/".format(prod_url=os.environ.get("PROD_URL")),
+            "website_url": "{prod_url}/".format(
+                prod_url=os.environ.get("PRODUCTION_URL")
+            ),
             "amount": rd["price"],
             "purchase_order_id": "course_" + str(trans_id),
             "purchase_order_name": "_".join(rd["course_id"]),
