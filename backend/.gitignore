@@ -5,7 +5,5 @@ __pycache__/
 *.json
 db.sqlite3
 
-dist/
-
 .env
 

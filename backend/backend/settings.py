@@ -29,6 +29,8 @@ SECRET_KEY = "django-insecure-s3us-ldf4sfh2v#^rts+p77le7xei+r#^d7c&te*#c4#)+0ut(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "") == "True"
 
+DJANGO_SPA = os.getenv("DJANGO_SPA", "") == "True"
+
 # Get the environment variable, default to empty string if not set
 allowed_hosts = os.getenv("DJANGO_ALLOWED_HOSTS", "")
 
@@ -197,11 +199,12 @@ STATIC_URL = "assets/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 MEDIA_URL = "uploads/"
 
+if DJANGO_SPA:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "dist", "assets"),
+    ]
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'dist', 'assets'),
-# ]
-
+STATIC_ROOT = "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

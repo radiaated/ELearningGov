@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
@@ -23,19 +24,19 @@ from django.views.generic import TemplateView
 from django.views.static import serve
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/user/', include("user.urls")),
-    path('api/base/', include("base.urls")),
-    path('api/admins/', include("admins.urls")),
+    path("admin/", admin.site.urls),
+    path("api/user/", include("user.urls")),
+    path("api/base/", include("base.urls")),
+    path("api/admins/", include("admins.urls")),
     re_path(
-            r'^uploads/(?P<path>.*)$', serve,
-            {'document_root': settings.MEDIA_ROOT, 'show_indexes': True}
-        ),
-    # re_path('.*', TemplateView.as_view(template_name='index.html')),
-] 
+        r"^uploads/(?P<path>.*)$",
+        serve,
+        {"document_root": settings.MEDIA_ROOT, "show_indexes": True},
+    ),
+]
+
+if settings.DJANGO_SPA:
+
+    urlpatterns.append(re_path(".*", TemplateView.as_view(template_name="index.html")))
 
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-
-
