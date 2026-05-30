@@ -73,7 +73,7 @@ const BuyCourse = () => {
         fetchCourse({
           slug: qs.get("course"),
           access: userCxt.auth ? userCxt.auth.access : null,
-        })
+        }),
       );
     }
     checkCourse();
@@ -112,7 +112,7 @@ const BuyCourse = () => {
                     <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
                       {course.course.category &&
                         courseCategories.find(
-                          (cat) => cat.short === course.course.category
+                          (cat) => cat.short === course.course.category,
                         ).title}
                     </div>
                   </div>

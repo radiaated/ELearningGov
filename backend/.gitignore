@@ -1,0 +1,9 @@
+penv/
+__pycache__/
+
+*.sh
+*.json
+db.sqlite3
+
+dist/
+
