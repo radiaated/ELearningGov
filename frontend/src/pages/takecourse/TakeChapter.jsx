@@ -17,7 +17,7 @@ const SyllabusList = () => {
       fetchBoughtCourse({
         slug: params["courseSlug"],
         access: userCxt.auth.access,
-      })
+      }),
     );
   }, []);
 
@@ -28,9 +28,7 @@ const SyllabusList = () => {
         <div className="flex gap-1">
           <div className="w-[20%]">
             <img
-              src={`${import.meta.env.VITE_API_URL}${
-                boughtCourse.boughtCourse.thumbnail
-              }`}
+              src={boughtCourse.boughtCourse.thumbnail}
               className="block object-cover rounded-md"
             />
           </div>
@@ -83,7 +81,7 @@ const TakeChapter = () => {
         chapterSlug: params["chapterSlug"],
         courseSlug: params["courseSlug"],
         access: userCxt.auth.access,
-      })
+      }),
     );
   }, [params]);
   return (

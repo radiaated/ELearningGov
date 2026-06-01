@@ -58,7 +58,7 @@ const CartPage = () => {
             <div className="flex gap-4 col-span-3 py-4">
               <div className="">
                 <img
-                  src={`${import.meta.env.VITE_API_URL}${item.thumbnail}`}
+                  src={item.thumbnail}
                   alt=""
                   className="block w-fit h-24 object-cover rounded-md"
                 />
@@ -75,7 +75,7 @@ const CartPage = () => {
                   <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
                     {item.category &&
                       courseCategories.find(
-                        (cat) => cat.short === item.category
+                        (cat) => cat.short === item.category,
                       ).title}
                   </div>
                 </div>
@@ -110,7 +110,7 @@ const CartPage = () => {
                 buyCourse({
                   course_id: course_id,
                   price: parseInt(
-                    cart.reduce((total, xx) => total + Number(xx.price), 0)
+                    cart.reduce((total, xx) => total + Number(xx.price), 0),
                   ),
                   // price: 1000,
                 });

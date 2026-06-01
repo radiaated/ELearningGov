@@ -11,12 +11,12 @@ export const fetchCourseList = createAsyncThunk(
 
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/courses${
+      url: `${import.meta.env.VITE_API_URL}/api/base/course${
         pl ? `/?${x}` : "/"
       }`,
     });
     return data;
-  }
+  },
 );
 
 export const fetchCourse = createAsyncThunk(
@@ -40,7 +40,7 @@ export const fetchCourse = createAsyncThunk(
     }
 
     return data;
-  }
+  },
 );
 
 export const fetchBoughtCourse = createAsyncThunk(
@@ -53,7 +53,7 @@ export const fetchBoughtCourse = createAsyncThunk(
     });
 
     return data;
-  }
+  },
 );
 
 export const fetchChapter = createAsyncThunk(
@@ -68,7 +68,7 @@ export const fetchChapter = createAsyncThunk(
     });
 
     return data;
-  }
+  },
 );
 
 const initialState = {

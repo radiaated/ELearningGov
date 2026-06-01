@@ -137,7 +137,7 @@ const Course = () => {
       fetchCourse({
         slug: params["courseSlug"],
         access: userCxt.auth ? userCxt.auth.access : null,
-      })
+      }),
     );
   }, []);
 
@@ -160,7 +160,7 @@ const Course = () => {
               <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
                 {course.course.category &&
                   courseCategories.find(
-                    (cat) => cat.short === course.course.category
+                    (cat) => cat.short === course.course.category,
                   ).title}
               </div>
               <div className="text-xs">
@@ -242,8 +242,8 @@ const Course = () => {
               <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-full md:w-[70%] mx-auto right-[15%] shadow-lg">
                 <div>
                   <img
-                    src={import.meta.env.VITE_API_URL + course.course.thumbnail}
-                    className="h-64 w-full object-cover "
+                    src={course.course.thumbnail}
+                    className="h-64 w-full object-cover"
                   />
                 </div>
 
@@ -276,7 +276,7 @@ const Course = () => {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
-                      }
+                      },
                     )}
                   </span>
                 </div>
@@ -299,7 +299,7 @@ const Course = () => {
                         ownFreeCourse(course.course.slug);
                       } else {
                         navigate(
-                          `/buycourse?type=course&course=${course.course.slug}`
+                          `/buycourse?type=course&course=${course.course.slug}`,
                         );
                       }
                     }}
