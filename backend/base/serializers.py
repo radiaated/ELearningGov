@@ -16,6 +16,15 @@ class ChapterSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CourseWithChaptersSerializer(serializers.ModelSerializer):
+
+    course_chapters = ChapterSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Course
+        fields = "__all__"
+
+
 class StudyMaterialSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -91,14 +91,14 @@ class CourseReview(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name="review_user",
+        related_name="course_review_user",
     )
-    online_course = models.ForeignKey(
+    course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name="review_course",
+        related_name="course_coursereviews",
     )
     rating = models.IntegerField(default=5, null=False, blank=False)
     comment = models.CharField(max_length=1000, null=False, blank=False)

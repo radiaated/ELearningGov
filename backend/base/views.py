@@ -5,7 +5,12 @@ from django.http import FileResponse
 from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import CourseSerializer, ChapterSerializer, StudyMaterialSerializer
+from .serializers import (
+    CourseSerializer,
+    ChapterSerializer,
+    StudyMaterialSerializer,
+    CourseWithChaptersSerializer,
+)
 from .models import Course, Chapter, Event, StudyMaterial
 from user.serializers import *
 from user.models import CourseReview
@@ -13,218 +18,277 @@ from django.contrib.auth.models import User
 from django.db.models import Avg, Count
 from django.conf import settings
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 # Create your views here.
 
 
-# Get a list of courses for public view
-@api_view(["GET"])
-def get_online_courses(request):
+class CourseListView(ListAPIView):
+    queryset = Course.objects.all().order_by("date_created")
+    serializer_class = CourseSerializer
+    lookup_field = "slug"
 
-    online_courses = OnlineCourse.objects.all().order_by("date_created")
+    def get_queryset(self):
+        queryset = super().get_queryset()
 
-    if request.GET.get("search") and request.GET.get("category"):
-        online_courses = online_courses.filter(
-            title__contains=request.GET.get("search"),
-            category=request.GET.get("category"),
+        search = self.request.GET.get("search")
+        category = self.request.GET.get("category")
+
+        if search:
+            queryset = queryset.filter(title__icontains=search)
+
+        if category:
+            queryset = queryset.filter(category=category)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().annotate(
+            avg_rating=Avg("course_coursereviews__rating"),
+            reviews_count=Count("course_coursereviews", distinct=True),
         )
-    elif request.GET.get("search"):
-        online_courses = online_courses.filter(
-            title__contains=request.GET.get("search")
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 5
+
+        page = paginator.paginate_queryset(queryset, request)
+        serializer = self.get_serializer(page, many=True)
+
+        data = serializer.data
+
+        for item in data:
+            item["avg_rating"] = item.get("avg_rating") or 0
+            item["reviews_count"] = item.get("reviews_count") or 0
+
+        return paginator.get_paginated_response(data)
+
+
+class CourseWithChaptersRetreiveView(RetrieveAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        return Course.objects.annotate(
+            avg_rating=Avg("course_coursereviews__rating"),
+            reviews_count=Count("course_coursereviews", distinct=True),
         )
-    elif request.GET.get("category"):
-        online_courses = online_courses.filter(category=request.GET.get("category"))
 
-    paginator = PageNumberPagination()
-    paginator.page_size = 5
-    result_page = paginator.paginate_queryset(online_courses, request)
-
-    if online_courses:
-
-        serializers = CourseSerializer(result_page, many=True).data
-
-        for oc in serializers:
-            avg_rating = CourseReview.objects.filter(
-                online_course__id=oc["id"]
-            ).aggregate(Avg("rating"))["rating__avg"]
-
-            oc["avg_rating"] = avg_rating if avg_rating else 0
-            oc["reviews_count"] = len(
-                CourseReview.objects.filter(online_course__id=oc["id"])
-            )
-
-        return paginator.get_paginated_response(serializers)
-    else:
-        return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+    def retrieve(self, request, *args, **kwargs):
+        course = self.get_object()
+        serializer = self.get_serializer(course)
+        return Response(serializer.data)
 
 
-# Get course detail
-@api_view(["GET"])
-def get_online_course(request, slug):
+# [DONE!]
+# # Get a list of courses for public view
+# @api_view(["GET"])
+# def get_online_courses(request):
 
-    online_course = Course.objects.get(slug=slug)
+#     online_courses = OnlineCourse.objects.all().order_by("date_created")
 
-    course = Chapter.objects.filter(online_course=online_course).order_by("chpt")
+#     if request.GET.get("search") and request.GET.get("category"):
+#         online_courses = online_courses.filter(
+#             title__contains=request.GET.get("search"),
+#             category=request.GET.get("category"),
+#         )
+#     elif request.GET.get("search"):
+#         online_courses = online_courses.filter(
+#             title__contains=request.GET.get("search")
+#         )
+#     elif request.GET.get("category"):
+#         online_courses = online_courses.filter(category=request.GET.get("category"))
 
-    reviews = CourseReview.objects.filter(online_course__slug=slug).order_by(
-        "-date_created"
-    )
+#     paginator = PageNumberPagination()
+#     paginator.page_size = 5
+#     result_page = paginator.paginate_queryset(online_courses, request)
 
-    avg_rating = CourseReview.objects.filter(online_course__slug=slug).aggregate(
-        Avg("rating")
-    )
+#     if online_courses:
 
-    if online_course:
+#         serializers = CourseSerializer(result_page, many=True).data
 
-        oc_serializers = CourseSerializer(online_course)
-        c_serializers = CourseSerializer(course, many=True)
-        r_serializers = CourseReviewSerializer(reviews, many=True)
-        oc_serializers = dict(oc_serializers.data)
-        oc_serializers["syllabus"] = c_serializers.data
+#         for oc in serializers:
+#             avg_rating = CourseReview.objects.filter(
+#                 online_course__id=oc["id"]
+#             ).aggregate(Avg("rating"))["rating__avg"]
 
-        oc_serializers["reviews"] = r_serializers.data
-        oc_serializers["avg_rating"] = (
-            avg_rating["rating__avg"] if avg_rating["rating__avg"] else 0
-        )
-        oc_serializers["count_rating"] = len(reviews)
-        return Response(oc_serializers, status=status.HTTP_200_OK)
-    else:
-        return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#             oc["avg_rating"] = avg_rating if avg_rating else 0
+#             oc["reviews_count"] = len(
+#                 CourseReview.objects.filter(online_course__id=oc["id"])
+#             )
 
-
-# Gets a chapter
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_bought_online_course(request, slug):
-
-    online_course = OnlineCourse.objects.get(slug=slug)
-
-    course = Course.objects.filter(online_course=online_course).order_by("chpt")
-
-    reviews = CourseReview.objects.filter(online_course__slug=slug).order_by(
-        "-date_created"
-    )
-
-    avg_rating = CourseReview.objects.filter(online_course__slug=slug).aggregate(
-        Avg("rating")
-    )
-
-    if online_course:
-
-        oc_serializers = CourseSerializer(online_course)
-        c_serializers = ChapterSerializer(course, many=True)
-        r_serializers = CourseReviewSerializer(reviews, many=True)
-        oc_serializers = dict(oc_serializers.data)
-        oc_serializers["syllabus"] = c_serializers.data
-        oc_serializers["reviews"] = r_serializers.data
-        oc_serializers["avg_rating"] = avg_rating["rating__avg"]
-        oc_serializers["count_rating"] = len(reviews)
-        return Response(oc_serializers, status=status.HTTP_200_OK)
-    else:
-        return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#         return paginator.get_paginated_response(serializers)
+#     else:
+#         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
 
-# Gets a bought chapter
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_bought_chapter(request, slug):
+# # Get course detail
+# @api_view(["GET"])
+# def get_online_course(request, slug):
 
-    online_course = Course.objects.get(slug=slug)
+#     online_course = Course.objects.get(slug=slug)
 
-    course = Chapter.objects.filter(
-        online_course=online_course, slug=request.GET.get("chapter_slug")
-    )[0]
+#     course = Chapter.objects.filter(online_course=online_course).order_by("chpt")
 
-    if online_course:
+#     reviews = CourseReview.objects.filter(online_course__slug=slug).order_by(
+#         "-date_created"
+#     )
 
-        c_serializers = ChapterSerializer(course)
+#     avg_rating = CourseReview.objects.filter(online_course__slug=slug).aggregate(
+#         Avg("rating")
+#     )
 
-        return Response(c_serializers.data, status=status.HTTP_200_OK)
-    else:
-        return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#     if online_course:
 
+#         oc_serializers = CourseSerializer(online_course)
+#         c_serializers = CourseSerializer(course, many=True)
+#         r_serializers = CourseReviewSerializer(reviews, many=True)
+#         oc_serializers = dict(oc_serializers.data)
+#         oc_serializers["syllabus"] = c_serializers.data
 
-# Downloads study materials
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def download_studym(request):
-
-    sm = StudyMaterial.objects.get(slug=request.GET.get("slug"))
-
-    sm.dw_count += 1
-
-    sm.save()
-
-    return Response({"file": str(sm.file)}, status=status.HTTP_200_OK)
-
-
-# Gets the student materials
-@api_view(["GET"])
-def get_study_materials(request):
-
-    study_materials = StudyMaterial.objects.all().order_by("date_created")
-    if request.GET.get("search") and request.GET.get("category"):
-        study_materials = study_materials.filter(
-            title__contains=request.GET.get("search"),
-            category=request.GET.get("category"),
-        )
-    elif request.GET.get("search"):
-        study_materials = study_materials.filter(
-            title__contains=request.GET.get("search")
-        )
-    elif request.GET.get("category"):
-        study_materials = study_materials.filter(category=request.GET.get("category"))
-
-    paginator = PageNumberPagination()
-    paginator.page_size = 5
-    result_page = paginator.paginate_queryset(study_materials, request)
-
-    if study_materials:
-
-        serializers = StudyMaterialSerializer(result_page, many=True).data
-
-        return paginator.get_paginated_response(serializers)
-
-    else:
-        return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#         oc_serializers["reviews"] = r_serializers.data
+#         oc_serializers["avg_rating"] = (
+#             avg_rating["rating__avg"] if avg_rating["rating__avg"] else 0
+#         )
+#         oc_serializers["count_rating"] = len(reviews)
+#         return Response(oc_serializers, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
 
-# Gets the student material details
-@api_view(["GET"])
-def get_study_material(request, slug):
+# # Gets a chapter
+# @api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+# def get_bought_online_course(request, slug):
 
-    study_material = StudyMaterial.objects.get(slug=slug)
+#     online_course = OnlineCourse.objects.get(slug=slug)
 
-    if study_material:
-        serializers = StudyMaterialSerializer(study_material)
-        return Response(serializers.data, status=status.HTTP_200_OK)
-    else:
-        return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#     course = Course.objects.filter(online_course=online_course).order_by("chpt")
+
+#     reviews = CourseReview.objects.filter(online_course__slug=slug).order_by(
+#         "-date_created"
+#     )
+
+#     avg_rating = CourseReview.objects.filter(online_course__slug=slug).aggregate(
+#         Avg("rating")
+#     )
+
+#     if online_course:
+
+#         oc_serializers = CourseSerializer(online_course)
+#         c_serializers = ChapterSerializer(course, many=True)
+#         r_serializers = CourseReviewSerializer(reviews, many=True)
+#         oc_serializers = dict(oc_serializers.data)
+#         oc_serializers["syllabus"] = c_serializers.data
+#         oc_serializers["reviews"] = r_serializers.data
+#         oc_serializers["avg_rating"] = avg_rating["rating__avg"]
+#         oc_serializers["count_rating"] = len(reviews)
+#         return Response(oc_serializers, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(["GET"])
-def get_events(request):
+# # Gets a bought chapter
+# @api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+# def get_bought_chapter(request, slug):
 
-    events = Event.objects.all().order_by("date_created")
-    if request.GET.get("category"):
-        events = Event.filter(category=request.GET.get("category"))
+#     online_course = Course.objects.get(slug=slug)
 
-    if events:
+#     course = Chapter.objects.filter(
+#         online_course=online_course, slug=request.GET.get("chapter_slug")
+#     )[0]
 
-        serializers = EventSerializer(events, many=True)
+#     if online_course:
 
-        return Response(serializers.data, status=status.HTTP_200_OK)
-    else:
-        return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#         c_serializers = ChapterSerializer(course)
+
+#         return Response(c_serializers.data, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
 
-@api_view(["GET"])
-def get_event(request, id):
+# # Downloads study materials
+# @api_view(["GET"])
+# @permission_classes([IsAuthenticated])
+# def download_studym(request):
 
-    events = Event.objects.get(id=id)
+#     sm = StudyMaterial.objects.get(slug=request.GET.get("slug"))
 
-    if events:
-        serializers = EventSerializer(events)
-        return Response(serializers.data, status=status.HTTP_200_OK)
-    else:
-        return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#     sm.dw_count += 1
+
+#     sm.save()
+
+#     return Response({"file": str(sm.file)}, status=status.HTTP_200_OK)
+
+
+# # Gets the student materials
+# @api_view(["GET"])
+# def get_study_materials(request):
+
+#     study_materials = StudyMaterial.objects.all().order_by("date_created")
+#     if request.GET.get("search") and request.GET.get("category"):
+#         study_materials = study_materials.filter(
+#             title__contains=request.GET.get("search"),
+#             category=request.GET.get("category"),
+#         )
+#     elif request.GET.get("search"):
+#         study_materials = study_materials.filter(
+#             title__contains=request.GET.get("search")
+#         )
+#     elif request.GET.get("category"):
+#         study_materials = study_materials.filter(category=request.GET.get("category"))
+
+#     paginator = PageNumberPagination()
+#     paginator.page_size = 5
+#     result_page = paginator.paginate_queryset(study_materials, request)
+
+#     if study_materials:
+
+#         serializers = StudyMaterialSerializer(result_page, many=True).data
+
+#         return paginator.get_paginated_response(serializers)
+
+#     else:
+#         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+
+
+# # Gets the student material details
+# @api_view(["GET"])
+# def get_study_material(request, slug):
+
+#     study_material = StudyMaterial.objects.get(slug=slug)
+
+#     if study_material:
+#         serializers = StudyMaterialSerializer(study_material)
+#         return Response(serializers.data, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+
+
+# @api_view(["GET"])
+# def get_events(request):
+
+#     events = Event.objects.all().order_by("date_created")
+#     if request.GET.get("category"):
+#         events = Event.filter(category=request.GET.get("category"))
+
+#     if events:
+
+#         serializers = EventSerializer(events, many=True)
+
+#         return Response(serializers.data, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+
+
+# @api_view(["GET"])
+# def get_event(request, id):
+
+#     events = Event.objects.get(id=id)
+
+#     if events:
+#         serializers = EventSerializer(events)
+#         return Response(serializers.data, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"course_detail": "Empty"}, status=status.HTTP_404_NOT_FOUND)
