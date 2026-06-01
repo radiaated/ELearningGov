@@ -9,7 +9,7 @@ from .models import *
 from base.models import Course
 from django.contrib.auth.hashers import make_password
 from .serializers import *
-from base.serializers import OnlineCourseSerializer
+from base.serializers import CourseSerializer
 from datetime import datetime
 from django.contrib.auth.models import User
 import requests

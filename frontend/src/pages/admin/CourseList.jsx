@@ -9,9 +9,11 @@ const CourseList = () => {
     try {
       const { data } = await axios({
         method: "GET",
-        url: `${import.meta.env.VITE_API_URL}/api/admins/courses/`,
+        url: `${import.meta.env.VITE_API_URL}/api/admins/course/`,
         withCredentials: true,
       });
+      console.log(data);
+
       setCourses(data);
     } catch {}
   };
@@ -20,7 +22,7 @@ const CourseList = () => {
     try {
       const { data } = await axios({
         method: "DELETE",
-        url: `${import.meta.env.VITE_API_URL}/api/admins/courses/${slug}/`,
+        url: `${import.meta.env.VITE_API_URL}/api/admins/course/${slug}/`,
         withCredentials: true,
       });
       fetchCourses();
@@ -46,10 +48,7 @@ const CourseList = () => {
         {courses.map((course, i) => (
           <div className="grid grid-cols-12 pt-4" key={i}>
             <div className="col-span-1">
-              <img
-                src={import.meta.env.VITE_API_URL + course.course.thumbnail}
-                className="h-16 w-16 object-cover"
-              />
+              <img src={course.thumbnail} className="h-16 w-16 object-cover" />
             </div>
             <div className="col-span-8">{course.title}</div>
             <div className="col-span-3 flex gap-1">

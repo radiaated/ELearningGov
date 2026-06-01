@@ -1,10 +1,8 @@
+from .views import CourseViewSet
+from rest_framework import routers
 
-from django.urls import path
-from . import views
+router = routers.SimpleRouter()
 
+router.register(r"course", CourseViewSet)
 
-urlpatterns = [
-    
-    path('courses/', views.CourseListView.as_view(), name='courselist-view'),
-    path('courses/<str:slug>/', views.CourseItemView.as_view(), name='courselitem-view'),
-]
+urlpatterns = router.urls

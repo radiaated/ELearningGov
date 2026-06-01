@@ -5,10 +5,10 @@ from django.http import FileResponse
 from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .serializers import *
-from .models import *
+from .serializers import CourseSerializer, ChapterSerializer, StudyMaterialSerializer
+from .models import Course, Chapter, Event, StudyMaterial
 from user.serializers import *
-from user.models import *
+from user.models import CourseReview
 from django.contrib.auth.models import User
 from django.db.models import Avg, Count
 from django.conf import settings
@@ -41,7 +41,7 @@ def get_online_courses(request):
 
     if online_courses:
 
-        serializers = OnlineCourseSerializer(result_page, many=True).data
+        serializers = CourseSerializer(result_page, many=True).data
 
         for oc in serializers:
             avg_rating = CourseReview.objects.filter(
@@ -62,9 +62,9 @@ def get_online_courses(request):
 @api_view(["GET"])
 def get_online_course(request, slug):
 
-    online_course = OnlineCourse.objects.get(slug=slug)
+    online_course = Course.objects.get(slug=slug)
 
-    course = Course.objects.filter(online_course=online_course).order_by("chpt")
+    course = Chapter.objects.filter(online_course=online_course).order_by("chpt")
 
     reviews = CourseReview.objects.filter(online_course__slug=slug).order_by(
         "-date_created"
@@ -76,7 +76,7 @@ def get_online_course(request, slug):
 
     if online_course:
 
-        oc_serializers = OnlineCourseSerializer(online_course)
+        oc_serializers = CourseSerializer(online_course)
         c_serializers = CourseSerializer(course, many=True)
         r_serializers = CourseReviewSerializer(reviews, many=True)
         oc_serializers = dict(oc_serializers.data)
@@ -111,8 +111,8 @@ def get_bought_online_course(request, slug):
 
     if online_course:
 
-        oc_serializers = OnlineCourseSerializer(online_course)
-        c_serializers = CourseSerializer(course, many=True)
+        oc_serializers = CourseSerializer(online_course)
+        c_serializers = ChapterSerializer(course, many=True)
         r_serializers = CourseReviewSerializer(reviews, many=True)
         oc_serializers = dict(oc_serializers.data)
         oc_serializers["syllabus"] = c_serializers.data
@@ -129,15 +129,15 @@ def get_bought_online_course(request, slug):
 @permission_classes([IsAuthenticated])
 def get_bought_chapter(request, slug):
 
-    online_course = OnlineCourse.objects.get(slug=slug)
+    online_course = Course.objects.get(slug=slug)
 
-    course = Course.objects.filter(
+    course = Chapter.objects.filter(
         online_course=online_course, slug=request.GET.get("chapter_slug")
     )[0]
 
     if online_course:
 
-        c_serializers = CourseSerializer(course)
+        c_serializers = ChapterSerializer(course)
 
         return Response(c_serializers.data, status=status.HTTP_200_OK)
     else:

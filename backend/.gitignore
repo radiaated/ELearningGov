@@ -5,5 +5,7 @@ __pycache__/
 *.json
 db.sqlite3
 
+uploads/
+
 .env
 
