@@ -226,9 +226,9 @@ const Course = () => {
               <div>
                 <h3 className="text-lg font-medium my-3">Reviews</h3>
                 <div className="flex flex-col gap-2">
-                  {course.course.reviews?.length === 0 && "No reviews"}
-                  {course.course.reviews &&
-                    course.course.reviews.map((rev, ind) => (
+                  {course.course.course_reviews?.length === 0 && "No reviews"}
+                  {course.course.course_reviews &&
+                    course.course.course_reviews.map((rev, ind) => (
                       <CourseReviews
                         rev={rev}
                         deleteReview={deleteReview}

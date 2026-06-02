@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Course, Chapter, StudyMaterial, Event
+from user.serializers import CourseReviewSerializer
 
 
 class ChapterSerializer(serializers.ModelSerializer):
@@ -19,6 +20,9 @@ class ChapterSerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     course_chapters = ChapterSerializer(many=True, read_only=True)
+    course_reviews = CourseReviewSerializer(
+        source="course_coursereviews", many=True, read_only=True
+    )
     avg_rating = serializers.FloatField(read_only=True)
     reviews_count = serializers.IntegerField(read_only=True)
 

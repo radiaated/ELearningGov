@@ -352,8 +352,8 @@ const TakeCoursePage = () => {
                       </form>
                     </div>
                     <div className="flex flex-col gap-2">
-                      {boughtCourse.boughtCourse.reviews &&
-                        boughtCourse.boughtCourse.reviews.map((rev) => (
+                      {boughtCourse.boughtCourse.course_reviews &&
+                        boughtCourse.boughtCourse.course_reviews.map((rev) => (
                           <CourseReviews
                             rev={rev}
                             deleteReview={deleteReview}

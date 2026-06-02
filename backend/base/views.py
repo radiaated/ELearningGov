@@ -18,7 +18,7 @@ class CourseListView(ListAPIView):
 
     def get_serializer(self, *args, **kwargs):
         return super().get_serializer(
-            *args, **kwargs, exclude_fields=["course_chapters"]
+            *args, **kwargs, exclude_fields=["course_chapters", "course_reviews"]
         )
 
     def get_queryset(self):

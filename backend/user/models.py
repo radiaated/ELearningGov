@@ -105,4 +105,4 @@ class CourseReview(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username}, {self.online_course.title}"
+        return f"{self.user.username}, {self.course.title}"
