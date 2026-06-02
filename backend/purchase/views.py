@@ -120,7 +120,7 @@ class VerifyCourseOwnershipView(APIView):
     def get(self, request):
 
         if CoursePurchase.objects.filter(
-            user=request.user, online_course__slug=request.GET.get("course_slug")
+            user=request.user, course__slug=request.GET.get("course_slug")
         ).exists():
 
             return Response({"status": True}, status=status.HTTP_200_OK)

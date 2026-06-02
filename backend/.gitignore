@@ -2,7 +2,6 @@ penv/
 __pycache__/
 
 *.sh
-*.json
 db.sqlite3
 
 uploads/
