@@ -18,7 +18,7 @@ from django.db import transaction
 import uuid
 from rest_framework import generics
 from rest_framework import views
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, UpdateAPIView
 
 
 import os
@@ -223,6 +223,14 @@ class ProfileAPIView(RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         return self.request.user.user_userprofile
+
+
+class PasswordUpdateAPIView(UpdateAPIView):
+    serializer_class = PasswordUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 
 # Profile

@@ -51,13 +51,14 @@ const Profile = () => {
 
   const updateUserPassword = async () => {
     const payload = {
-      password: password,
-      oldpassword: prevPassword,
+      password,
+      password2,
+      old_password: prevPassword,
     };
 
     await axios({
       method: "PUT",
-      url: `${import.meta.env.VITE_API_URL}/api/user/profile/`,
+      url: `${import.meta.env.VITE_API_URL}/api/user/password-update/`,
       data: payload,
       withCredentials: true,
     }).then((res) => {

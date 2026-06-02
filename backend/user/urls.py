@@ -10,6 +10,11 @@ urlpatterns = [
     path("token/refresh/", views.MyTokenRefreshView.as_view(), name="token_refresh"),
     path("logout/", views.MyTokenBacklistView.as_view(), name="logout"),
     path("profile/", views.ProfileAPIView.as_view(), name="user-profile"),
+    path(
+        "password-update/",
+        views.PasswordUpdateAPIView.as_view(),
+        name="user-password-update",
+    ),
     # path("profilecourses/", views.course_trans_s),
     # path("profilecourse/", views.course_trans),
     # path("coursereview/", views.course_review),
