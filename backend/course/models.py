@@ -77,7 +77,7 @@ class Chapter(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.online_course.title}, {self.title}"
+        return f"{self.course.title}, {self.title}"
 
 
 class CourseReview(models.Model):

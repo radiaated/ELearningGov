@@ -3,12 +3,12 @@ from .models import CoursePurchase
 
 
 class CoursePurchaseSerializer(serializers.ModelSerializer):
-    title = serializers.ReadOnlyField(source="online_course.title")
-    description = serializers.ReadOnlyField(source="online_course.description")
-    thumbnail = serializers.ImageField(source="online_course.thumbnail")
-    price = serializers.ReadOnlyField(source="online_course.price")
-    category = serializers.ReadOnlyField(source="online_course.category")
-    slug = serializers.ReadOnlyField(source="online_course.slug")
+    title = serializers.ReadOnlyField(source="course.title")
+    description = serializers.ReadOnlyField(source="course.description")
+    thumbnail = serializers.ImageField(source="course.thumbnail")
+    price = serializers.ReadOnlyField(source="course.price")
+    category = serializers.ReadOnlyField(source="course.category")
+    slug = serializers.ReadOnlyField(source="course.slug")
 
     class Meta:
         model = CoursePurchase
