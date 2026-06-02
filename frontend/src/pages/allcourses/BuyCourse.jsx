@@ -44,7 +44,7 @@ const BuyCourse = () => {
     try {
       const { data } = await axios({
         method: "POST",
-        url: `${import.meta.env.VITE_API_URL}/api/user/purchase-course/`,
+        url: `${import.meta.env.VITE_API_URL}/api/purchase/purchase-course/`,
         data: payload,
         withCredentials: true,
       });

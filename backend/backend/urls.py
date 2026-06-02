@@ -26,7 +26,9 @@ from django.views.static import serve
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/user/", include("user.urls")),
+    path("api/auth/", include("auth.urls")),
     path("api/course/", include("course.urls")),
+    path("api/purchase/", include("purchase.urls")),
     path("api/admins/", include("admins.urls")),
     re_path(
         r"^uploads/(?P<path>.*)$",

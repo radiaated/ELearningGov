@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    "auth",
+    "purchase",
     "user",
     "course",
     "admins",
@@ -76,7 +78,7 @@ REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": [
     #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     # ],
-    "DEFAULT_AUTHENTICATION_CLASSES": ("user.authentication.CustomAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("auth.authentication.CustomAuthentication",),
 }
 
 SIMPLE_JWT = {
