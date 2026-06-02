@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, CourseReview
+from .models import UserProfile
 
 
 class PasswordUpdateSerializer(serializers.ModelSerializer):
@@ -61,7 +61,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         user_data = validated_data.pop("user")
-        print(user_data)
         user_serializer = UserSerializer(
             instance=instance.user, data=user_data, partial=True
         )
@@ -69,14 +68,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user_serializer.save()
 
         return super().update(instance, validated_data)
-
-
-class CourseReviewSerializer(serializers.ModelSerializer):
-    username = serializers.ReadOnlyField(source="user.username")
-
-    class Meta:
-        model = CourseReview
-        fields = ["id", "username", "date_created", "rating", "comment"]
 
 
 # TODO

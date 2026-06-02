@@ -5,16 +5,16 @@ urlpatterns = [
     path(
         "purchase-course/",
         views.PurchaseCourseView.as_view(),
-        name="course-purchase-course",
+        name="purchase-purchase-course",
     ),
     path(
         "verify-payment/",
         views.VerifyPurchaseCourseView.as_view(),
-        name="user-verify-purhcase-course",
+        name="purchase-verify-purhcase-course",
     ),
     path(
         "verify-course-ownership/",
         views.VerifyCourseOwnershipView.as_view(),
-        name="user-verify-course-ownership",
+        name="purchase-verify-course-ownership",
     ),
 ]

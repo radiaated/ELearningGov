@@ -1,13 +1,15 @@
 from django.db.models import Avg, Count
+from django.shortcuts import get_object_or_404
 
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Course, Chapter
-from .serializers import (
-    CourseSerializer,
-    ChapterSerializer,
-)
+from .serializers import CourseSerializer, ChapterSerializer, CourseReviewSerializer
 
 
 # Create your views here.
@@ -101,3 +103,42 @@ class TakeChapterRetreiveView(RetrieveAPIView):
 
     def get_queryset(self):
         return Chapter.objects.filter(course__slug=self.kwargs["course_slug"])
+
+
+class CourseReviewCreateUpdateDestroyView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, course_slug):
+
+        course = get_object_or_404(Course, slug=course_slug)
+
+        serializer = CourseReviewSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user, course=course)
+
+        return Response(serializer.data)
+
+    def put(self, request):
+        course_slug = request.GET.get("course")
+        course = get_object_or_404(Course, slug=course_slug)
+
+        review = self.get_object(course, request.user)
+
+        serializer = CourseReviewSerializer(review, data=request.data, partial=False)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        course_slug = request.GET.get("course")
+        course = get_object_or_404(Course, slug=course_slug)
+
+        review = self.get_object(course, request.user)
+        review.delete()
+
+        return Response(
+            {"detail": "Review deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )

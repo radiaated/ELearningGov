@@ -38,8 +38,6 @@ class PurchaseCourseView(APIView):
             },
         )
 
-        print(res.text)
-
         return Response(json.loads(res.text), status=status.HTTP_200_OK)
 
 
@@ -49,8 +47,6 @@ class VerifyPurchaseCourseView(APIView):
     def post(self, request):
         pidx = request.data.get("pidx")
         course_ids_raw = request.GET.get("course_ids", "")
-
-        print(request.GET)
 
         if not pidx:
             return Response(

@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Chapter
-from user.serializers import CourseReviewSerializer
+from .models import Course, Chapter, CourseReview
 
 
 class ChapterSerializer(serializers.ModelSerializer):
@@ -16,6 +15,14 @@ class ChapterSerializer(serializers.ModelSerializer):
         if exclude_fields:
             for field in exclude_fields:
                 self.fields.pop(field, None)
+
+
+class CourseReviewSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(source="user.username")
+
+    class Meta:
+        model = CourseReview
+        fields = ["id", "username", "date_created", "rating", "comment"]
 
 
 class CourseSerializer(serializers.ModelSerializer):

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 
 from rest_framework import status, exceptions
+from rest_framework.permissions import AllowAny
 from rest_framework.generics import (
     CreateAPIView,
 )
@@ -79,8 +80,6 @@ class MyTokenRefreshView(TokenRefreshView):
             request.data["refresh"] = request.COOKIES.get("refresh")
             response = super().post(request, *args, **kwargs)
 
-            print(request.user)
-
             access_token = response.data["access"]
             refresh_token = response.data["refresh"]
 
@@ -135,24 +134,21 @@ class MyTokenBacklistView(TokenRefreshView):
 
             request.data["refresh"] = raw_refresh_token
 
-            print(request.data)
             response = super().post(request, *args, **kwargs)
             response.data = {"detail": "Logged out"}
             response = self.clear_cookies(response)
-            print("returnd_top")
             return response
         except Exception as ex:
-            print(ex)
 
             response = Response({"detail": "Logged out"})
 
             response = self.clear_cookies(response)
 
-            print("returnd_bottom")
-
             return Response({"detail": "Logged out"})
 
 
 class RegisterView(CreateAPIView):
+    permission_classes = [AllowAny]
+
     queryset = User.objects.all()
     serializer_class = RegisterSerializer

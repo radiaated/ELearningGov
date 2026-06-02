@@ -39,8 +39,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         academic_level = validated_data.pop("academic_level")
         validated_data.pop("password2")
 
-        print("a")
-
         # create user
         user = User.objects.create_user(**validated_data)
 

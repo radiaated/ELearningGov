@@ -11,11 +11,6 @@ urlpatterns = [
     path(
         "course/",
         views.UserCoursesListAPIView.as_view(),
-        name="course-user-course-list",
-    ),
-    path(
-        "course-review/",
-        views.CourseReviewCreateUpdateDestroyView.as_view(),
-        name="user-course-review-create-update-destroy",
+        name="user-user-course-list",
     ),
 ]

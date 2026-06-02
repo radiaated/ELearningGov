@@ -136,7 +136,7 @@ const TakeCoursePage = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/course-review/?course=${params["courseSlug"]}`,
+      }/api/course/${params["courseSlug"]}/course-review/`,
       method: "POST",
       data: { comment: pl.comment, rating: starRating },
       withCredentials: true,
@@ -171,7 +171,7 @@ const TakeCoursePage = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/course-review/?review_id=${id}`,
+      }/api/course/course-review/?review_id=${id}`,
       method: "DELETE",
       withCredentials: true,
     }).then(() => {

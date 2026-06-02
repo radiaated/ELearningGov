@@ -18,6 +18,11 @@ urlpatterns = [
         views.TakeChapterRetreiveView.as_view(),
         name="course-takechapter-retrieve",
     ),
+    path(
+        "<slug:course_slug>/course-review/",
+        views.CourseReviewCreateUpdateDestroyView.as_view(),
+        name="course-course-review-create-update-destroy",
+    ),
     # TODO:
     # path('studymaterials/'),
     # path('studymaterial/<slug:slug>/'),

@@ -54,11 +54,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    "admins",
     "auth",
-    "purchase",
     "user",
     "course",
-    "admins",
+    "purchase",
 ]
 
 MIDDLEWARE = [
@@ -75,9 +75,9 @@ MIDDLEWARE = [
 
 
 REST_FRAMEWORK = {
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    # ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("auth.authentication.CustomAuthentication",),
 }
 
