@@ -12,12 +12,14 @@ urlpatterns = [
         name="user-password-update",
     ),
     path(
-        "course/", views.UserCoursesListAPIView.as_view(), name="base-user-course-list"
+        "course/",
+        views.UserCoursesListAPIView.as_view(),
+        name="course-user-course-list",
     ),
     path(
         "purchase-course/",
         views.PurchaseCourseView.as_view(),
-        name="base-purchase-course",
+        name="course-purchase-course",
     ),
     path(
         "course-review/",

@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from base.models import Course, Chapter
+from course.models import Course, Chapter
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from base.serializers import CourseSerializer, ChapterSerializer
+from course.serializers import CourseSerializer, ChapterSerializer
 from rest_framework.decorators import APIView, permission_classes
 from rest_framework.permissions import IsAdminUser
 from django.db import transaction

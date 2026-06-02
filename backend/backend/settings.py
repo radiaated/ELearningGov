@@ -55,14 +55,14 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "user",
-    "base",
+    "course",
     "admins",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    # "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     # "django.middleware.csrf.CsrfViewMiddleware",
@@ -73,9 +73,9 @@ MIDDLEWARE = [
 
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ],
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    # ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("user.authentication.CustomAuthentication",),
 }
 

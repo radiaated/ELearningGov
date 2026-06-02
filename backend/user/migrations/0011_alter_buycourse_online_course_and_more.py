@@ -7,19 +7,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0020_remove_course_online_course_and_more'),
-        ('user', '0010_coursereview_date_created'),
+        ("course", "0020_remove_course_online_course_and_more"),
+        ("user", "0010_coursereview_date_created"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='buycourse',
-            name='online_course',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='buycourse_course', to='base.course'),
+            model_name="buycourse",
+            name="online_course",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="buycourse_course",
+                to="course.course",
+            ),
         ),
         migrations.AlterField(
-            model_name='coursereview',
-            name='online_course',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='review_course', to='base.course'),
+            model_name="coursereview",
+            name="online_course",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="review_course",
+                to="course.course",
+            ),
         ),
     ]

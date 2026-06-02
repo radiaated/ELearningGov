@@ -8,25 +8,53 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0021_rename_online_course_chapter_course'),
-        ('user', '0012_remove_coursereview_online_course_and_more'),
+        ("course", "0021_rename_online_course_chapter_course"),
+        ("user", "0012_remove_coursereview_online_course_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CoursePurchase',
+            name="CoursePurchase",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_created', models.DateTimeField(auto_now_add=True)),
-                ('pidx', models.CharField(blank=True, max_length=24, null=True)),
-                ('total_amount', models.IntegerField(blank=True, default=1000, null=True)),
-                ('transaction_id', models.CharField(blank=True, max_length=24, null=True)),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='course_coursepurchases', to='base.course')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_coursepurchases', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("date_created", models.DateTimeField(auto_now_add=True)),
+                ("pidx", models.CharField(blank=True, max_length=24, null=True)),
+                (
+                    "total_amount",
+                    models.IntegerField(blank=True, default=1000, null=True),
+                ),
+                (
+                    "transaction_id",
+                    models.CharField(blank=True, max_length=24, null=True),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="course_coursepurchases",
+                        to="course.course",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_coursepurchases",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.DeleteModel(
-            name='BuyCourse',
+            name="BuyCourse",
         ),
     ]

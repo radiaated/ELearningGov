@@ -22,8 +22,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from base.serializers import CourseSerializer
-from base.models import Course
+from course.serializers import CourseSerializer
+from course.models import Course
 
 from .models import CoursePurchase
 from .serializers import (

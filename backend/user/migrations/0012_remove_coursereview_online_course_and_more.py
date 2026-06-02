@@ -8,25 +8,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('base', '0021_rename_online_course_chapter_course'),
-        ('user', '0011_alter_buycourse_online_course_and_more'),
+        ("course", "0021_rename_online_course_chapter_course"),
+        ("user", "0011_alter_buycourse_online_course_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='coursereview',
-            name='online_course',
+            model_name="coursereview",
+            name="online_course",
         ),
         migrations.AddField(
-            model_name='coursereview',
-            name='course',
-            field=models.ForeignKey(default=5, on_delete=django.db.models.deletion.CASCADE, related_name='course_coursereviews', to='base.course'),
+            model_name="coursereview",
+            name="course",
+            field=models.ForeignKey(
+                default=5,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="course_coursereviews",
+                to="course.course",
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='coursereview',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='course_review_user', to=settings.AUTH_USER_MODEL),
+            model_name="coursereview",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="course_review_user",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

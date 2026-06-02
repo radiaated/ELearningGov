@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from base.models import Course
+from course.models import Course
 
 # Create your models here.
 
