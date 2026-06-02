@@ -9,7 +9,6 @@ from .serializers import (
     CourseSerializer,
     ChapterSerializer,
     StudyMaterialSerializer,
-    CourseWithChaptersSerializer,
 )
 from .models import Course, Chapter, Event, StudyMaterial
 from user.serializers import *
@@ -19,6 +18,7 @@ from django.db.models import Avg, Count
 from django.conf import settings
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from django.db.models.functions import Coalesce
 
 # Create your views here.
 
@@ -27,6 +27,11 @@ class CourseListView(ListAPIView):
     queryset = Course.objects.all().order_by("date_created")
     serializer_class = CourseSerializer
     lookup_field = "slug"
+
+    def get_serializer(self, *args, **kwargs):
+        return super().get_serializer(
+            *args, **kwargs, exclude_fields=["course_chapters"]
+        )
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -40,25 +45,22 @@ class CourseListView(ListAPIView):
         if category:
             queryset = queryset.filter(category=category)
 
-        return queryset
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().annotate(
+        queryset = queryset.annotate(
             avg_rating=Avg("course_coursereviews__rating"),
             reviews_count=Count("course_coursereviews", distinct=True),
         )
 
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+
         paginator = PageNumberPagination()
         paginator.page_size = 5
 
-        page = paginator.paginate_queryset(queryset, request)
+        page = paginator.paginate_queryset(self.get_queryset(), request)
         serializer = self.get_serializer(page, many=True)
 
         data = serializer.data
-
-        for item in data:
-            item["avg_rating"] = item.get("avg_rating") or 0
-            item["reviews_count"] = item.get("reviews_count") or 0
 
         return paginator.get_paginated_response(data)
 
@@ -68,16 +70,18 @@ class CourseWithChaptersRetreiveView(RetrieveAPIView):
     serializer_class = CourseSerializer
     lookup_field = "slug"
 
+    def get_serializer(self, *args, **kwargs):
+        context = self.get_serializer_context()
+        context["include_chapter_video"] = False
+        kwargs["context"] = context
+
+        return super().get_serializer(*args, **kwargs)
+
     def get_queryset(self):
         return Course.objects.annotate(
             avg_rating=Avg("course_coursereviews__rating"),
             reviews_count=Count("course_coursereviews", distinct=True),
         )
-
-    def retrieve(self, request, *args, **kwargs):
-        course = self.get_object()
-        serializer = self.get_serializer(course)
-        return Response(serializer.data)
 
 
 # [DONE!]
@@ -121,7 +125,7 @@ class CourseWithChaptersRetreiveView(RetrieveAPIView):
 #     else:
 #         return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
-
+# [DONE!]
 # # Get course detail
 # @api_view(["GET"])
 # def get_online_course(request, slug):

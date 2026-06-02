@@ -175,8 +175,8 @@ const Course = () => {
               <div className="">
                 <h3 className="text-xl font-medium my-4">Contents:</h3>
                 <Accordion allowMultipleExpanded={false}>
-                  {course.course.syllabus &&
-                    course.course.syllabus.map((syl, ind) => (
+                  {course.course.course_chapters &&
+                    course.course.course_chapters.map((syl, ind) => (
                       <AccordionItem key={ind}>
                         <AccordionItemHeading>
                           <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
