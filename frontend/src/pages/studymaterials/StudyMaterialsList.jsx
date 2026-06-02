@@ -11,7 +11,7 @@ const StudyMaterialsList = () => {
   const dispatch = useDispatch();
   let [qs, setQs] = useSearchParams();
   const [cat, setCat] = useState(
-    qs.get("category") ? qs.get("category") : "none"
+    qs.get("category") ? qs.get("category") : "none",
   );
   const { studyMaterials } = useSelector((state) => state.studyMaterials);
 
@@ -110,7 +110,7 @@ const StudyMaterialsList = () => {
               <div key={sm.id} className="py-2">
                 <Link to={`/studymaterial/${sm.slug}`}>
                   <img
-                    src={import.meta.env.VITE_API_URL + sm.thumbnail}
+                    src={sm.thumbnail}
                     className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
                   />
 

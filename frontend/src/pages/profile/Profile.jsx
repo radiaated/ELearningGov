@@ -32,7 +32,7 @@ const Profile = () => {
     const payload = {
       username: username ? username : profile.username,
       email: email ? email : profile.email,
-      full_name: fullName ? fullName : profile.full_name,
+      first_name: fullName ? fullName : profile.full_name,
       address: address ? address : profile.address,
       phone: phone ? phone : profile.phone,
       academic_level: academicLevel ? academicLevel : profile.academic_level,
@@ -51,13 +51,14 @@ const Profile = () => {
 
   const updateUserPassword = async () => {
     const payload = {
-      password: password,
-      oldpassword: prevPassword,
+      password,
+      password2,
+      old_password: prevPassword,
     };
 
     await axios({
       method: "PUT",
-      url: `${import.meta.env.VITE_API_URL}/api/user/profile/`,
+      url: `${import.meta.env.VITE_API_URL}/api/user/password-update/`,
       data: payload,
       withCredentials: true,
     }).then((res) => {
@@ -90,8 +91,8 @@ const Profile = () => {
                   username !== null
                     ? username
                     : profile.profile.username
-                    ? profile.profile.username
-                    : ""
+                      ? profile.profile.username
+                      : ""
                 }
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -104,8 +105,8 @@ const Profile = () => {
                   email !== null
                     ? email
                     : profile.profile.email
-                    ? profile.profile.email
-                    : ""
+                      ? profile.profile.email
+                      : ""
                 }
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -118,8 +119,8 @@ const Profile = () => {
                   fullName !== null
                     ? fullName
                     : profile.profile.full_name
-                    ? profile.profile.full_name
-                    : ""
+                      ? profile.profile.full_name
+                      : ""
                 }
                 onChange={(e) => setFullName(e.target.value)}
               />
@@ -171,8 +172,8 @@ const Profile = () => {
                   address !== null
                     ? address
                     : profile.profile.address
-                    ? profile.profile.address
-                    : ""
+                      ? profile.profile.address
+                      : ""
                 }
                 onChange={(e) => setAddress(e.target.value)}
               />
@@ -185,8 +186,8 @@ const Profile = () => {
                   phone !== null
                     ? phone
                     : profile.profile.phone
-                    ? profile.profile.phone
-                    : ""
+                      ? profile.profile.phone
+                      : ""
                 }
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -198,8 +199,8 @@ const Profile = () => {
                   academicLevel !== null
                     ? academicLevel
                     : profile.profile.academic_level
-                    ? profile.profile.academic_level
-                    : ""
+                      ? profile.profile.academic_level
+                      : ""
                 }
                 onChange={(e) => setAcademicLevel(e.target.value)}
               >

@@ -33,7 +33,7 @@ const CourseItem = ({ course }) => {
     <div key={course.id} className="py-2">
       <Link to={`/course/${course.slug}`}>
         <img
-          src={import.meta.env.VITE_API_URL + course.thumbnail}
+          src={course.thumbnail}
           className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
         />
 

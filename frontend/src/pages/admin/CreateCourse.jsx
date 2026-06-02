@@ -130,7 +130,7 @@ const CreateCourse = () => {
     try {
       await axios({
         method: "POST",
-        url: `${import.meta.env.VITE_API_URL}/api/admins/courses/`,
+        url: `${import.meta.env.VITE_API_URL}/api/admins/course/`,
         data: fd,
         withCredentials: true,
       });
@@ -325,6 +325,7 @@ const CreateCourse = () => {
               </div>
               <div className="col-span-2">
                 <button
+                  type="button"
                   onClick={() =>
                     setChapters((state) => {
                       let temp = [...state];

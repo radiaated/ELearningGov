@@ -11,7 +11,7 @@ export const fetchStudyMaterials = createAsyncThunk(
 
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/studymaterials${
+      url: `${import.meta.env.VITE_API_URL}/api/studymaterials${
         pl ? `/?${x}` : "/"
       }`,
       headers: {
@@ -20,21 +20,21 @@ export const fetchStudyMaterials = createAsyncThunk(
     });
 
     return data;
-  }
+  },
 );
 export const fetchStudyMaterial = createAsyncThunk(
   "studyMaterials/fetchStudyMaterial",
   async (slug) => {
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/studymaterial/${slug}/`,
+      url: `${import.meta.env.VITE_API_URL}/api/studymaterial/${slug}/`,
       headers: {
         "Content-Type": "application/json",
       },
     });
 
     return data;
-  }
+  },
 );
 
 const initialState = {

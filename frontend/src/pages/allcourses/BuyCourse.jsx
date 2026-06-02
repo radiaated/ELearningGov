@@ -44,7 +44,7 @@ const BuyCourse = () => {
     try {
       const { data } = await axios({
         method: "POST",
-        url: `${import.meta.env.VITE_API_URL}/api/user/profilecourses/`,
+        url: `${import.meta.env.VITE_API_URL}/api/purchase/purchase-course/`,
         data: payload,
         withCredentials: true,
       });
@@ -73,7 +73,7 @@ const BuyCourse = () => {
         fetchCourse({
           slug: qs.get("course"),
           access: userCxt.auth ? userCxt.auth.access : null,
-        })
+        }),
       );
     }
     checkCourse();
@@ -92,7 +92,7 @@ const BuyCourse = () => {
                 <hr className="mb-4" />
                 <div className="flex flex-col md:flex-row gap-4">
                   <img
-                    src={import.meta.env.VITE_API_URL + course.course.thumbnail}
+                    src={course.course.thumbnail}
                     className="h-36 md:-*24 rounded-md object-cover"
                   />
                   <div className="flex flex-col gap-1">
@@ -112,7 +112,7 @@ const BuyCourse = () => {
                     <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
                       {course.course.category &&
                         courseCategories.find(
-                          (cat) => cat.short === course.course.category
+                          (cat) => cat.short === course.course.category,
                         ).title}
                     </div>
                   </div>

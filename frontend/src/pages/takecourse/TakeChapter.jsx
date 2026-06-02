@@ -17,7 +17,7 @@ const SyllabusList = () => {
       fetchBoughtCourse({
         slug: params["courseSlug"],
         access: userCxt.auth.access,
-      })
+      }),
     );
   }, []);
 
@@ -28,9 +28,7 @@ const SyllabusList = () => {
         <div className="flex gap-1">
           <div className="w-[20%]">
             <img
-              src={`${import.meta.env.VITE_API_URL}${
-                boughtCourse.boughtCourse.thumbnail
-              }`}
+              src={boughtCourse.boughtCourse.thumbnail}
               className="block object-cover rounded-md"
             />
           </div>
@@ -46,8 +44,8 @@ const SyllabusList = () => {
       </div>
       <h4 className="text-xl font-semibold mb-4">Chapters</h4>
       <div className="flex flex-col gap-4 w-fit">
-        {boughtCourse.boughtCourse.syllabus &&
-          boughtCourse.boughtCourse.syllabus.map((syl, index) => {
+        {boughtCourse.boughtCourse.course_chapters &&
+          boughtCourse.boughtCourse.course_chapters.map((syl, index) => {
             return (
               <div
                 key={index}
@@ -83,7 +81,7 @@ const TakeChapter = () => {
         chapterSlug: params["chapterSlug"],
         courseSlug: params["courseSlug"],
         access: userCxt.auth.access,
-      })
+      }),
     );
   }, [params]);
   return (
@@ -142,9 +140,7 @@ const TakeChapter = () => {
               <LionPlayer
                 sources={[
                   {
-                    src: `${import.meta.env.VITE_API_URL}${
-                      boughtChapter.boughtChapter.video
-                    }`,
+                    src: boughtChapter.boughtChapter.video,
                     type: "video/mp4",
                   },
                 ]}

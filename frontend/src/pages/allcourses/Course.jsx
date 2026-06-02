@@ -100,7 +100,7 @@ const Course = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/coursereview/?review_id=${id}`,
+      }/api/course/course-review/?review_id=${id}`,
       method: "DELETE",
       withCredentials: true,
     }).then(() => {
@@ -137,7 +137,7 @@ const Course = () => {
       fetchCourse({
         slug: params["courseSlug"],
         access: userCxt.auth ? userCxt.auth.access : null,
-      })
+      }),
     );
   }, []);
 
@@ -160,7 +160,7 @@ const Course = () => {
               <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
                 {course.course.category &&
                   courseCategories.find(
-                    (cat) => cat.short === course.course.category
+                    (cat) => cat.short === course.course.category,
                   ).title}
               </div>
               <div className="text-xs">
@@ -175,8 +175,8 @@ const Course = () => {
               <div className="">
                 <h3 className="text-xl font-medium my-4">Contents:</h3>
                 <Accordion allowMultipleExpanded={false}>
-                  {course.course.syllabus &&
-                    course.course.syllabus.map((syl, ind) => (
+                  {course.course.course_chapters &&
+                    course.course.course_chapters.map((syl, ind) => (
                       <AccordionItem key={ind}>
                         <AccordionItemHeading>
                           <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
@@ -226,9 +226,9 @@ const Course = () => {
               <div>
                 <h3 className="text-lg font-medium my-3">Reviews</h3>
                 <div className="flex flex-col gap-2">
-                  {course.course.reviews?.length === 0 && "No reviews"}
-                  {course.course.reviews &&
-                    course.course.reviews.map((rev, ind) => (
+                  {course.course.course_reviews?.length === 0 && "No reviews"}
+                  {course.course.course_reviews &&
+                    course.course.course_reviews.map((rev, ind) => (
                       <CourseReviews
                         rev={rev}
                         deleteReview={deleteReview}
@@ -242,8 +242,8 @@ const Course = () => {
               <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-full md:w-[70%] mx-auto right-[15%] shadow-lg">
                 <div>
                   <img
-                    src={import.meta.env.VITE_API_URL + course.course.thumbnail}
-                    className="h-64 w-full object-cover "
+                    src={course.course.thumbnail}
+                    className="h-64 w-full object-cover"
                   />
                 </div>
 
@@ -276,7 +276,7 @@ const Course = () => {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
-                      }
+                      },
                     )}
                   </span>
                 </div>
@@ -299,7 +299,7 @@ const Course = () => {
                         ownFreeCourse(course.course.slug);
                       } else {
                         navigate(
-                          `/buycourse?type=course&course=${course.course.slug}`
+                          `/buycourse?type=course&course=${course.course.slug}`,
                         );
                       }
                     }}

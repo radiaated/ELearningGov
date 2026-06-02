@@ -94,10 +94,11 @@ const UpdateCourse = () => {
     try {
       const { data } = await axios({
         method: "GET",
-        url: `${import.meta.env.VITE_API_URL}/api/admins/courses/${
-          param.slug
-        }/`,
+        url: `${import.meta.env.VITE_API_URL}/api/admins/course/${param.slug}/`,
+        withCredentials: true,
       });
+      console.log(data);
+
       reset(data.course);
       setChapters(data.chapters);
     } catch {}
@@ -117,7 +118,7 @@ const UpdateCourse = () => {
     fd.append("thumbnail", payload.thumbnail ? payload.thumbnail[0] : null);
     fd.append(
       "preview_video",
-      payload.preview_video ? payload.preview_video[0] : null
+      payload.preview_video ? payload.preview_video[0] : null,
     );
     fd.append("price", payload.price);
 
@@ -134,7 +135,7 @@ const UpdateCourse = () => {
     // try {
     await axios({
       method: "PUT",
-      url: `${import.meta.env.VITE_API_URL}/api/admins/courses/${param.slug}/`,
+      url: `${import.meta.env.VITE_API_URL}/api/admins/course/${param.slug}/`,
       data: fd,
       withCredentials: true,
     });
@@ -321,6 +322,7 @@ const UpdateCourse = () => {
               </div>
               <div className="col-span-2">
                 <button
+                  type="button"
                   onClick={() =>
                     setChapters((state) => {
                       let temp = [...state];

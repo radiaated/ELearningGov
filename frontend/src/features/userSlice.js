@@ -11,8 +11,11 @@ export const fetchProfile = createAsyncThunk(
       withCredentials: true,
     });
 
-    return data;
-  }
+    const { first_name, ...data2 } = data;
+    data2.full_name = first_name;
+
+    return data2;
+  },
 );
 
 export const fetchUserCourses = createAsyncThunk(
@@ -20,12 +23,12 @@ export const fetchUserCourses = createAsyncThunk(
   async (access) => {
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/user/profilecourses/`,
+      url: `${import.meta.env.VITE_API_URL}/api/user/course/`,
       withCredentials: true,
     });
 
     return data;
-  }
+  },
 );
 
 const initialState = {

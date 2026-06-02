@@ -11,12 +11,10 @@ export const fetchCourseList = createAsyncThunk(
 
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/courses${
-        pl ? `/?${x}` : "/"
-      }`,
+      url: `${import.meta.env.VITE_API_URL}/api/course${pl ? `/?${x}` : "/"}`,
     });
     return data;
-  }
+  },
 );
 
 export const fetchCourse = createAsyncThunk(
@@ -24,14 +22,14 @@ export const fetchCourse = createAsyncThunk(
   async (pl) => {
     let { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/course/${pl.slug}/`,
+      url: `${import.meta.env.VITE_API_URL}/api/course/${pl.slug}/`,
     });
 
     if (pl.access) {
       let data2 = await axios({
         url: `${
           import.meta.env.VITE_API_URL
-        }/api/user/checkcourseown/?course_slug=${pl.slug}`,
+        }/api/purchase/verify-course-ownership/?course_slug=${pl.slug}`,
         method: "GET",
         withCredentials: true,
       });
@@ -40,7 +38,7 @@ export const fetchCourse = createAsyncThunk(
     }
 
     return data;
-  }
+  },
 );
 
 export const fetchBoughtCourse = createAsyncThunk(
@@ -48,12 +46,12 @@ export const fetchBoughtCourse = createAsyncThunk(
   async (pl) => {
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/takecourse/${pl.slug}/`,
+      url: `${import.meta.env.VITE_API_URL}/api/course/takecourse/${pl.slug}/`,
       withCredentials: true,
     });
 
     return data;
-  }
+  },
 );
 
 export const fetchChapter = createAsyncThunk(
@@ -61,14 +59,14 @@ export const fetchChapter = createAsyncThunk(
   async (pl) => {
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/takechapter/${
+      url: `${import.meta.env.VITE_API_URL}/api/course/takechapter/${
         pl.courseSlug
-      }/?chapter_slug=${pl.chapterSlug}`,
+      }/${pl.chapterSlug}/`,
       withCredentials: true,
     });
 
     return data;
-  }
+  },
 );
 
 const initialState = {

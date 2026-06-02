@@ -39,7 +39,7 @@ const UserCourses = () => {
                 >
                   <img
                     className="block h-24 w-full md:w-32 object-cover mr-2"
-                    src={`${import.meta.env.VITE_API_URL}${course.thumbnail}`}
+                    src={course.thumbnail}
                     alt=""
                   />
                   <div>
@@ -50,7 +50,7 @@ const UserCourses = () => {
                     <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
                       {course.category &&
                         courseCategories.find(
-                          (cat) => cat.short === course.category
+                          (cat) => cat.short === course.category,
                         ).title}
                     </div>
                   </div>

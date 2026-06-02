@@ -15,7 +15,7 @@ export const UserContextProvider = ({ children }) => {
   const [auth, setAuth] = useState(
     localStorage.getItem("auth")
       ? JSON.parse(localStorage.getItem("auth"))
-      : null
+      : null,
   );
 
   const loginUser = async (payload) => {
@@ -23,7 +23,7 @@ export const UserContextProvider = ({ children }) => {
     setLogging(true);
     await axios({
       method: "POST",
-      url: `${import.meta.env.VITE_API_URL}/api/user/token/`,
+      url: `${import.meta.env.VITE_API_URL}/api/auth/token/`,
       data: payload,
       withCredentials: true,
     })
@@ -42,7 +42,7 @@ export const UserContextProvider = ({ children }) => {
 
   const logout = async () => {
     await axios({
-      url: `${import.meta.env.VITE_API_URL}/api/user/logout/`,
+      url: `${import.meta.env.VITE_API_URL}/api/auth/logout/`,
       method: "POST",
       withCredentials: true,
     }).finally((res) => {
@@ -57,7 +57,7 @@ export const UserContextProvider = ({ children }) => {
     setSigning(true);
     await axios({
       method: "POST",
-      url: `${import.meta.env.VITE_API_URL}/api/user/register/`,
+      url: `${import.meta.env.VITE_API_URL}/api/auth/register/`,
       data: payload,
     })
       .then((res) => {
@@ -73,7 +73,7 @@ export const UserContextProvider = ({ children }) => {
 
   const refresh = async () => {
     await axios({
-      url: `${import.meta.env.VITE_API_URL}/api/user/token/refresh/`,
+      url: `${import.meta.env.VITE_API_URL}/api/auth/token/refresh/`,
       method: "POST",
       withCredentials: true,
     }).then((res) => {

@@ -28,12 +28,12 @@ const StudyMaterial = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/base/download/studymaterial/?slug=${slug}`,
+      }/api/download/studymaterial/?slug=${slug}`,
       method: "GET",
     }).then((res) => {
       window.open(
         `${import.meta.env.VITE_API_URL}/uploads/${res.data.file}`,
-        "_blank"
+        "_blank",
       );
     });
   };
@@ -51,7 +51,7 @@ const StudyMaterial = () => {
               <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
                 {studyMaterial.studyMaterial.category &&
                   courseCategories.find(
-                    (cat) => cat.short === studyMaterial.studyMaterial.category
+                    (cat) => cat.short === studyMaterial.studyMaterial.category,
                   ).title}
               </div>
               <h3 className="text-2xl font-medium">
@@ -81,10 +81,7 @@ const StudyMaterial = () => {
             </div>
             <div className="space-y-4 text-sm">
               <img
-                src={
-                  import.meta.env.VITE_API_URL +
-                  studyMaterial.studyMaterial.thumbnail
-                }
+                src={studyMaterial.studyMaterial.thumbnail}
                 className="h-64 block"
               />
 
@@ -101,7 +98,7 @@ const StudyMaterial = () => {
                 <i className="fa-regular fa-clock"></i>
                 Updated: {"  "}
                 {new Date(
-                  studyMaterial.studyMaterial.date_created
+                  studyMaterial.studyMaterial.date_created,
                 ).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
