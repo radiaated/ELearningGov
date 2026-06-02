@@ -41,54 +41,54 @@ The platform enables students to browse and enroll in online video courses, secu
 
     2.1. Go to directory `backend`
 
-        ```bash
-        cd backend
-        ```
+    ```bash
+    cd backend
+    ```
 
     2.2. Install Python dependencies
 
-        ```bash
-        pip install -r requirements.txt
-        ```
+    ```bash
+    pip install -r requirements.txt
+    ```
 
     2.3. Apply database migrations
 
-        ```bash
-        python manage.py makemigrations
-        python manage.py migrate
-        ```
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
 
     2.4. Load default course and chapter records
 
-        ```bash
-        python manage.py load_db
-        ```
+    ```bash
+    python manage.py load_db
+    ```
 
     2.5. Run Django server
 
-        ```bash
-        python manage.py runserver
-        ```
+    ```bash
+    python manage.py runserver
+    ```
 
 3.  Install frontend
 
     3.1. Go to directory `frontend`
 
-        ```bash
-        cd frontend
-        ```
+    ```bash
+    cd frontend
+    ```
 
     3.2. Install node dependencies
 
-        ```bash
-        npm i
-        ```
+    ```bash
+    npm i
+    ```
 
     3.3. Run React server
 
-        ```bash
-        npm run dev
-        ```
+    ```bash
+    npm run dev
+    ```
 
 ---
 
