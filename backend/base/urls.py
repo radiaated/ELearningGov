@@ -8,4 +8,20 @@ urlpatterns = [
         views.CourseWithChaptersRetreiveView.as_view(),
         name="base-course-retrieve",
     ),
+    path(
+        "takecourse/<slug:slug>/",
+        views.TakeCourseRetreiveView.as_view(),
+        name="base-takecourse-retrieve",
+    ),
+    path(
+        "takechapter/<slug:course_slug>/<slug:chapter_slug>/",
+        views.TakeChapterRetreiveView.as_view(),
+        name="base-takechapter-retrieve",
+    ),
+    # TODO:
+    # path('studymaterials/'),
+    # path('studymaterial/<slug:slug>/'),
+    # path('download/studymaterial/'),
+    # path('events/'),
+    # path('event/<slug:slug>/'),
 ]

@@ -43,6 +43,7 @@ class CourseSerializer(serializers.ModelSerializer):
             )
 
 
+# TODO
 class StudyMaterialSerializer(serializers.ModelSerializer):
 
     class Meta:

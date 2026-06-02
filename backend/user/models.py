@@ -37,20 +37,20 @@ class UserDetail(models.Model):
         return self.user.username
 
 
-class BuyCourse(models.Model):
+class CoursePurchase(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name="buycourse_user",
+        related_name="user_coursepurchases",
     )
-    online_course = models.ForeignKey(
+    course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name="buycourse_course",
+        related_name="course_coursepurchases",
     )
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
     pidx = models.CharField(max_length=24, null=True, blank=True)
@@ -58,7 +58,7 @@ class BuyCourse(models.Model):
     transaction_id = models.CharField(max_length=24, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username}, {self.online_course.title}"
+        return f"{self.user.username}, {self.course.title}"
 
 
 class BuyStudyMat(models.Model):

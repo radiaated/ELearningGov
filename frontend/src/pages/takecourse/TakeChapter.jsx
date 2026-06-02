@@ -44,8 +44,8 @@ const SyllabusList = () => {
       </div>
       <h4 className="text-xl font-semibold mb-4">Chapters</h4>
       <div className="flex flex-col gap-4 w-fit">
-        {boughtCourse.boughtCourse.syllabus &&
-          boughtCourse.boughtCourse.syllabus.map((syl, index) => {
+        {boughtCourse.boughtCourse.course_chapters &&
+          boughtCourse.boughtCourse.course_chapters.map((syl, index) => {
             return (
               <div
                 key={index}
@@ -140,9 +140,7 @@ const TakeChapter = () => {
               <LionPlayer
                 sources={[
                   {
-                    src: `${import.meta.env.VITE_API_URL}${
-                      boughtChapter.boughtChapter.video
-                    }`,
+                    src: boughtChapter.boughtChapter.video,
                     type: "video/mp4",
                   },
                 ]}

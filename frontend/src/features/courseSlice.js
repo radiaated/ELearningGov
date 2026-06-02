@@ -63,7 +63,7 @@ export const fetchChapter = createAsyncThunk(
       method: "GET",
       url: `${import.meta.env.VITE_API_URL}/api/base/takechapter/${
         pl.courseSlug
-      }/?chapter_slug=${pl.chapterSlug}`,
+      }/${pl.chapterSlug}/`,
       withCredentials: true,
     });
 

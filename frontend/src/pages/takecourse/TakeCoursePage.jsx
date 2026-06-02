@@ -148,7 +148,7 @@ const TakeCoursePage = () => {
         fetchBoughtCourse({
           slug: params["courseSlug"],
           access: userCxt.auth.access,
-        })
+        }),
       );
     });
   };
@@ -181,7 +181,7 @@ const TakeCoursePage = () => {
         fetchBoughtCourse({
           slug: params["courseSlug"],
           access: userCxt.auth.access,
-        })
+        }),
       );
     });
   };
@@ -191,7 +191,7 @@ const TakeCoursePage = () => {
       fetchBoughtCourse({
         slug: params["courseSlug"],
         access: userCxt.auth.access,
-      })
+      }),
     );
     setQs({ view: "content" });
   }, []);
@@ -216,7 +216,7 @@ const TakeCoursePage = () => {
               <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
                 {boughtCourse.boughtCourse.category &&
                   courseCategories.find(
-                    (cat) => cat.short === boughtCourse.boughtCourse.category
+                    (cat) => cat.short === boughtCourse.boughtCourse.category,
                   ).title}
               </div>
               <div className="text-xs">
@@ -258,57 +258,60 @@ const TakeCoursePage = () => {
 
                 {qs.get("view") === "content" && (
                   <Accordion allowMultipleExpanded={false}>
-                    {boughtCourse.boughtCourse.syllabus &&
-                      boughtCourse.boughtCourse.syllabus.map((syl, idx) => (
-                        <AccordionItem key={idx}>
-                          <AccordionItemHeading>
-                            <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
-                              <div className="font-medium text-xl flex justify-between">
-                                <div>
-                                  <div className="mb-1">
-                                    {syl.chpt}. {syl.title}
+                    {boughtCourse.boughtCourse.course_chapters &&
+                      boughtCourse.boughtCourse.course_chapters.map(
+                        (syl, idx) => (
+                          <AccordionItem key={idx}>
+                            <AccordionItemHeading>
+                              <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
+                                <div className="font-medium text-xl flex justify-between">
+                                  <div>
+                                    <div className="mb-1">
+                                      {syl.chpt}. {syl.title}
+                                    </div>
+                                    <div className="align-middle text-xs text-zinc-400">
+                                      <i className="fa-regular fa-clock mr-2"></i>
+                                      <span className="">
+                                        {syl.duration > 60
+                                          ? `${parseInt(syl.duration / 60)} hour${
+                                              parseInt(syl.duration / 60) >> 1
+                                                ? "s"
+                                                : ""
+                                            }, ${
+                                              syl.duration -
+                                              parseInt(syl.duration / 60) * 60
+                                            } minute${
+                                              syl.duration -
+                                                parseInt(syl.duration / 60) *
+                                                  60 >
+                                              1
+                                                ? "s"
+                                                : ""
+                                            }`
+                                          : `${syl.duration} minute${
+                                              syl.duration > 1 ? "s" : ""
+                                            }`}
+                                      </span>
+                                    </div>
                                   </div>
-                                  <div className="align-middle text-xs text-zinc-400">
-                                    <i className="fa-regular fa-clock mr-2"></i>
-                                    <span className="">
-                                      {syl.duration > 60
-                                        ? `${parseInt(syl.duration / 60)} hour${
-                                            parseInt(syl.duration / 60) >> 1
-                                              ? "s"
-                                              : ""
-                                          }, ${
-                                            syl.duration -
-                                            parseInt(syl.duration / 60) * 60
-                                          } minute${
-                                            syl.duration -
-                                              parseInt(syl.duration / 60) * 60 >
-                                            1
-                                              ? "s"
-                                              : ""
-                                          }`
-                                        : `${syl.duration} minute${
-                                            syl.duration > 1 ? "s" : ""
-                                          }`}
-                                    </span>
+                                  <div>
+                                    <i className="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
                                   </div>
                                 </div>
-                                <div>
-                                  <i className="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
-                                </div>
-                              </div>
-                            </AccordionItemButton>
-                          </AccordionItemHeading>
-                          <AccordionItemPanel className="bg-white border-b border-x border-zinc-200 p-4 pl-6 text-sm relative pb-16">
-                            <p>{syl.description}</p>
-                            <Link
-                              to={`/takecourse/${boughtCourse.boughtCourse.slug}/${syl.slug}`}
-                              className="block align-middle  text-white bg-orange-500 px-4 py-2 w-fit rounded-sm absolute hover:border-b-4 hover:border-orange-600 bottom-5 right-4"
-                            >
-                              Take <i className="fa-solid fa-arrow-right"></i>
-                            </Link>
-                          </AccordionItemPanel>
-                        </AccordionItem>
-                      ))}
+                              </AccordionItemButton>
+                            </AccordionItemHeading>
+                            <AccordionItemPanel className="bg-white border-b border-x border-zinc-200 p-4 pl-6 text-sm relative pb-16">
+                              <p>{syl.description}</p>
+                              <Link
+                                to={`/takecourse/${boughtCourse.boughtCourse.slug}/${syl.slug}`}
+                                className="block align-middle  text-white bg-orange-500 px-4 py-2 w-fit rounded-sm absolute hover:border-b-4 hover:border-orange-600 bottom-5 right-4"
+                              >
+                                Take <i className="fa-solid fa-arrow-right"></i>
+                              </Link>
+                            </AccordionItemPanel>
+                          </AccordionItem>
+                        ),
+                      )}
                   </Accordion>
                 )}
 
@@ -367,10 +370,7 @@ const TakeCoursePage = () => {
                 {" "}
                 <div>
                   <img
-                    src={
-                      import.meta.env.VITE_API_URL +
-                      boughtCourse.boughtCourse.thumbnail
-                    }
+                    src={boughtCourse.boughtCourse.thumbnail}
                     className="h-64 w-full object-cover "
                   />
                 </div>
@@ -382,7 +382,7 @@ const TakeCoursePage = () => {
                   <span className="block">
                     <i className="fa-regular fa-clock"></i> Updated: {"  "}
                     {new Date(
-                      boughtCourse.boughtCourse.date_created
+                      boughtCourse.boughtCourse.date_created,
                     ).toLocaleDateString("en-US", {
                       weekday: "long",
                       year: "numeric",
