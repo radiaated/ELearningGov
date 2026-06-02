@@ -28,7 +28,7 @@ const StudyMaterial = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/base/download/studymaterial/?slug=${slug}`,
+      }/api/download/studymaterial/?slug=${slug}`,
       method: "GET",
     }).then((res) => {
       window.open(

@@ -7,7 +7,7 @@ export const fetchEvents = createAsyncThunk(
   async (cat) => {
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/base/course${cat ? `/?category=${cat}` : "/"}`,
+      url: `${import.meta.env.VITE_API_URL}/api/course${cat ? `/?category=${cat}` : "/"}`,
     });
     return data;
   },
