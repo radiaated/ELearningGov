@@ -23,7 +23,7 @@ export const fetchUserCourses = createAsyncThunk(
   async (access) => {
     const { data } = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}/api/user/profilecourses/`,
+      url: `${import.meta.env.VITE_API_URL}/api/user/course/`,
       withCredentials: true,
     });
 

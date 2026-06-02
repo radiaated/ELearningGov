@@ -15,7 +15,7 @@ urlpatterns = [
         views.PasswordUpdateAPIView.as_view(),
         name="user-password-update",
     ),
-    # path("profilecourses/", views.course_trans_s),
+    path("course/", views.UserCoursesListAPIView.as_view(), name="base-user-course"),
     # path("profilecourse/", views.course_trans),
     # path("coursereview/", views.course_review),
     path("register/", views.RegisterView.as_view(), name="register"),

@@ -124,7 +124,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 
-class BuyCourseSerializer(serializers.ModelSerializer):
+class CoursePurchaseSerializer(serializers.ModelSerializer):
     title = serializers.ReadOnlyField(source="online_course.title")
     description = serializers.ReadOnlyField(source="online_course.description")
     thumbnail = serializers.ImageField(source="online_course.thumbnail")

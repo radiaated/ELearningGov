@@ -18,7 +18,12 @@ from django.db import transaction
 import uuid
 from rest_framework import generics
 from rest_framework import views
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, UpdateAPIView
+from rest_framework.generics import (
+    RetrieveUpdateDestroyAPIView,
+    UpdateAPIView,
+    ListCreateAPIView,
+    ListAPIView,
+)
 
 
 import os
@@ -326,51 +331,61 @@ class PasswordUpdateAPIView(UpdateAPIView):
 #         return Response({"message": "Account Deleted"}, status=status.HTTP_200_OK)
 
 
-@api_view(["GET", "POST", "DELETE"])
-@permission_classes([IsAuthenticated])
-def course_trans_s(request):
+class UserCoursesListAPIView(ListAPIView):
+    serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticated]
 
-    # Gets the list of all the purchased user's courses
-    if request.method == "GET":
-        buy_course = BuyCourse.objects.filter(user=request.user)
+    def get_queryset(self):
+        return Course.objects.filter(
+            course_coursepurchases__user=self.request.user
+        ).all()
 
-        if buy_course:
 
-            serializers = BuyCourseSerializer(buy_course, many=True)
+# @api_view(["GET", "POST", "DELETE"])
+# @permission_classes([IsAuthenticated])
+# def course_trans_s(request):
 
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#     # Gets the list of all the purchased user's courses
+#     if request.method == "GET":
+#         buy_course = BuyCourse.objects.filter(user=request.user)
 
-    # Initiates the payment for purchasing the course
-    elif request.method == "POST":
+#         if buy_course:
 
-        rd = request.data
+#             serializers = BuyCourseSerializer(buy_course, many=True)
 
-        trans_id = uuid.uuid1()
+#             return Response(serializers.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
-        payload = {
-            "return_url": "{prod_url}/verifypay".format(
-                prod_url=os.environ.get("PRODUCTION_URL")
-            ),
-            "website_url": "{prod_url}/".format(
-                prod_url=os.environ.get("PRODUCTION_URL")
-            ),
-            "amount": rd["price"],
-            "purchase_order_id": "course_" + str(trans_id),
-            "purchase_order_name": "_".join(rd["course_id"]),
-        }
+#     # Initiates the payment for purchasing the course
+#     elif request.method == "POST":
 
-        res = requests.post(
-            "https://a.khalti.com/api/v2/epayment/initiate/",
-            data=json.dumps(payload),
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": "Key ed5c97d78e1d4473acf4fd5ddabe488f",
-            },
-        )
+#         rd = request.data
 
-        return Response(json.loads(res.text), status=status.HTTP_200_OK)
+#         trans_id = uuid.uuid1()
+
+#         payload = {
+#             "return_url": "{prod_url}/verifypay".format(
+#                 prod_url=os.environ.get("PRODUCTION_URL")
+#             ),
+#             "website_url": "{prod_url}/".format(
+#                 prod_url=os.environ.get("PRODUCTION_URL")
+#             ),
+#             "amount": rd["price"],
+#             "purchase_order_id": "course_" + str(trans_id),
+#             "purchase_order_name": "_".join(rd["course_id"]),
+#         }
+
+#         res = requests.post(
+#             "https://a.khalti.com/api/v2/epayment/initiate/",
+#             data=json.dumps(payload),
+#             headers={
+#                 "Content-Type": "application/json",
+#                 "Authorization": "Key ed5c97d78e1d4473acf4fd5ddabe488f",
+#             },
+#         )
+
+#         return Response(json.loads(res.text), status=status.HTTP_200_OK)
 
 
 #
