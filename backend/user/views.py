@@ -16,6 +16,11 @@ import requests
 import json
 from django.db import transaction
 import uuid
+from rest_framework import generics
+from rest_framework import views
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
+
+
 import os
 
 # Create your views here.
@@ -150,7 +155,7 @@ class MyTokenBacklistView(TokenRefreshView):
             response = self.clear_cookies(response)
             print("returnd_top")
             return response
-        except:
+        except Exception as ex:
 
             response = Response({"detail": "Logged out"})
 
@@ -161,143 +166,156 @@ class MyTokenBacklistView(TokenRefreshView):
             return Response({"detail": "Logged out"})
 
 
-#
-# Register
-#
-@api_view(["POST"])
-@transaction.atomic
-def register(request):
-    if request.method == "POST":
-        rd = request.data
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
 
-        # Checks if username exists
-        if User.objects.filter(username=rd["username"]).exists():
-            return Response(
-                {"detail": "Username exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
 
-        # Checks if email exists
-        if User.objects.filter(email=rd["email"]).exists():
-            return Response(
-                {"detail": "Email exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
+# #
+# # Register
+# #
+# @api_view(["POST"])
+# @transaction.atomic
+# def register(request):
+#     if request.method == "POST":
+#         rd = request.data
 
-        user = User.objects.create(
-            username=rd["username"],
-            email=rd["email"],
-            first_name=rd["full_name"],
-            password=make_password(rd["password"]),
-        )
+#         # Checks if username exists
+#         if User.objects.filter(username=rd["username"]).exists():
+#             return Response(
+#                 {"detail": "Username exists"}, status=status.HTTP_400_BAD_REQUEST
+#             )
 
-        user_detail = UserDetail.objects.create(
-            gender=rd["gender"],
-            address=rd["address"],
-            phone=rd["phone"],
-            academic_level=rd["academic_level"],
-            user=user,
-        )
+#         # Checks if email exists
+#         if User.objects.filter(email=rd["email"]).exists():
+#             return Response(
+#                 {"detail": "Email exists"}, status=status.HTTP_400_BAD_REQUEST
+#             )
 
-        if user and user_detail:
-            user.save()
-            user_detail.save()
-            serializers = UserDetailSerializer(user_detail)
+#         user = User.objects.create(
+#             username=rd["username"],
+#             email=rd["email"],
+#             first_name=rd["full_name"],
+#             password=make_password(rd["password"]),
+#         )
 
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#         user_detail = UserDetail.objects.create(
+#             gender=rd["gender"],
+#             address=rd["address"],
+#             phone=rd["phone"],
+#             academic_level=rd["academic_level"],
+#             user=user,
+#         )
+
+#         if user and user_detail:
+#             user.save()
+#             user_detail.save()
+#             serializers = UserDetailSerializer(user_detail)
+
+#             return Response(serializers.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ProfileAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user.user_userprofile
 
 
 # Profile
-@api_view(["GET", "PUT"])
-@permission_classes([IsAuthenticated])
-def get_profile(request):
+# @api_view(["GET", "PUT"])
+# @permission_classes([IsAuthenticated])
+# def get_profile(request):
 
-    # Retrieve the user profile
-    if request.method == "GET":
+#     # Retrieve the user profile
+#     if request.method == "GET":
 
-        user_detail = UserDetail.objects.get(user=request.user)
+#         user_detail = UserDetail.objects.get(user=request.user)
 
-        if user_detail:
+#         if user_detail:
 
-            serializers = UserDetailSerializer(user_detail)
+#             serializers = UserDetailSerializer(user_detail)
 
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#             return Response(serializers.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Update the user profile
-    elif request.method == "PUT":
-        rd = request.data
+#     # Update the user profile
+#     elif request.method == "PUT":
+#         rd = request.data
 
-        user = User.objects.get(id=request.user.id)
-        if rd.get("username"):
-            if (
-                User.objects.filter(username=rd["username"])
-                .exclude(username=request.user.username)
-                .exists()
-            ):
-                return Response(
-                    {"message": "Username Exists"}, status=status.HTTP_403_FORBIDDEN
-                )
-            else:
-                user.username = rd["username"]
+#         user = User.objects.get(id=request.user.id)
+#         if rd.get("username"):
+#             if (
+#                 User.objects.filter(username=rd["username"])
+#                 .exclude(username=request.user.username)
+#                 .exists()
+#             ):
+#                 return Response(
+#                     {"message": "Username Exists"}, status=status.HTTP_403_FORBIDDEN
+#                 )
+#             else:
+#                 user.username = rd["username"]
 
-        if rd.get("full_name"):
-            user.first_name = rd["full_name"]
+#         if rd.get("full_name"):
+#             user.first_name = rd["full_name"]
 
-        if rd.get("email"):
-            if (
-                User.objects.filter(email=rd["email"])
-                .exclude(email=request.user.email)
-                .exists()
-            ):
-                return Response(
-                    {"message": "Email Exists"}, status=status.HTTP_403_FORBIDDEN
-                )
-            else:
-                user.email = rd["email"]
+#         if rd.get("email"):
+#             if (
+#                 User.objects.filter(email=rd["email"])
+#                 .exclude(email=request.user.email)
+#                 .exists()
+#             ):
+#                 return Response(
+#                     {"message": "Email Exists"}, status=status.HTTP_403_FORBIDDEN
+#                 )
+#             else:
+#                 user.email = rd["email"]
 
-        if rd.get("password"):
+#         if rd.get("password"):
 
-            if request.user.check_password(rd["oldpassword"]):
+#             if request.user.check_password(rd["oldpassword"]):
 
-                user.password = make_password(rd["password"])
-            else:
-                return Response(
-                    {"message": "Incorrect oldd password"},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
+#                 user.password = make_password(rd["password"])
+#             else:
+#                 return Response(
+#                     {"message": "Incorrect oldd password"},
+#                     status=status.HTTP_404_NOT_FOUND,
+#                 )
 
-        user_detail = UserDetail.objects.get(user=request.user)
+#         user_detail = UserDetail.objects.get(user=request.user)
 
-        if rd.get("gender"):
-            user_detail.gender = rd["gender"]
+#         if rd.get("gender"):
+#             user_detail.gender = rd["gender"]
 
-        if rd.get("address"):
-            user_detail.address = rd["address"]
+#         if rd.get("address"):
+#             user_detail.address = rd["address"]
 
-        if rd.get("phone"):
-            user_detail.phone = rd["phone"]
+#         if rd.get("phone"):
+#             user_detail.phone = rd["phone"]
 
-        if rd.get("academic_level"):
-            user_detail.academic_level = rd["academic_level"]
+#         if rd.get("academic_level"):
+#             user_detail.academic_level = rd["academic_level"]
 
-        if user and user_detail:
-            user.save()
-            user_detail.save()
-            serializers = UserDetailSerializer(user_detail)
+#         if user and user_detail:
+#             user.save()
+#             user_detail.save()
+#             serializers = UserDetailSerializer(user_detail)
 
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+#             return Response(serializers.data, status=status.HTTP_200_OK)
+#         else:
+#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Delete account
-    elif request.method == "DELETE":
+#     # Delete account
+#     elif request.method == "DELETE":
 
-        UserDetail.objects.get(user=request.user).delete()
-        User.objects.get(id=request.user.id).delete()
+#         UserDetail.objects.get(user=request.user).delete()
+#         User.objects.get(id=request.user.id).delete()
 
-        return Response({"message": "Account Deleted"}, status=status.HTTP_200_OK)
+#         return Response({"message": "Account Deleted"}, status=status.HTTP_200_OK)
 
 
 @api_view(["GET", "POST", "DELETE"])

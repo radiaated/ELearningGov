@@ -5,13 +5,11 @@ from base.models import Course, Chapter, StudyMaterial
 # Create your models here.
 
 
-class UserDetail(models.Model):
-    user = models.ForeignKey(
+class UserProfile(models.Model):
+    user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        null=False,
-        blank=False,
-        related_name="userdetail_user",
+        related_name="user_userprofile",
     )
     gender = models.CharField(
         max_length=10,

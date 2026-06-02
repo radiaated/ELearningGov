@@ -11,8 +11,11 @@ export const fetchProfile = createAsyncThunk(
       withCredentials: true,
     });
 
-    return data;
-  }
+    const { first_name, ...data2 } = data;
+    data2.full_name = first_name;
+
+    return data2;
+  },
 );
 
 export const fetchUserCourses = createAsyncThunk(
@@ -25,7 +28,7 @@ export const fetchUserCourses = createAsyncThunk(
     });
 
     return data;
-  }
+  },
 );
 
 const initialState = {
