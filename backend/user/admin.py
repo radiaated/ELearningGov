@@ -1,9 +1,8 @@
 from django.contrib import admin
-from .models import *
+from .models import UserProfile, CoursePurchase, CourseReview
 
 # Register your models here.
 
 admin.site.register(UserProfile)
 admin.site.register(CoursePurchase)
-admin.site.register(BuyStudyMat)
 admin.site.register(CourseReview)

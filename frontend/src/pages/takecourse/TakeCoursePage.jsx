@@ -136,11 +136,9 @@ const TakeCoursePage = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/coursereview/?online_course=${
-        params["courseSlug"]
-      }&rating=${starRating}`,
+      }/api/user/course-review/?course=${params["courseSlug"]}`,
       method: "POST",
-      data: { comment: pl.comment },
+      data: { comment: pl.comment, rating: starRating },
       withCredentials: true,
     }).then((res) => {
       setComment("");
@@ -173,7 +171,7 @@ const TakeCoursePage = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/coursereview/?review_id=${id}`,
+      }/api/user/course-review/?review_id=${id}`,
       method: "DELETE",
       withCredentials: true,
     }).then(() => {

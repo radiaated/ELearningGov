@@ -1,9 +1,5 @@
 from django.urls import path
 from . import views
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 
 urlpatterns = [
     path("token/", views.MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
@@ -15,11 +11,28 @@ urlpatterns = [
         views.PasswordUpdateAPIView.as_view(),
         name="user-password-update",
     ),
-    path("course/", views.UserCoursesListAPIView.as_view(), name="base-user-course"),
-    # path("profilecourse/", views.course_trans),
-    # path("coursereview/", views.course_review),
+    path(
+        "course/", views.UserCoursesListAPIView.as_view(), name="base-user-course-list"
+    ),
+    path(
+        "purchase-course/",
+        views.PurchaseCourseView.as_view(),
+        name="base-purchase-course",
+    ),
+    path(
+        "course-review/",
+        views.CourseReviewCreateUpdateDestroyView.as_view(),
+        name="user-course-review-create-update-destroy",
+    ),
     path("register/", views.RegisterView.as_view(), name="register"),
-    # path("verifypay/", views.verify_payment),
-    # path("ownfreecourse/", views.free_course),
-    # path("checkcourseown/", views.check_course_own),
+    path(
+        "verify-payment/",
+        views.VerifyPurchaseCourseView.as_view(),
+        name="user-verify-purhcase-course",
+    ),
+    path(
+        "verify-course-ownership/",
+        views.VerifyCourseOwnershipView.as_view(),
+        name="user-verify-course-ownership",
+    ),
 ]

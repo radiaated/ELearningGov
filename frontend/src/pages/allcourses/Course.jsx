@@ -100,7 +100,7 @@ const Course = () => {
     await axios({
       url: `${
         import.meta.env.VITE_API_URL
-      }/api/user/coursereview/?review_id=${id}`,
+      }/api/user/course-review/?review_id=${id}`,
       method: "DELETE",
       withCredentials: true,
     }).then(() => {

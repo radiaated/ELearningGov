@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import *
+from .models import UserProfile, CoursePurchase, CourseReview
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -145,16 +145,17 @@ class CoursePurchaseSerializer(serializers.ModelSerializer):
         ]
 
 
-class BuyStudyMatSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = BuyStudyMat
-        fields = "__all__"
-
-
 class CourseReviewSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source="user.username")
 
     class Meta:
         model = CourseReview
         fields = ["id", "username", "date_created", "rating", "comment"]
+
+
+# TODO
+# class BuyStudyMatSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = BuyStudyMat
+#         fields = "__all__"

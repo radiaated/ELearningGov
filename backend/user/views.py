@@ -1,34 +1,16 @@
-from django.shortcuts import render
-from rest_framework import status
-from rest_framework.response import Response
-from datetime import datetime, timedelta
-from rest_framework.decorators import api_view, permission_classes, APIView
-from rest_framework import exceptions
-from rest_framework.permissions import IsAuthenticated
-from .models import *
-from base.models import Course
-from django.contrib.auth.hashers import make_password
-from .serializers import *
-from base.serializers import CourseSerializer
-from datetime import datetime
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-import requests
-import json
-from django.db import transaction
-import uuid
-from rest_framework import generics
-from rest_framework import views
+
+from rest_framework import status, exceptions
+from rest_framework.views import APIView
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView,
-    ListCreateAPIView,
     ListAPIView,
+    CreateAPIView,
 )
-
-
-import os
-
-# Create your views here.
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
@@ -38,8 +20,26 @@ from rest_framework_simplejwt.serializers import (
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
-    TokenBlacklistView,
 )
+
+from base.serializers import CourseSerializer
+from base.models import Course
+
+from .models import CoursePurchase
+from .serializers import (
+    RegisterSerializer,
+    UserProfileSerializer,
+    PasswordUpdateSerializer,
+    CourseReviewSerializer,
+)
+
+from datetime import datetime, timedelta
+import requests
+import json
+import uuid
+import os
+
+# Create your views here.
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -161,6 +161,7 @@ class MyTokenBacklistView(TokenRefreshView):
             print("returnd_top")
             return response
         except Exception as ex:
+            print(ex)
 
             response = Response({"detail": "Logged out"})
 
@@ -171,55 +172,9 @@ class MyTokenBacklistView(TokenRefreshView):
             return Response({"detail": "Logged out"})
 
 
-class RegisterView(generics.CreateAPIView):
+class RegisterView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-
-
-# #
-# # Register
-# #
-# @api_view(["POST"])
-# @transaction.atomic
-# def register(request):
-#     if request.method == "POST":
-#         rd = request.data
-
-#         # Checks if username exists
-#         if User.objects.filter(username=rd["username"]).exists():
-#             return Response(
-#                 {"detail": "Username exists"}, status=status.HTTP_400_BAD_REQUEST
-#             )
-
-#         # Checks if email exists
-#         if User.objects.filter(email=rd["email"]).exists():
-#             return Response(
-#                 {"detail": "Email exists"}, status=status.HTTP_400_BAD_REQUEST
-#             )
-
-#         user = User.objects.create(
-#             username=rd["username"],
-#             email=rd["email"],
-#             first_name=rd["full_name"],
-#             password=make_password(rd["password"]),
-#         )
-
-#         user_detail = UserDetail.objects.create(
-#             gender=rd["gender"],
-#             address=rd["address"],
-#             phone=rd["phone"],
-#             academic_level=rd["academic_level"],
-#             user=user,
-#         )
-
-#         if user and user_detail:
-#             user.save()
-#             user_detail.save()
-#             serializers = UserDetailSerializer(user_detail)
-
-#             return Response(serializers.data, status=status.HTTP_200_OK)
-#         else:
-#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ProfileAPIView(RetrieveUpdateDestroyAPIView):
@@ -238,102 +193,14 @@ class PasswordUpdateAPIView(UpdateAPIView):
         return self.request.user
 
 
-# Profile
-# @api_view(["GET", "PUT"])
-# @permission_classes([IsAuthenticated])
-# def get_profile(request):
-
-#     # Retrieve the user profile
-#     if request.method == "GET":
-
-#         user_detail = UserDetail.objects.get(user=request.user)
-
-#         if user_detail:
-
-#             serializers = UserDetailSerializer(user_detail)
-
-#             return Response(serializers.data, status=status.HTTP_200_OK)
-#         else:
-#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
-
-#     # Update the user profile
-#     elif request.method == "PUT":
-#         rd = request.data
-
-#         user = User.objects.get(id=request.user.id)
-#         if rd.get("username"):
-#             if (
-#                 User.objects.filter(username=rd["username"])
-#                 .exclude(username=request.user.username)
-#                 .exists()
-#             ):
-#                 return Response(
-#                     {"message": "Username Exists"}, status=status.HTTP_403_FORBIDDEN
-#                 )
-#             else:
-#                 user.username = rd["username"]
-
-#         if rd.get("full_name"):
-#             user.first_name = rd["full_name"]
-
-#         if rd.get("email"):
-#             if (
-#                 User.objects.filter(email=rd["email"])
-#                 .exclude(email=request.user.email)
-#                 .exists()
-#             ):
-#                 return Response(
-#                     {"message": "Email Exists"}, status=status.HTTP_403_FORBIDDEN
-#                 )
-#             else:
-#                 user.email = rd["email"]
-
-#         if rd.get("password"):
-
-#             if request.user.check_password(rd["oldpassword"]):
-
-#                 user.password = make_password(rd["password"])
-#             else:
-#                 return Response(
-#                     {"message": "Incorrect oldd password"},
-#                     status=status.HTTP_404_NOT_FOUND,
-#                 )
-
-#         user_detail = UserDetail.objects.get(user=request.user)
-
-#         if rd.get("gender"):
-#             user_detail.gender = rd["gender"]
-
-#         if rd.get("address"):
-#             user_detail.address = rd["address"]
-
-#         if rd.get("phone"):
-#             user_detail.phone = rd["phone"]
-
-#         if rd.get("academic_level"):
-#             user_detail.academic_level = rd["academic_level"]
-
-#         if user and user_detail:
-#             user.save()
-#             user_detail.save()
-#             serializers = UserDetailSerializer(user_detail)
-
-#             return Response(serializers.data, status=status.HTTP_200_OK)
-#         else:
-#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
-
-#     # Delete account
-#     elif request.method == "DELETE":
-
-#         UserDetail.objects.get(user=request.user).delete()
-#         User.objects.get(id=request.user.id).delete()
-
-#         return Response({"message": "Account Deleted"}, status=status.HTTP_200_OK)
-
-
 class UserCoursesListAPIView(ListAPIView):
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_serializer(self, *args, **kwargs):
+        return super().get_serializer(
+            *args, **kwargs, exclude_fields=["course_chapters", "course_reviews"]
+        )
 
     def get_queryset(self):
         return Course.objects.filter(
@@ -341,218 +208,158 @@ class UserCoursesListAPIView(ListAPIView):
         ).all()
 
 
-# @api_view(["GET", "POST", "DELETE"])
-# @permission_classes([IsAuthenticated])
-# def course_trans_s(request):
+class PurchaseCourseView(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     # Gets the list of all the purchased user's courses
-#     if request.method == "GET":
-#         buy_course = BuyCourse.objects.filter(user=request.user)
+    def post(self, request):
 
-#         if buy_course:
+        transaction_id = uuid.uuid1()
 
-#             serializers = BuyCourseSerializer(buy_course, many=True)
+        payload = {
+            "return_url": f"{os.environ.get('PRODUCTION_URL')}/verifypay",
+            "website_url": f"{os.environ.get('PRODUCTION_URL')}/",
+            "amount": request.data.get("price"),
+            "purchase_order_id": "course_" + str(transaction_id),
+            "purchase_order_name": "_".join(request.data.get("course_id")),
+        }
 
-#             return Response(serializers.data, status=status.HTTP_200_OK)
-#         else:
-#             return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
-
-#     # Initiates the payment for purchasing the course
-#     elif request.method == "POST":
-
-#         rd = request.data
-
-#         trans_id = uuid.uuid1()
-
-#         payload = {
-#             "return_url": "{prod_url}/verifypay".format(
-#                 prod_url=os.environ.get("PRODUCTION_URL")
-#             ),
-#             "website_url": "{prod_url}/".format(
-#                 prod_url=os.environ.get("PRODUCTION_URL")
-#             ),
-#             "amount": rd["price"],
-#             "purchase_order_id": "course_" + str(trans_id),
-#             "purchase_order_name": "_".join(rd["course_id"]),
-#         }
-
-#         res = requests.post(
-#             "https://a.khalti.com/api/v2/epayment/initiate/",
-#             data=json.dumps(payload),
-#             headers={
-#                 "Content-Type": "application/json",
-#                 "Authorization": "Key ed5c97d78e1d4473acf4fd5ddabe488f",
-#             },
-#         )
-
-#         return Response(json.loads(res.text), status=status.HTTP_200_OK)
-
-
-#
-# Authorizes if the user bought the course during the payment
-#
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def course_trans(request):
-
-    if request.method == "GET":
-
-        buy_course = BuyCourse.objects.filter(
-            user=request.user, online_course__slug=request.GET.get("slug")
+        res = requests.post(
+            "https://a.khalti.com/api/v2/epayment/initiate/",
+            data=json.dumps(payload),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Key {os.environ.get("KHALTI_KEY")}",
+            },
         )
 
-        if buy_course:
+        print(res.text)
 
-            serializers = BuyCourseSerializer(buy_course[0])
-
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Empty"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(json.loads(res.text), status=status.HTTP_200_OK)
 
 
-# Verifies the payment
-# And saves the course after payment verification
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def verify_payment(request):
-    rd = request.data
+class VerifyPurchaseCourseView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    payload = {
-        "pidx": rd["pidx"],
-    }
+    def post(self, request):
+        pidx = request.data.get("pidx")
+        course_ids_raw = request.GET.get("course_ids", "")
 
-    res = requests.post(
-        "https://a.khalti.com/api/v2/epayment/lookup/",
-        data=json.dumps(payload),
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": "Key ed5c97d78e1d4473acf4fd5ddabe488f",
-        },
-    )
+        print(request.GET)
 
-    if res:
-        res = json.loads(res.text)
-        if request.GET.get("type") == "course":
+        if not pidx:
+            return Response(
+                {"message": "pidx is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            # Can buy in mass
-            for xx in request.GET.get("course_id").split("_"):
-                if not BuyCourse.objects.filter(
-                    user=request.user, online_course__id=xx
-                ).exists():
-                    oc = OnlineCourse.objects.get(id=xx)
-                    buy_course = BuyCourse.objects.create(
-                        user=request.user,
-                        online_course=oc,
-                        pidx=res["pidx"],
-                        total_amount=res["total_amount"],
-                        transaction_id=res["transaction_id"],
-                    )
+        course_ids = [cid for cid in course_ids_raw.split("_") if cid.strip().isdigit()]
 
-                    if buy_course:
-                        buy_course.save()
+        if not course_ids:
+            return Response(
+                {"message": "No valid course IDs provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            return Response(status=status.HTTP_200_OK)
+        try:
+            payment_response = requests.post(
+                "https://a.khalti.com/api/v2/epayment/lookup/",
+                json={"pidx": pidx},
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Key {os.environ.get('KHALTI_KEY')}",
+                },
+                timeout=10,
+            )
+        except requests.RequestException:
+            return Response(
+                {"message": "Payment verification service unavailable"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
-    else:
-        return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+        if payment_response.status_code != 200:
+            return Response(
+                {"message": "Failed to verify payment"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
+        payment_data = payment_response.json()
 
-@api_view(["POST"])
-@permission_classes([IsAuthenticated])
-def free_course(request):
+        courses_to_purchase = Course.objects.filter(id__in=course_ids)
 
-    if not BuyCourse.objects.filter(
-        user=request.user, online_course__slug=request.GET.get("course_slug")
-    ).exists():
-        buy_course = BuyCourse.objects.create(
-            user=request.user,
-            online_course__slug=request.GET.get("course_slug"),
-            total_amount=0,
-        )
+        existing_purchases_course = CoursePurchase.objects.filter(
+            user=request.user, course__in=courses_to_purchase, pidx=pidx
+        ).values_list("course_id", flat=True)
 
-        if buy_course:
-            buy_course.save()
+        to_create = [
+            CoursePurchase(
+                user=request.user,
+                course=course,
+                pidx=pidx,
+                total_amount=payment_data.get("total_amount", 0),
+                transaction_id=payment_data.get("transaction_id", ""),
+            )
+            for course in courses_to_purchase
+            if course.id not in existing_purchases_course
+        ]
 
-        serializers = BuyCourseSerializer(buy_course)
-        return Response(serializers.data, status=status.HTTP_200_OK)
+        CoursePurchase.objects.bulk_create(to_create)
 
-    else:
         return Response(
-            {"message": "Purchased before."}, status=status.HTTP_404_NOT_FOUND
+            {
+                "message": "Courses purchased successfully",
+            },
+            status=status.HTTP_200_OK,
         )
 
-    # else:
-    #     return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
 
+class VerifyCourseOwnershipView(APIView):
+    permission_classes = [IsAuthenticated]
 
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def check_course_own(request):
+    def get(self, request):
 
-    if BuyCourse.objects.filter(
-        user=request.user, online_course__slug=request.GET.get("course_slug")
-    ).exists():
+        if CoursePurchase.objects.filter(
+            user=request.user, online_course__slug=request.GET.get("course_slug")
+        ).exists():
 
-        return Response({"status": True}, status=status.HTTP_200_OK)
+            return Response({"status": True}, status=status.HTTP_200_OK)
 
-    else:
-        return Response({"status": False}, status=status.HTTP_200_OK)
-
-
-@api_view(["GET", "POST", "PUT", "DELETE"])
-@permission_classes([IsAuthenticated])
-def course_review(request):
-
-    if request.method == "POST":
-
-        rd = request.data
-
-        review = CourseReview.objects.create(
-            user=request.user,
-            online_course__slug=request.GET.get("online_course"),
-            rating=request.GET.get("rating"),
-            comment=rd["comment"],
-        )
-
-        if review:
-            review.save()
-
-            serializers = CourseReviewSerializer(review)
-            return Response(serializers.data, status=status.HTTP_200_OK)
         else:
-            return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"status": False}, status=status.HTTP_200_OK)
 
-    elif request.method == "PUT":
 
-        rd = request.data
+class CourseReviewCreateUpdateDestroyView(APIView):
+    permission_classes = [IsAuthenticated]
 
-        review = CourseReview.objects.get(
-            user=request.user, online_course__slug=request.GET.get("online_course")
+    def post(self, request):
+        course_slug = request.GET.get("course")
+        course = get_object_or_404(Course, slug=course_slug)
+
+        serializer = CourseReviewSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user, course=course)
+
+        return Response(serializer.data)
+
+    def put(self, request):
+        course_slug = request.GET.get("course")
+        course = get_object_or_404(Course, slug=course_slug)
+
+        review = self.get_object(course, request.user)
+
+        serializer = CourseReviewSerializer(review, data=request.data, partial=False)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        course_slug = request.GET.get("course")
+        course = get_object_or_404(Course, slug=course_slug)
+
+        review = self.get_object(course, request.user)
+        review.delete()
+
+        return Response(
+            {"detail": "Review deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
         )
-
-        review.rating = rd["rating"]
-        review.comment = rd["comment"]
-
-        if review:
-
-            review.save()
-
-            serializers = CourseReviewSerializer(review)
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)
-
-    elif request.method == "DELETE":
-
-        rd = request.data
-
-        review = CourseReview.objects.get(
-            user=request.user, id=request.GET.get("review_id")
-        )
-
-        if review:
-            review.delete()
-
-            return Response(status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "Error"}, status=status.HTTP_404_NOT_FOUND)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Chapter, StudyMaterial, Event
+from .models import Course, Chapter
 from user.serializers import CourseReviewSerializer
 
 
@@ -48,15 +48,15 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 # TODO
-class StudyMaterialSerializer(serializers.ModelSerializer):
+# class StudyMaterialSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = StudyMaterial
-        fields = "__all__"
+#     class Meta:
+#         model = StudyMaterial
+#         fields = "__all__"
 
 
-class EventSerializer(serializers.ModelSerializer):
+# class EventSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = Event
-        fields = "__all__"
+#     class Meta:
+#         model = Event
+#         fields = "__all__"

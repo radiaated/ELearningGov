@@ -15,9 +15,7 @@ const VerifyPayment = () => {
   const verifyPayment = async () => {
     await axios({
       method: "POST",
-      url: `${import.meta.env.VITE_API_URL}/api/user/verifypay/?type=${
-        qs.get("purchase_order_id").split("_")[0]
-      }&course_id=${qs.get("purchase_order_name")}`,
+      url: `${import.meta.env.VITE_API_URL}/api/user/verify-payment/?course_ids=${qs.get("purchase_order_name")}`,
       data: {
         pidx: qs.get("pidx"),
       },

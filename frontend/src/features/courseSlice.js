@@ -31,7 +31,7 @@ export const fetchCourse = createAsyncThunk(
       let data2 = await axios({
         url: `${
           import.meta.env.VITE_API_URL
-        }/api/user/checkcourseown/?course_slug=${pl.slug}`,
+        }/api/user/verify-course-ownership/?course_slug=${pl.slug}`,
         method: "GET",
         withCredentials: true,
       });
