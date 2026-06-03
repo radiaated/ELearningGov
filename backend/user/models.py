@@ -9,6 +9,8 @@ class UserProfile(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="user_userprofile",
+        null=False,
+        blank=False,
     )
     gender = models.CharField(
         max_length=10,
@@ -17,7 +19,7 @@ class UserProfile(models.Model):
         blank=False,
     )
     phone = models.CharField(max_length=15, null=False, blank=False)
-    address = models.CharField(max_length=500, null=True, blank=True)
+    address = models.CharField(max_length=500, null=False, blank=False)
     academic_level = models.CharField(
         max_length=100,
         choices=(
@@ -26,8 +28,8 @@ class UserProfile(models.Model):
             ("bch", "Bachelor"),
             ("mst", "Master"),
         ),
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
     )
 
     def __str__(self):

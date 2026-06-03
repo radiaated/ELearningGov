@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
 import os
 import uuid
 
@@ -33,23 +37,27 @@ course_category = (
 
 
 class Course(models.Model):
-    slug = models.SlugField(max_length=200, null=True, blank=True)
+    slug = models.SlugField(max_length=200, null=False, blank=False)
     title = models.CharField(max_length=200, null=False, blank=False)
-    author = models.CharField(max_length=200, null=True, blank=True)
-    language = models.CharField(max_length=100, null=True, blank=True)
-    level = models.CharField(max_length=100, null=True, blank=True)
+    author = models.CharField(max_length=200, null=False, blank=False)
+    language = models.CharField(max_length=100, null=False, blank=False)
+    level = models.CharField(max_length=100, null=False, blank=False)
     description = models.CharField(max_length=5000, null=False, blank=False)
-    requirements = models.CharField(max_length=200, null=True, blank=True)
+    requirements = models.CharField(max_length=200, null=False, blank=False)
     category = models.CharField(
         max_length=100, choices=course_category, null=False, blank=False
     )
     thumbnail = models.ImageField(upload_to=get_file_path, null=False, blank=False)
     preview_video = models.FileField(upload_to=get_file_path, null=False, blank=False)
+    price = models.FloatField(
+        default=0, validators=[MinValueValidator(0.1)], null=False, blank=False
+    )
+
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
-    price = models.FloatField(default=0, null=False, blank=False)
 
     def save(self, *args, **kwargs):
-        self.slug = self.title.lower().replace(" ", "-")
+        if not self.slug:
+            self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -57,8 +65,8 @@ class Course(models.Model):
 
 
 class Chapter(models.Model):
-    slug = models.SlugField(max_length=200, null=True, blank=True)
-    chpt = models.IntegerField(default=1, null=False, blank=False)
+    slug = models.SlugField(max_length=200, null=False, blank=False)
+    chpt = models.PositiveSmallIntegerField(default=1, null=False, blank=False)
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
@@ -69,11 +77,12 @@ class Chapter(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.CharField(max_length=5000, null=False, blank=False)
     video = models.FileField(upload_to=get_file_path, null=False, blank=False)
+    duration = models.PositiveSmallIntegerField(default=1, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
-    duration = models.IntegerField(default=1, null=False, blank=False)
 
     def save(self, *args, **kwargs):
-        self.slug = self.title.lower().replace(" ", "-")
+        if not self.slug:
+            self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -95,9 +104,17 @@ class CourseReview(models.Model):
         blank=False,
         related_name="course_coursereviews",
     )
-    rating = models.IntegerField(default=5, null=False, blank=False)
+    rating = models.PositiveSmallIntegerField(
+        default=5,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(5),
+        ],
+        null=False,
+        blank=False,
+    )
     comment = models.CharField(max_length=1000, null=False, blank=False)
-    date_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self):
         return f"{self.user.username}, {self.course.title}"
