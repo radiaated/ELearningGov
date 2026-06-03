@@ -28,9 +28,9 @@ const AdminLogin = () => {
           className="sl-form"
           onSubmit={(e) => {
             e.preventDefault();
-            userCxt.loginUser({ username, password }).finally(() => {
+            userCxt.loginUser({ username, password }).then(() => {
               localStorage.setItem("isAdmin", JSON.stringify(true));
-              window.location.replace("/admin/dashboard");
+              // window.location.replace("/admin/dashboard");
             });
           }}
         >

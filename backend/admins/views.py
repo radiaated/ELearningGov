@@ -17,6 +17,17 @@ class CourseViewSet(ModelViewSet):
     permission_classes = [IsAdminUser]
     lookup_field = "slug"
 
+    def get_serializer(self, *args, **kwargs):
+
+        if self.action == "list":
+            kwargs["exclude_fields"] = ["course_chapters", "course_reviews"]
+        elif self.action == "retrieve":
+            context = self.get_serializer_context()
+            context["include_chapter_video"] = True
+            kwargs["context"] = context
+            kwargs["exclude_fields"] = ["course_reviews"]
+        return super().get_serializer(*args, **kwargs)
+
     def create(self, request, *args, **kwargs):
 
         course_data = request.data.dict()
@@ -37,17 +48,6 @@ class CourseViewSet(ModelViewSet):
             chapter_serializer.save()
 
         return Response(course_serializer.data, status=status.HTTP_201_CREATED)
-
-    def retrieve(self, request, *args, **kwargs):
-        course = self.get_object()
-        chapters = course.course_chapters.all()
-
-        course_serializer = CourseSerializer(course)
-        chapter_serializer = ChapterSerializer(chapters, many=True)
-
-        return Response(
-            {"course": course_serializer.data, "chapters": chapter_serializer.data}
-        )
 
     def update(self, request, *args, **kwargs):
         course = self.get_object()

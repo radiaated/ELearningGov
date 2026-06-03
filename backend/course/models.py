@@ -3,15 +3,13 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-
-import os
 import uuid
 
 
 def get_file_path(_, filename):
     ext = filename.split(".")[-1]
     filename = f"{uuid.uuid4()}.{ext}"
-    return os.path.join("uploads", filename)
+    return filename
 
 
 # Create your models here.
@@ -58,6 +56,7 @@ class Course(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -79,6 +78,9 @@ class Chapter(models.Model):
     video = models.FileField(upload_to=get_file_path, null=False, blank=False)
     duration = models.PositiveSmallIntegerField(default=1, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+
+    class Meta:
+        ordering = ["chpt"]
 
     def save(self, *args, **kwargs):
         if not self.slug:
