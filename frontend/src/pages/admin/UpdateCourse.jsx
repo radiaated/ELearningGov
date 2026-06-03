@@ -99,8 +99,8 @@ const UpdateCourse = () => {
       });
       console.log(data);
 
-      reset(data.course);
-      setChapters(data.chapters);
+      reset(data);
+      setChapters(data.course_chapters);
     } catch {}
   };
 
@@ -115,19 +115,21 @@ const UpdateCourse = () => {
     fd.append("requirements", payload.requirements);
     fd.append("category", payload.category);
 
-    fd.append("thumbnail", payload.thumbnail ? payload.thumbnail[0] : null);
-    fd.append(
-      "preview_video",
-      payload.preview_video ? payload.preview_video[0] : null,
-    );
+    if (payload.thumbnail instanceof File) {
+      fd.append("thumbnail", payload.thumbnail);
+    }
+    if (payload.preview_video instanceof File) {
+      fd.append("preview_video", payload.preview_video);
+    }
+
     fd.append("price", payload.price);
 
     fd.append("chapters", JSON.stringify(chapters));
 
     chapters.forEach((chapter, i) => {
-      console.log(chapter.video);
-
-      fd.append(`chpt_no${i + 1}`, chapter.video);
+      if (chapter.video instanceof File) {
+        fd.append(`chpt_no${i + 1}`, chapter.video);
+      }
     });
 
     console.log(payload);

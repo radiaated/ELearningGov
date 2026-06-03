@@ -7,6 +7,7 @@ class ChapterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chapter
         fields = "__all__"
+        read_only_fields = ("slug",)
 
     def __init__(self, *args, **kwargs):
         exclude_fields = kwargs.pop("exclude_fields", None)
@@ -36,6 +37,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+        read_only_fields = ("slug",)
 
     def __init__(self, *args, **kwargs):
         exclude_fields = kwargs.pop("exclude_fields", [])
