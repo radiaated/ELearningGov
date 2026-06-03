@@ -143,11 +143,13 @@ DATABASES = {
         "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
-    }
+        "ATOMIC_REQUESTS": True,
+    },
     # "default": {
     #     "ENGINE": "django.db.backends.sqlite3",
     #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
+    #     "ATOMIC_REQUESTS": True,
+    # },
 }
 
 
