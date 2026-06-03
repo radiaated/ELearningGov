@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
 
 from course.models import Course
 
@@ -21,10 +22,12 @@ class CoursePurchase(models.Model):
         blank=False,
         related_name="course_coursepurchases",
     )
+    pidx = models.CharField(max_length=24, null=False, blank=False)
+    total_amount = models.FloatField(
+        default=1000, validators=[MinValueValidator(1000)], null=False, blank=False
+    )
+    transaction_id = models.CharField(max_length=24, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
-    pidx = models.CharField(max_length=24, null=True, blank=True)
-    total_amount = models.IntegerField(default=1000, null=True, blank=True)
-    transaction_id = models.CharField(max_length=24, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username}, {self.course.title}"
