@@ -1,10 +1,11 @@
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.generics import (
     RetrieveUpdateDestroyAPIView,
     UpdateAPIView,
     ListAPIView,
-    RetrieveAPIView,
 )
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 
 from course.serializers import CourseSerializer
@@ -19,9 +20,15 @@ from .serializers import (
 # Create your views here.
 
 
-class CurrentUserAPIView(RetrieveAPIView):
-    serializer_class = CurrentUserSerializer
+class CurrentUserAPIView(APIView):
+
     permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        serializer = CurrentUserSerializer(request.user)
+
+        return Response(serializer.data)
 
 
 class ProfileAPIView(RetrieveUpdateDestroyAPIView):
@@ -53,3 +60,16 @@ class UserCoursesListAPIView(ListAPIView):
         return Course.objects.filter(
             course_coursepurchases__user=self.request.user
         ).all()
+
+
+class UserCoursesPurchaseStatusAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, slug):
+        print(slug)
+        purchase_status = Course.objects.filter(
+            slug=slug, course_coursepurchases__user=request.user
+        ).exists()
+
+        return Response({"purchase_status": purchase_status})

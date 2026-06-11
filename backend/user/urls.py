@@ -14,4 +14,9 @@ urlpatterns = [
         views.UserCoursesListAPIView.as_view(),
         name="user-user-course-list",
     ),
+    path(
+        "course/<slug:slug>/purchase-status/",
+        views.UserCoursesPurchaseStatusAPIView.as_view(),
+        name="user-user-course-purchase-status",
+    ),
 ]

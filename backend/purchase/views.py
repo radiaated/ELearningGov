@@ -22,7 +22,7 @@ class PurchaseCourseView(APIView):
         transaction_id = uuid.uuid1()
 
         payload = {
-            "return_url": f"{os.environ.get('PRODUCTION_URL')}/verifypay",
+            "return_url": f"{os.environ.get('PRODUCTION_URL')}/verifying-payment",
             "website_url": f"{os.environ.get('PRODUCTION_URL')}/",
             "amount": request.data.get("price"),
             "purchase_order_id": "course_" + str(transaction_id),

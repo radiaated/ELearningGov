@@ -40,6 +40,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class CurrentUserSerializer(serializers.ModelSerializer):
 
+    is_admin = serializers.BooleanField(source="is_superuser", read_only=True)
+
     class Meta:
         model = User
         fields = ["username", "email", "is_admin"]
