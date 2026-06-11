@@ -89,20 +89,20 @@ const Header = () => {
       </div>
 
       <div
-        className={`flex items-center h-16 ${
-          location.pathname !== "/"
-            ? "bg-white border-b border-zinc-200 shadow-sm"
-            : `text-zinc-50 ${
-                headerColor
-                  ? "bg-white text-zinc-800 transition-all duration-500"
-                  : "transition-all duration-300"
-              }`
-        }`}
+      // className={`flex items-center h-16 ${
+      //   location.pathname !== "/"
+      //     ? "bg-white border-b border-zinc-200 shadow-sm"
+      //     : `text-zinc-50 ${
+      //         headerColor
+      //           ? "bg-white text-zinc-800 transition-all duration-500"
+      //           : "transition-all duration-300"
+      //       }`
+      // }`}
       >
         <div className="w-[1400px] max-w-[90%] mx-auto flex justify-between items-center">
           <Link href="/">
             <div className="text-xl font-semibold">
-              {location.pathname === "/" ? (
+              {/* {location.pathname === "/" ? (
                 headerColor ? (
                   <img src="logo-black.png" className="h-9 w-auto" />
                 ) : (
@@ -110,7 +110,7 @@ const Header = () => {
                 )
               ) : (
                 <img src="logo-black.png" className="h-9 w-auto" />
-              )}
+              )} */}
             </div>
           </Link>
           <button

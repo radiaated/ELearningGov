@@ -26,7 +26,7 @@ class CourseListView(ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        search = self.request.GET.get("search")
+        search = self.request.GET.get("q")
         category = self.request.GET.get("category")
 
         if search:
