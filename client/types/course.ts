@@ -7,6 +7,22 @@ export const courseReviewSchema = yup.object({
   date_created: yup.date().required().min(1).max(5),
 });
 
+export const chapterSchema = yup.object({
+  slug: yup.string().required(),
+
+  chpt: yup.number().required().integer().min(1),
+
+  title: yup.string().required().min(1).max(200),
+
+  description: yup.string().required().max(5000),
+
+  video: yup.string().required(),
+
+  duration: yup.number().required().integer().min(1),
+
+  date_created: yup.date().required(),
+});
+
 export const courseSchema = yup.object({
   id: yup.number().required(),
   slug: yup.string().required(),
@@ -26,25 +42,9 @@ export const courseSchema = yup.object({
 
   level: yup.string().optional(),
   language: yup.string().optional(),
-
+  course_chapters: yup.array().of(chapterSchema).required(),
   created_at: yup.string().optional(),
   updated_at: yup.string().optional(),
-});
-
-export const chapterSchema = yup.object({
-  slug: yup.string().required(),
-
-  chpt: yup.number().required().integer().min(1),
-
-  title: yup.string().required().min(1).max(200),
-
-  description: yup.string().required().max(5000),
-
-  video: yup.string().required(),
-
-  duration: yup.number().required().integer().min(1),
-
-  date_created: yup.date().required(),
 });
 
 export type Course = yup.InferType<typeof courseSchema>;

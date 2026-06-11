@@ -84,7 +84,6 @@ const CoursePage = () => {
 
   useDebounce(
     () => {
-      console.log("q");
       handleSubmit(onSubmit)();
     },
     [values.q, values.category],

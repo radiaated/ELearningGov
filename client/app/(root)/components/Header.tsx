@@ -54,7 +54,10 @@ const Header = () => {
                     Dashboard
                   </Link>
                 )}
-                <Link className=" px-4 py-1 rounded-sm" href="/yourcourses">
+                <Link
+                  className=" px-4 py-1 rounded-sm"
+                  href="/classroom/courses"
+                >
                   Your Courses
                 </Link>
                 <Link

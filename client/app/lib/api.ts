@@ -1,7 +1,10 @@
 export async function refreshAccessToken() {
   const res = await fetch("/api/auth/token/refresh/", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookieStore.toString(),
+    },
     credentials: "include",
   });
 
@@ -19,7 +22,7 @@ export const api = async (
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     if (response.status === 401) {
@@ -27,7 +30,7 @@ export const api = async (
         await refreshAccessToken();
       } catch (err) {
         console.log("Session expired, logging out...");
-        window.location.href = "/login";
+        // window.location.href = "/login";
         return null;
       }
     }

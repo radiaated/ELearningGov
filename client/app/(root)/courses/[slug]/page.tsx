@@ -10,11 +10,13 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
+import { cookies } from "next/headers";
 
 import courseCategories from "@/data/courseCategories";
 import { Chapter } from "@/types/course";
 import { getDuration } from "@/app/lib/duration";
 import ChapterList from "@/app/components/ChapterList";
+import { redirect } from "next/navigation";
 
 const CoursePage = async ({
   params,
@@ -22,14 +24,31 @@ const CoursePage = async ({
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  const response = await api(env.API_URL + `/api/course/${slug}/`);
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
+  let response = await api(env.API_URL + `/api/course/${slug}/`);
 
   const course = await response?.json();
+
+  response = await api(
+    env.API_URL + `/api/user/course/${slug}/purchase-status/`,
+    {
+      headers: {
+        Cookie: cookieHeader,
+      },
+    },
+  );
+
+  const purchaseStatusData = await response?.json();
+
+  console.log(purchaseStatusData);
 
   const deleteReview = async (id: number) => {
     await api(env.API_URL + `/api/course/course-review/?review_id=${id}`, {
       method: "DELETE",
-      credential: "include",
+      headers: {
+        Cookie: cookieHeader,
+      },
     });
   };
 
@@ -38,7 +57,9 @@ const CoursePage = async ({
       env.API_URL + `/api/user/ownfreecourse/?course_slug=${course_slug}`,
       {
         method: "POST",
-        withCredentials: true,
+        headers: {
+          Cookie: cookieHeader,
+        },
       },
     );
   };
@@ -123,20 +144,15 @@ const CoursePage = async ({
                 <span className="block">{course.requirements}</span>
               </div>
               <div>
-                <button
+                <Link
                   className="block group w-full text-center px-5 py-4 bg-primary-main text-zinc-100 hover:bg-primary-main/90 hover:text-zinc-100 duration-100 disabled:bg-zinc-100 disabled:text-zinc-700"
-                  disabled={course.own_status && course.own_status.status}
-                  //   onClick={() => {
-                  //     if (course.price === 0 && userCxt.auth !== null) {
-                  //       ownFreeCourse(course.slug);
-                  //     } else {
-                  //       navigate(
-                  //         `/buycourse?type=course&course=${course.slug}`,
-                  //       );
-                  //     }
-                  //   }}
+                  href={
+                    purchaseStatusData?.purchase_status
+                      ? `/classroom/course/${slug}`
+                      : `/courses/${slug}/buy`
+                  }
                 >
-                  {course.own_status && course.own_status.status ? (
+                  {purchaseStatusData && purchaseStatusData.purchase_status ? (
                     <>
                       Enrolled{"  "} <i className="fa-solid fa-check"></i>
                     </>
@@ -146,7 +162,7 @@ const CoursePage = async ({
                       <i className="fa-solid fa-graduation-cap group-hover:text-zinc-100"></i>
                     </>
                   )}
-                </button>
+                </Link>
               </div>
             </div>
             {/* {(!course.own_status?.status || userCxt.auth == null) &&

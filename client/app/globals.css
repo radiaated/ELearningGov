@@ -1,5 +1,5 @@
 @import url("./../node_modules/@fortawesome/fontawesome-free/css/all.min.css");
-/* @import url("./../node_modules/lion-player/dist/lion-skin.min.css"); */
+@import url("./../node_modules/lion-player/dist/lion-skin.min.css");
 
 @import "tailwindcss";
 
