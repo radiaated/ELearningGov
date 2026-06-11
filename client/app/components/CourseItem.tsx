@@ -16,7 +16,7 @@ const CourseItem = ({ course }: { course: Course }) => {
   ];
   return (
     <div key={course.id}>
-      <Link href={`/course/${course.slug}`}>
+      <Link href={`/courses/${course.slug}`}>
         <img
           src={course.thumbnail}
           className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"

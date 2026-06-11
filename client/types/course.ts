@@ -31,5 +31,22 @@ export const courseSchema = yup.object({
   updated_at: yup.string().optional(),
 });
 
-export type CourseReview = yup.InferType<typeof courseReviewSchema>;
+export const chapterSchema = yup.object({
+  slug: yup.string().required(),
+
+  chpt: yup.number().required().integer().min(1),
+
+  title: yup.string().required().min(1).max(200),
+
+  description: yup.string().required().max(5000),
+
+  video: yup.string().required(),
+
+  duration: yup.number().required().integer().min(1),
+
+  date_created: yup.date().required(),
+});
+
 export type Course = yup.InferType<typeof courseSchema>;
+export type Chapter = yup.InferType<typeof chapterSchema>;
+export type CourseReview = yup.InferType<typeof courseReviewSchema>;

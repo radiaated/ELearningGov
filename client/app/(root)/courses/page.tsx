@@ -18,6 +18,7 @@ import { api } from "@/app/lib/api";
 import { env } from "@/env";
 
 import courseCategories from "@/data/courseCategories";
+import CourseList from "@/app/components/CourseList";
 
 const formSchema = yup.object({
   q: yup.string().default(""),
@@ -125,16 +126,7 @@ const CoursePage = () => {
 
       <hr className="my-2" />
 
-      <div className="grid grid-cols-5 gap-8">
-        {courses.map((course) => (
-          <div
-            key={course.id ?? course.title}
-            className="col-span-5 md:col-span-1"
-          >
-            <CourseItem course={course} />
-          </div>
-        ))}
-      </div>
+      <CourseList courses={courses} />
       {courses && (
         <ReactPaginate
           forcePage={pageParam ? Number(pageParam) - 1 : 0}
