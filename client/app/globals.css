@@ -1,0 +1,118 @@
+@import url("./../node_modules/@fortawesome/fontawesome-free/css/all.min.css");
+/* @import url("./../node_modules/lion-player/dist/lion-skin.min.css"); */
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary-dark: #1a6985;
+  --color-primary-main: #2596be;
+  --color-primary-light: #51abcb;
+
+  --font-montserrat: "Montserrat", sans-serif;
+
+  --text-shadow-sm: 0 1px 2px var(--tw-shadow-color);
+  --text-shadow: 0 2px 4px var(--tw-shadow-color);
+  --text-shadow-lg: 0 8px 16px var(--tw-shadow-color);
+}
+
+@utility text-shadow-sm {
+  text-shadow: var(--text-shadow-sm);
+}
+
+@utility text-shadow {
+  text-shadow: var(--text-shadow);
+}
+
+@utility text-shadow-lg {
+  text-shadow: var(--text-shadow-lg);
+}
+
+@layer components {
+  body {
+    @apply font-[var(--font-montserrat)];
+  }
+
+  .sl-form {
+    @apply flex flex-col gap-4;
+  }
+
+  .sl-form input[type="text"],
+  .sl-form input[type="username"],
+  .sl-form input[type="email"],
+  .sl-form input[type="password"],
+  .sl-form input[type="number"],
+  .sl-form textarea,
+  .sl-form select {
+    @apply w-full rounded-sm border border-zinc-400 border-b-[3px] border-b-zinc-500 bg-zinc-50 p-2 text-base focus:border-b-zinc-950 focus:outline-none;
+  }
+
+  .sl-form label {
+    @apply mb-2 block text-xl;
+  }
+
+  .sl-form div div label {
+    @apply block text-lg;
+  }
+
+  .btn {
+    @apply w-full cursor-pointer border border-primary-main bg-primary-main p-2 text-lg font-medium text-zinc-100 hover:bg-[#2187ab];
+  }
+
+  .section {
+    @apply mx-auto my-4 w-350 max-w-[90%];
+  }
+
+  .title {
+    @apply mt-8 mb-4 text-xl font-medium;
+  }
+
+  .embla {
+    @apply relative;
+  }
+
+  .embla__viewport {
+    @apply overflow-hidden;
+  }
+
+  .embla__container {
+    @apply flex touch-pan-y touch-pinch-zoom;
+  }
+
+  .embla__slide {
+    @apply min-w-0;
+    flex: 0 0 100%;
+  }
+
+  .embla__dots {
+    @apply absolute bottom-4 right-1/2 flex gap-4 -translate-y-1/2;
+  }
+
+  .embla__control {
+    @apply w-full;
+  }
+
+  .embla__control-left,
+  .embla__control-right {
+    @apply absolute top-[50%] translate-y-[-50%] cursor-pointer;
+  }
+
+  .embla__control-left {
+    @apply -left-5;
+  }
+
+  .embla__control-right {
+    @apply -right-5;
+  }
+
+  .embla__control i {
+    @apply text-2xl;
+  }
+
+  .embla__dot {
+    @apply block h-3 w-3 cursor-pointer rounded-full bg-gray-300;
+  }
+
+  .embla__dot.active {
+    @apply bg-primary-dark;
+  }
+}
