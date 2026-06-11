@@ -14,7 +14,9 @@ const Header = () => {
 
   const [user, setUser] = useState<CurrentUser | null>(null);
   const getUser = async () => {
-    const response = await api(env.API_URL + "/api/user/me/");
+    const response = await api(env.API_URL + "/api/user/me/", {
+      credentials: "include",
+    });
     const data = await response?.json();
     setUser(data);
   };
@@ -80,7 +82,7 @@ const Header = () => {
                   className="bg-primary-dark/50 px-4 py-1 rounded-sm"
                   href="/signup"
                 >
-                  Register
+                  Signup
                 </Link>
               </>
             )}
