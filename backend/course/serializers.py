@@ -20,10 +20,17 @@ class ChapterSerializer(serializers.ModelSerializer):
 
 class CourseReviewSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source="user.username")
+    is_author = serializers.SerializerMethodField()
 
     class Meta:
         model = CourseReview
-        fields = ["id", "username", "date_created", "rating", "comment"]
+        fields = ["id", "username", "date_created", "rating", "comment", "is_author"]
+
+    def get_is_author(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.user == request.user
 
 
 class CourseSerializer(serializers.ModelSerializer):
