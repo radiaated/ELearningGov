@@ -66,7 +66,7 @@ const CoursePage = async ({
             </div>
             <ChapterList chapters={course.course_chapters} />
             <hr />
-            <CourseReviewList couresReviews={course.course_reviews} />
+            <CourseReviewList courseReviews={course.course_reviews} />
           </div>
           <div className="col-span-12 md:col-span-6">
             <div className="border border-primary-dark rounded-xl flex flex-col divide-y divide-zinc-300 overflow-hidden h-fit w-full md:w-[70%] mx-auto right-[15%] shadow-lg">

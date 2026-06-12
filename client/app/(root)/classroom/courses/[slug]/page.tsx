@@ -142,8 +142,11 @@ const ClassroomCoursePageClient = () => {
             </form>
 
             {/* REVIEW LIST (manual but still uses your logic) */}
-            {course?.course_reviews && (
-              <CourseReviewList couresReviews={course?.course_reviews} />
+            {course && (
+              <CourseReviewList
+                courseReviews={course.course_reviews}
+                courseSlug={slug}
+              />
             )}
           </div>
         )}

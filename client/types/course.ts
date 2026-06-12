@@ -1,10 +1,12 @@
 import * as yup from "yup";
 
 export const courseReviewSchema = yup.object({
+  id: yup.number().notRequired(),
   username: yup.string().optional(),
   rating: yup.number().required().min(1).max(5),
   comment: yup.string().required(),
   date_created: yup.date().optional(),
+  is_admin: yup.boolean().required().default(false),
 });
 
 export const chapterSchema = yup.object({

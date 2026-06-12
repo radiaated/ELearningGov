@@ -1,21 +1,35 @@
 import React from "react";
 import type { CourseReview } from "@/types/course";
 import CourseReviewItem from "./CourseReviewItem";
+import deleteCourseReview from "../lib/deleteCourseReview";
 
 const CourseReviewList = ({
-  couresReviews,
+  courseReviews,
+  courseSlug,
 }: {
-  couresReviews: CourseReview[];
+  courseReviews: CourseReview[];
+  courseSlug?: string;
 }) => {
   return (
     <div>
       <h3 className="text-lg font-medium my-3">Reviews</h3>
+
       <div className="flex flex-col gap-2">
-        {couresReviews?.length > 0
-          ? couresReviews.map((review, ind) => (
-              <CourseReviewItem review={review} isOwner={true} key={ind} />
-            ))
-          : "No reviews"}
+        {courseReviews?.length > 0 ? (
+          courseReviews.map((review) => (
+            <CourseReviewItem
+              key={review.id}
+              review={review}
+              deleteReview={() =>
+                review.id &&
+                courseSlug &&
+                deleteCourseReview(courseSlug, review.id)
+              }
+            />
+          ))
+        ) : (
+          <p>No reviews</p>
+        )}
       </div>
     </div>
   );
