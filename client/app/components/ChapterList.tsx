@@ -9,8 +9,17 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
+import Link from "next/link";
 
-const ChapterList = ({ chapters }: { chapters: Chapter[] }) => {
+const ChapterList = ({
+  chapters,
+  showWatchButton,
+  courseSlug,
+}: {
+  chapters: Chapter[];
+  showWatchButton?: boolean;
+  courseSlug?: string;
+}) => {
   return (
     <div className="">
       <h3 className="text-xl font-medium my-4">Contents:</h3>
@@ -39,6 +48,14 @@ const ChapterList = ({ chapters }: { chapters: Chapter[] }) => {
             </AccordionItemHeading>
             <AccordionItemPanel className="bg-white border-b border-x border-zinc-200 p-4 pl-6">
               <p>{chapter.description}</p>
+              {showWatchButton && (
+                <Link
+                  href={`/classroom/courses/${courseSlug}/chapter/${chapter.slug}`}
+                  className="block align-middle  text-white bg-orange-500 px-4 py-2 w-fit rounded-sm absolute hover:border-b-4 hover:border-orange-600 bottom-5 right-4"
+                >
+                  Take <i className="fa-solid fa-arrow-right"></i>
+                </Link>
+              )}
             </AccordionItemPanel>
           </AccordionItem>
         ))}

@@ -5,12 +5,8 @@ type PurchaseStatusResponse = {
   purchase_status: boolean;
 };
 
-type GetCoursePurchaseStatusPayload = {
-  course_slug: string;
-};
-
 const getCoursePurchaseStatus = async (
-  payload: GetCoursePurchaseStatusPayload,
+  course_slug: string,
   cookieHeader?: string | null,
 ): Promise<PurchaseStatusResponse> => {
   const options: RequestInit = cookieHeader
@@ -24,7 +20,7 @@ const getCoursePurchaseStatus = async (
       };
 
   const res = await api(
-    `${env.API_URL}/api/user/course/${payload.course_slug}/purchase-status/`,
+    `${env.API_URL}/api/user/course/${course_slug}/purchase-status/`,
     options,
   );
 

@@ -21,7 +21,9 @@ const ClassRoomChapterPage = () => {
 
   useEffect(() => {
     getCourse(slug).then((course) => setCourse(course));
-    getChapter(slug, chapterSlug).then((chapter) => setChapter(chapter));
+    getChapter({ courseSlug: slug, chapterSlug }).then((chapter) =>
+      setChapter(chapter),
+    );
   }, []);
 
   return (

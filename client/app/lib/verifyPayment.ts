@@ -5,17 +5,11 @@ type VerifyPaymentPayload = {
   pidx: string;
 };
 
-type VerifyPaymentParams = {
-  payload: VerifyPaymentPayload;
-  purchaseOrderName: string;
-  cookieHeader?: string | null;
-};
-
-const verifyPayment = async ({
-  payload,
-  purchaseOrderName,
-  cookieHeader,
-}: VerifyPaymentParams): Promise<any> =>
+const verifyPayment = async (
+  payload: VerifyPaymentPayload,
+  purchaseOrderName: string,
+  cookieHeader?: string,
+): Promise<any> =>
   api(
     `${env.API_URL}/api/purchase/verify-payment/?course_ids=${purchaseOrderName}`,
     {

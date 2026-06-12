@@ -1,10 +1,10 @@
 import * as yup from "yup";
 
 export const courseReviewSchema = yup.object({
-  username: yup.string().required(),
+  username: yup.string().optional(),
   rating: yup.number().required().min(1).max(5),
   comment: yup.string().required(),
-  date_created: yup.date().required().min(1).max(5),
+  date_created: yup.date().optional(),
 });
 
 export const chapterSchema = yup.object({

@@ -3,16 +3,16 @@ import { env } from "@/env";
 import { Chapter } from "@/types/course";
 
 type GetChapterPayload = {
-  course_slug: string;
-  chapter_slug: string;
+  courseSlug: string;
+  chapterSlug: string;
 };
 
 const getChapter = async (
-  payload: GetChapterPayload,
+  { courseSlug, chapterSlug }: GetChapterPayload,
   cookieHeader?: string | null,
 ): Promise<Chapter> => {
   const res = await api(
-    `${env.API_URL}/api/course/takechapter/${payload.course_slug}/chapter/${payload.chapter_slug}/`,
+    `${env.API_URL}/api/course/takechapter/${courseSlug}/chapter/${chapterSlug}/`,
     {
       headers: {
         ...(cookieHeader ? { Cookie: cookieHeader } : {}),
