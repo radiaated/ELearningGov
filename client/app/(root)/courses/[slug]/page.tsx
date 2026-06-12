@@ -11,6 +11,7 @@ import {
   AccordionItemPanel,
 } from "react-accessible-accordion";
 import { cookies } from "next/headers";
+import CartButton from "./components/CartButton";
 
 import courseCategories from "@/data/courseCategories";
 import { Chapter } from "@/types/course";
@@ -165,26 +166,16 @@ const CoursePage = async ({
                 </Link>
               </div>
             </div>
-            {/* {(!course.own_status?.status || userCxt.auth == null) &&
-              course.price > 0 && (
-                <button
-                  className="block w-fit mx-auto text-center px-5 py-4 text-lg text-zinc-700 hover:text-zinc-500 disabled:hover:text-zinc-700"
-                  disabled={cart.find((c) => c.slug === course.slug)}
-                  onClick={() => {
-                    dispatch(appActions.addToCart(course));
-                  }}
-                >
-                  {cart.find((c) => c.slug === course.slug) ? (
-                    <>
-                      Added <i className="fa-solid fa-cart-shopping"></i>
-                    </>
-                  ) : (
-                    <>
-                      Add to cart <i className="fa-solid fa-cart-plus"></i>
-                    </>
-                  )}
-                </button>
-              )} */}
+            <CartButton
+              course={{
+                id: course.id,
+                slug: course.slug,
+                title: course.title,
+                price: course.price,
+                thumbnail: course.thumbnail,
+              }}
+              purchased={purchaseStatusData?.purchase_status}
+            />
           </div>
         </div>
         {/* <video

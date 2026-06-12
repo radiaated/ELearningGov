@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
 import type { CurrentUser } from "@/types/user";
+import { useCartStore } from "@/store/cartStore";
 
 const Header = () => {
   // const { cart } = useSelector((state) => state.app);
@@ -20,6 +21,8 @@ const Header = () => {
     const data = await response?.json();
     setUser(data);
   };
+
+  const cartItems = useCartStore((state) => state.items);
 
   useEffect(() => {
     getUser();
@@ -37,12 +40,12 @@ const Header = () => {
       <div className="w-full bg-primary-dark text-white flex flex-col md:flex-row justify-between text-xs px-2 py-1 md:items-center">
         <div>01-4444444, 01-4444442</div>
         <div className="flex gap-2 items-center justify-between w-full md:w-fit md:justify-normal">
-          {/* <div>
-            <Link to="/cart">
+          <div>
+            <Link href="/cart">
               Cart
-              <i className="fa-solid fa-cart-shopping"></i> ({cart.length})
+              <i className="fa-solid fa-cart-shopping"></i> ({cartItems.length})
             </Link>
-          </div> */}
+          </div>
           <div className="flex gap-2">
             {user ? (
               <>
