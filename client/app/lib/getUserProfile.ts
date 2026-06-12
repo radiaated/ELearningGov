@@ -6,8 +6,10 @@ import { ProfileFormData } from "@/types/user";
 const getUserProfile = async (
   cookieHeader?: string | null,
 ): Promise<ProfileFormData> => {
-  const res = await api(env.API_URL + "/api/user/profile/", {
-    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+  const res = await api(`${env.API_URL}/api/user/profile/`, {
+    headers: {
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+    },
     credentials: cookieHeader ? undefined : "include",
   });
 

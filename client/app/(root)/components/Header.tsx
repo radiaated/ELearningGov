@@ -9,8 +9,6 @@ import { useCartStore } from "@/store/cartStore";
 import getUser from "@/app/lib/getUser";
 
 const Header = () => {
-  // const { cart } = useSelector((state) => state.app);
-
   const [headerColor, setHeaderColor] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
 

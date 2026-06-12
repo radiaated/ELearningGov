@@ -2,13 +2,17 @@ import { api } from "./api";
 import { env } from "@/env";
 import { Course } from "@/types/course";
 
+type GetCoursesPayload = {
+  searchParams?: string | null;
+};
+
 const getCourses = async (
-  searchParams: string | null = null,
+  payload: GetCoursesPayload,
 ): Promise<{ count: number; results: Course[] }> => {
-  const response = await api(
-    env.API_URL + `/api/course/` + ("?" + searchParams || ""),
-  );
-  const data = await response?.json();
+  const query = payload.searchParams ? `?${payload.searchParams}` : "";
+
+  const res = await api(`${env.API_URL}/api/course/${query}`);
+  const data = await res?.json();
 
   return data;
 };

@@ -5,9 +5,13 @@ type PurchaseStatusResponse = {
   purchase_status: boolean;
 };
 
+type GetCoursePurchaseStatusPayload = {
+  course_slug: string;
+};
+
 const getCoursePurchaseStatus = async (
-  courseSlug: string,
-  cookieHeader: string | null = null,
+  payload: GetCoursePurchaseStatusPayload,
+  cookieHeader?: string | null,
 ): Promise<PurchaseStatusResponse> => {
   const options: RequestInit = cookieHeader
     ? {
@@ -19,13 +23,12 @@ const getCoursePurchaseStatus = async (
         credentials: "include",
       };
 
-  const response = await api(
-    `${env.API_URL}/api/user/course/${courseSlug}/purchase-status/`,
+  const res = await api(
+    `${env.API_URL}/api/user/course/${payload.course_slug}/purchase-status/`,
     options,
   );
 
-  const data: PurchaseStatusResponse = await response?.json();
-  return data;
+  return res?.json();
 };
 
 export default getCoursePurchaseStatus;

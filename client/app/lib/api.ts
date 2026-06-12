@@ -1,42 +1,58 @@
-export async function refreshAccessToken() {
-  const res = await fetch("/api/auth/token/refresh/", {
+import { env } from "@/env";
+
+type ApiOptions = RequestInit & {
+  headers?: HeadersInit & {
+    Cookie?: string;
+  };
+};
+
+export async function refreshAccessToken({
+  cookieHeader,
+}: {
+  cookieHeader?: string;
+}): Promise<void> {
+  const res = await fetch(env.API_URL + "/api/auth/token/refresh/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: cookieStore.toString(),
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
     },
-    credentials: "include",
+    credentials: cookieHeader ? undefined : "include",
   });
 
-  if (!res.ok) throw new Error("Refresh failed");
-  const data = await res.json();
-  localStorage.setItem("accessToken", data.access);
-  return data.access;
+  if (!res.ok) {
+    throw new Error("Refresh failed");
+  }
 }
 
 export const api = async (
   url: string,
-  options: object = {},
+  options: ApiOptions = {},
 ): Promise<Response | null> => {
-  try {
-    const response = await fetch(url, options);
+  let response = await fetch(url, options);
 
-    if (!response.ok) {
-      // throw new Error(`HTTP error! status: ${response.status}`);
+  if (response.status === 401) {
+    try {
+      const cookieHeader =
+        typeof options.headers === "object" && "Cookie" in options.headers
+          ? options.headers.Cookie
+          : undefined;
+
+      await refreshAccessToken({
+        cookieHeader,
+      });
+
+      // Retry original request
+      response = await fetch(url, options);
+    } catch {
+      console.log("Session expired...");
+      return null;
     }
-
-    if (response.status === 401) {
-      try {
-        await refreshAccessToken();
-      } catch (err) {
-        console.log("Session expired, logging out...");
-        // window.location.href = "/login";
-        return null;
-      }
-    }
-
-    return response;
-  } catch (error) {
-    throw error;
   }
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response;
 };

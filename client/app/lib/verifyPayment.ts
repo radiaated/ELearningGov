@@ -1,15 +1,21 @@
 import { api } from "./api";
 import { env } from "@/env";
 
-type Payload = {
+type VerifyPaymentPayload = {
   pidx: string;
 };
 
-const verifyPayment = (
-  payload: Payload,
-  purchaseOrderName: string,
-  cookieHeader?: string | null,
-) =>
+type VerifyPaymentParams = {
+  payload: VerifyPaymentPayload;
+  purchaseOrderName: string;
+  cookieHeader?: string | null;
+};
+
+const verifyPayment = async ({
+  payload,
+  purchaseOrderName,
+  cookieHeader,
+}: VerifyPaymentParams): Promise<any> =>
   api(
     `${env.API_URL}/api/purchase/verify-payment/?course_ids=${purchaseOrderName}`,
     {
@@ -17,7 +23,7 @@ const verifyPayment = (
       body: JSON.stringify(payload),
       headers: {
         "Content-Type": "application/json",
-        Cookie: cookieHeader ? cookieHeader : undefined,
+        ...(cookieHeader ? { Cookie: cookieHeader } : {}),
       },
       credentials: cookieHeader ? undefined : "include",
     },

@@ -7,23 +7,15 @@ export type User = {
   is_admin: boolean;
 };
 
-const USER_ME_URL = new URL("/api/user/me/", env.API_URL).toString();
-
-export default async function getUser(
-  cookieHeader?: string | null,
-): Promise<User> {
-  const headers: HeadersInit | undefined = cookieHeader
-    ? { Cookie: cookieHeader }
-    : undefined;
-
-  const response = await api(USER_ME_URL, {
-    headers,
-    credentials: cookieHeader ? "omit" : "include",
+const getUser = async (cookieHeader?: string | null): Promise<User> => {
+  const res = await api(`${env.API_URL}/api/user/me/`, {
+    headers: {
+      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+    },
+    credentials: cookieHeader ? undefined : "include",
   });
 
-  if (!response?.ok) {
-    throw new Error(`getUser failed (${response?.status})`);
-  }
+  return res?.json();
+};
 
-  return response.json();
-}
+export default getUser;

@@ -2,17 +2,26 @@ import { api } from "./api";
 import { env } from "@/env";
 import { Chapter } from "@/types/course";
 
-const getChapter = async (
-  courseSlug: string,
-  chapterSlug: string,
-): Promise<Chapter> => {
-  const response = await api(
-    env.API_URL +
-      `/api/course/takechapter/${courseSlug}/chapter/${chapterSlug}/`,
-  );
-  const data = await response?.json();
+type GetChapterPayload = {
+  course_slug: string;
+  chapter_slug: string;
+};
 
-  return data;
+const getChapter = async (
+  payload: GetChapterPayload,
+  cookieHeader?: string | null,
+): Promise<Chapter> => {
+  const res = await api(
+    `${env.API_URL}/api/course/takechapter/${payload.course_slug}/chapter/${payload.chapter_slug}/`,
+    {
+      headers: {
+        ...(cookieHeader ? { Cookie: cookieHeader } : {}),
+      },
+      credentials: cookieHeader ? undefined : "include",
+    },
+  );
+
+  return res?.json();
 };
 
 export default getChapter;

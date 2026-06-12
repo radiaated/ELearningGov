@@ -15,7 +15,6 @@ import CartButton from "./components/CartButton";
 
 import courseCategories from "@/data/courseCategories";
 import { Chapter } from "@/types/course";
-import { getDuration } from "@/app/lib/duration";
 import ChapterList from "@/app/components/ChapterList";
 import { redirect } from "next/navigation";
 import getCourse from "@/app/lib/getCourse";

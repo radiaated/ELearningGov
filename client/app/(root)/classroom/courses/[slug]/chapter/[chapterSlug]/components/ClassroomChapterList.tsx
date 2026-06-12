@@ -2,9 +2,11 @@ import { Chapter } from "@/types/course";
 import Link from "next/link";
 
 const ClassroomChapterList = ({
+  courseSlug,
   chapters,
   currentChapterSlug,
 }: {
+  courseSlug: string;
   chapters: Chapter[];
   currentChapterSlug: string;
 }) => {
@@ -23,7 +25,7 @@ const ClassroomChapterList = ({
               }`}
             >
               <Link
-                href={`/classroom/course/${currentChapterSlug}/chapter/${chapter.slug}`}
+                href={`/classroom/courses/${courseSlug}/chapter/${chapter.slug}`}
               >
                 {chapter.chpt}. {chapter.title}
               </Link>{" "}

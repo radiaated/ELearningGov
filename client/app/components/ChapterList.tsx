@@ -1,8 +1,7 @@
 "use client";
 
 import { Chapter } from "@/types/course";
-import { getDuration } from "../lib/duration";
-
+import formatDuration from "@/utils/formatDuration";
 import {
   Accordion,
   AccordionItem,
@@ -27,7 +26,9 @@ const ChapterList = ({ chapters }: { chapters: Chapter[] }) => {
                     </div>
                     <div className="align-middle text-xs text-zinc-400">
                       <i className="fa-regular fa-clock mr-2"></i>
-                      <span className="">{getDuration(chapter.duration)}</span>
+                      <span className="">
+                        {formatDuration(chapter.duration)}
+                      </span>
                     </div>
                   </div>
                   <div>

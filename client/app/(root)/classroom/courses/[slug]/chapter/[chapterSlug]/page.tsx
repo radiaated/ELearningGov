@@ -3,7 +3,7 @@
 import ClassroomChapterList from "./components/ClassroomChapterList";
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
-import { getDuration } from "@/app/lib/duration";
+import formatDuration from "@/utils/formatDuration";
 import VideoPlayer from "./components/VideoPlayer";
 import { useEffect, useState } from "react";
 import type { Chapter, Course } from "@/types/course";
@@ -28,6 +28,7 @@ const ClassRoomChapterPage = () => {
     <div className="flex flex-col-reverse md:flex-row gap-10">
       {course && (
         <ClassroomChapterList
+          courseSlug={slug}
           chapters={course.course_chapters}
           currentChapterSlug={chapterSlug}
         />
@@ -46,7 +47,7 @@ const ClassRoomChapterPage = () => {
         <div className="align-middle text-sm text-zinc-500 my-3">
           <i className="fa-regular fa-clock mr-2"></i>
           <span className="">
-            {chapter?.duration && getDuration(chapter.duration)}
+            {chapter?.duration && formatDuration(chapter.duration)}
           </span>
         </div>
 
