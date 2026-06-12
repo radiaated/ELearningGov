@@ -6,6 +6,7 @@ import { api } from "@/app/lib/api";
 import { env } from "@/env";
 import type { CurrentUser } from "@/types/user";
 import { useCartStore } from "@/store/cartStore";
+import getUser from "@/app/lib/getUser";
 
 const Header = () => {
   // const { cart } = useSelector((state) => state.app);
@@ -14,18 +15,11 @@ const Header = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
 
   const [user, setUser] = useState<CurrentUser | null>(null);
-  const getUser = async () => {
-    const response = await api(env.API_URL + "/api/user/me/", {
-      credentials: "include",
-    });
-    const data = await response?.json();
-    setUser(data);
-  };
 
   const cartItems = useCartStore((state) => state.items);
 
   useEffect(() => {
-    getUser();
+    getUser().then((user) => setUser(user));
     window.addEventListener("scroll", () => {
       if (window.scrollY >= 200) {
         setHeaderColor(true);

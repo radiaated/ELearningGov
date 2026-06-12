@@ -19,6 +19,7 @@ import { env } from "@/env";
 
 import courseCategories from "@/data/courseCategories";
 import CourseList from "@/app/components/CourseList";
+import getCourses from "@/app/lib/getCourses";
 
 const formSchema = yup.object({
   q: yup.string().default(""),
@@ -55,20 +56,10 @@ const CoursePage = () => {
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  const fetchCourses = async () => {
-    const res = await api(
-      `${env.API_URL}/api/course?${searchParams.toString()}`,
-    );
-
-    const data = await res?.json();
-    setCourses(data?.results ?? []);
-    setCount(data?.count);
-  };
-
   const pageParam = searchParams.get("page");
 
   const handlePageClick = (event: any) => {
-    setSearchParams({ page: event.selected });
+    setSearchParams({ page: event.selected + 1 });
   };
 
   const onSubmit = (formData: FormData) => {
@@ -77,7 +68,11 @@ const CoursePage = () => {
 
   // Fetch when URL changes
   useEffect(() => {
-    fetchCourses();
+    getCourses(searchParams.toString()).then((data) => {
+      console.log(data);
+      setCourses(data.results);
+      setCount(data.count);
+    });
   }, [searchParams.toString()]);
 
   const values = watch();

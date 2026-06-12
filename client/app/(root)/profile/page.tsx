@@ -9,35 +9,18 @@ import { academicLevelCategories } from "@/data/user";
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
 
-// ----------------------
-// Validation Schema
-// ----------------------
-const profileSchema = yup.object({
-  username: yup.string().required("Username is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  first_name: yup.string().required("Full name is required"),
-  gender: yup.string().oneOf(["m", "f", "o", ""]).required(),
-  address: yup.string().required(),
-  phone: yup.string().required(),
-  academic_level: yup.string().required("Academic level is required"),
-});
-
-const passwordSchema = yup.object({
-  old_password: yup.string().required("Old password is required"),
-  password: yup.string().min(6, "Min 6 characters").required(),
-  password2: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords do not match")
-    .required(),
-});
-
-type ProfileFormData = yup.InferType<typeof profileSchema>;
-type PasswordFormData = yup.InferType<typeof passwordSchema>;
+import {
+  profileSchema,
+  ProfileFormData,
+  passwordSchema,
+  PasswordFormData,
+} from "@/types/user";
+import getUser from "@/app/lib/getUser";
+import getUserProfile from "@/app/lib/getUserProfile";
+import updateUser from "@/app/lib/updateUser";
+import updateUserPassword from "@/app/lib/updatePassword";
 
 const ProfilePage = () => {
-  // ----------------------
-  // Profile form
-  // ----------------------
   const {
     register,
     handleSubmit,
@@ -56,9 +39,6 @@ const ProfilePage = () => {
     },
   });
 
-  // ----------------------
-  // Password form
-  // ----------------------
   const {
     register: registerPwd,
     handleSubmit: handlePwdSubmit,
@@ -68,74 +48,49 @@ const ProfilePage = () => {
     resolver: yupResolver(passwordSchema),
   });
 
-  // ----------------------
-  // Fetch profile
-  // ----------------------
   const fetchUserProfile = async () => {
     try {
-      const response = await api(env.API_URL + "/api/user/profile/", {
-        credentials: "include",
-      });
+      const userProfile = await getUserProfile();
 
-      const data = await response?.json();
-
-      if (!data) return;
-
-      // IMPORTANT: map API response -> form fields
       reset({
-        username: data.username ?? "",
-        email: data.email ?? "",
-        first_name: data.first_name ?? "",
-        gender: data.gender ?? "",
-        address: data.address ?? "",
-        phone: data.phone ?? "",
-        academic_level: data.academic_level ?? "",
+        username: userProfile.username ?? "",
+        email: userProfile.email ?? "",
+        first_name: userProfile.first_name ?? "",
+        gender: userProfile.gender ?? "",
+        address: userProfile.address ?? "",
+        phone: userProfile.phone ?? "",
+        academic_level: userProfile.academic_level ?? "",
       });
     } catch (err) {
       console.error("Failed to fetch profile:", err);
     }
+  };
+  // ----------------------
+  // Update profile
+  // ----------------------
+  const updateUserProfile = async (data: ProfileFormData) => {
+    await updateUser(data);
+  };
+
+  // ----------------------
+  // Update password
+  // ----------------------
+  const updatePassword = async (data: PasswordFormData) => {
+    await updateUserPassword(data);
+
+    resetPwd();
   };
 
   useEffect(() => {
     fetchUserProfile();
   }, []);
 
-  // ----------------------
-  // Update profile
-  // ----------------------
-  const updateUser = async (data: ProfileFormData) => {
-    await api(env.API_URL + "/api/user/profile/", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-  };
-
-  // ----------------------
-  // Update password
-  // ----------------------
-  const updateUserPassword = async (data: PasswordFormData) => {
-    await api(env.API_URL + "/api/user/password-update/", {
-      method: "PUT",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-
-    resetPwd();
-  };
-
   return (
     <div className="w-full md:w-[60%] mx-auto">
       <h2 className="text-3xl font-semibold mb-4">Profile</h2>
 
       {/* ---------------- PROFILE FORM ---------------- */}
-      <form className="sl-form" onSubmit={handleSubmit(updateUser)}>
+      <form className="sl-form" onSubmit={handleSubmit(updateUserProfile)}>
         <div>
           <label>Username</label>
           <input {...register("username")} />
@@ -203,7 +158,7 @@ const ProfilePage = () => {
       {/* ---------------- PASSWORD FORM ---------------- */}
       <h3 className="text-2xl font-semibold mb-4">Change Password</h3>
 
-      <form className="sl-form" onSubmit={handlePwdSubmit(updateUserPassword)}>
+      <form className="sl-form" onSubmit={handlePwdSubmit(updatePassword)}>
         <div>
           <label>Old Password</label>
           <input type="password" {...registerPwd("old_password")} />

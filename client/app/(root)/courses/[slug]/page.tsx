@@ -18,6 +18,9 @@ import { Chapter } from "@/types/course";
 import { getDuration } from "@/app/lib/duration";
 import ChapterList from "@/app/components/ChapterList";
 import { redirect } from "next/navigation";
+import getCourse from "@/app/lib/getCourse";
+import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
+import deleteCourseReview from "@/app/lib/deleteCourseReview";
 
 const CoursePage = async ({
   params,
@@ -27,43 +30,10 @@ const CoursePage = async ({
   const { slug } = await params;
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
-  let response = await api(env.API_URL + `/api/course/${slug}/`);
 
-  const course = await response?.json();
+  const course = await getCourse(slug);
 
-  response = await api(
-    env.API_URL + `/api/user/course/${slug}/purchase-status/`,
-    {
-      headers: {
-        Cookie: cookieHeader,
-      },
-    },
-  );
-
-  const purchaseStatusData = await response?.json();
-
-  console.log(purchaseStatusData);
-
-  const deleteReview = async (id: number) => {
-    await api(env.API_URL + `/api/course/course-review/?review_id=${id}`, {
-      method: "DELETE",
-      headers: {
-        Cookie: cookieHeader,
-      },
-    });
-  };
-
-  const getIsCoursePurchased = async (course_slug: string) => {
-    await api(
-      env.API_URL + `/api/user/ownfreecourse/?course_slug=${course_slug}`,
-      {
-        method: "POST",
-        headers: {
-          Cookie: cookieHeader,
-        },
-      },
-    );
-  };
+  const purchaseStatusData = await getCoursePurchaseStatus(slug, cookieHeader);
 
   return (
     <div className="text-zinc-800 md:w-[90%] md:mx-auto">
@@ -76,9 +46,9 @@ const CoursePage = async ({
               <span className="font-medium text-yellow-700">
                 {course.avg_rating}
               </span>
-              <StarRating rating={course.avg_rating} /> ({course.count_rating}{" "}
+              <StarRating rating={course.avg_rating} /> ({course.reviews_count}{" "}
               Review
-              {course.count_rating > 1 && "s"})
+              {course.reviews_count > 1 && "s"})
             </div>
             <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
               {

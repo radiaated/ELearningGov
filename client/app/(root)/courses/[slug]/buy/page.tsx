@@ -7,43 +7,33 @@ import { useParams, useRouter } from "next/navigation";
 import courseCategories from "@/data/courseCategories";
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
+import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
+import getCourse from "@/app/lib/getCourse";
+import buyCourse from "@/app/lib/buyCourse";
+import { Course } from "@/types/course";
 
 export default function BuyCoursePage() {
   const { slug } = useParams<{ slug: string }>();
   const router = useRouter();
 
-  const [course, setCourse] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState<Course | null>(null);
 
   useEffect(() => {
     if (!slug) return;
 
     const loadData = async () => {
       try {
-        // Check purchase status
-        let response = await api(
-          `${env.API_URL}/api/user/course/${slug}/purchase-status/`,
-          {
-            credentials: "include",
-          },
-        );
-
-        const purchaseStatusData = await response?.json();
+        const purchaseStatusData = await getCoursePurchaseStatus(slug);
 
         if (purchaseStatusData.purchase_status) {
           router.push(`/classroom/course/${slug}`);
           return;
         }
 
-        // Get course
-        response = await api(`${env.API_URL}/api/course/${slug}/`);
-
-        const courseData = await response?.json();
+        const courseData = await getCourse(slug);
         setCourse(courseData);
       } catch (error) {
         console.error(error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -54,32 +44,16 @@ export default function BuyCoursePage() {
     if (!course) return;
 
     try {
-      const response = await api(
-        `${env.API_URL}/api/purchase/purchase-course/`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            course_id: [String(course.id)],
-            price: course.price,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        },
-      );
-
-      const data = await response?.json();
-
-      window.location.href = data.payment_url;
+      buyCourse({
+        course_id: [course.id],
+        price: course.price,
+      }).then((data) => {
+        window.location.href = data.payment_url;
+      });
     } catch (error) {
       console.error(error);
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (!course) {
     return <div>Course not found.</div>;

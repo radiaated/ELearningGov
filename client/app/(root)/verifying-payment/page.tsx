@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
 import { useCartStore } from "@/store/cartStore";
+import verifyPayment from "@/app/lib/verifyPayment";
 
 export default function VerifyPaymentPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function VerifyPaymentPage() {
 
   const cartItems = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
-  const verifyPayment = async () => {
+  const verifyPaymentt = async () => {
     const pidx = searchParams.get("pidx");
     const purchaseOrderName = searchParams.get("purchase_order_name");
 
@@ -26,17 +27,7 @@ export default function VerifyPaymentPage() {
       .map((item) => parseInt(item, 10));
 
     try {
-      await api(
-        `${env.API_URL}/api/purchase/verify-payment/?course_ids=${purchaseOrderName}`,
-        {
-          method: "POST",
-          body: JSON.stringify({ pidx }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        },
-      );
+      await verifyPayment({ pidx }, purchaseOrderName);
 
       purchasedCourseIds.forEach((id) => {
         if (cartItems.some((item) => item.id === id)) {
@@ -51,8 +42,8 @@ export default function VerifyPaymentPage() {
   };
 
   useEffect(() => {
-    verifyPayment();
-  }, [searchParams, router, cartItems, removeItem]);
+    verifyPaymentt();
+  }, []);
 
   return (
     <div className="flex min-h-[50vh] items-center justify-center">

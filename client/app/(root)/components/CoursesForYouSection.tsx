@@ -1,12 +1,12 @@
 import { env } from "@/env";
 import { api } from "@/app/lib/api";
 import CourseList from "@/app/components/CourseList";
+import getCourses from "@/app/lib/getCourses";
 
 const CoursesForYouSection = async () => {
-  let courses = [];
-  const response = await api(env.API_URL + "/api/course/");
-  const data = await response?.json();
-  courses = data.results;
+  const coursesData = await getCourses();
+  console.log(coursesData);
+  const courses = coursesData.results;
   return (
     <section className="section">
       <h2 className="title">Courses for you</h2>

@@ -26,7 +26,7 @@ export const chapterSchema = yup.object({
 export const courseSchema = yup.object({
   id: yup.number().required(),
   slug: yup.string().required(),
-
+  requirements: yup.string().required(),
   title: yup.string().required().min(3),
   thumbnail: yup.string().url().required(),
 
@@ -43,8 +43,8 @@ export const courseSchema = yup.object({
   level: yup.string().optional(),
   language: yup.string().optional(),
   course_chapters: yup.array().of(chapterSchema).required(),
-  created_at: yup.string().optional(),
-  updated_at: yup.string().optional(),
+  course_reviews: yup.array().of(courseReviewSchema).required(),
+  date_created: yup.string().required(),
 });
 
 export type Course = yup.InferType<typeof courseSchema>;

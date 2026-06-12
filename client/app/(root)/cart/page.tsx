@@ -7,25 +7,13 @@ import { api } from "@/app/lib/api";
 
 import { useCartStore } from "@/store/cartStore";
 import { Course } from "@/types/course";
+import buyCourse from "@/app/lib/buyCourse";
 
 const CartPage = () => {
   const cartItems = useCartStore((state) => state.items);
   const addItem = useCartStore((state) => state.addItem);
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
-
-  const buyCourse = async (payload: { course_id: number[]; price: number }) => {
-    const response = await api(env.API_URL + "/api/purchase/purchase-course/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      credentials: "include",
-    });
-
-    const data = await response?.json();
-
-    window.location.href = data.payment_url;
-  };
 
   return (
     <div className="w-full md:w-[80%] mx-auto mb-48">
@@ -94,7 +82,7 @@ const CartPage = () => {
                 buyCourse({
                   course_id: course_id,
                   price: cartItems.reduce((total, xx) => total + xx.price, 0),
-                });
+                }).then((data) => (window.location.href = data.payment_url));
               }}
             >
               Checkout <i className="fa-solid fa-cart-arrow-down"></i>

@@ -7,23 +7,8 @@ import * as yup from "yup";
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
 import { academicLevelCategories } from "@/data/user";
-
-const schema = yup.object({
-  username: yup.string().required("Username is required"),
-  email: yup.string().email("Invalid email").required("Email is required"),
-  first_name: yup.string().required("Full name is required"),
-  gender: yup.string().oneOf(["", "m", "f", "o"], "Select gender").required(),
-  address: yup.string().required("Address is required"),
-  phone: yup.string().required("Phone is required"),
-  academic_level: yup.string().notOneOf(["-1"], "Select academic level"),
-  password: yup.string().min(6, "Min 6 characters").required(),
-  password2: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required(),
-});
-
-type SignupFormData = yup.InferType<typeof schema>;
+import { signupSchema, SignupFormData } from "@/types/user";
+import signup from "@/app/lib/signup";
 
 const SignupPage = () => {
   const {
@@ -32,7 +17,7 @@ const SignupPage = () => {
     setError,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(signupSchema),
     defaultValues: {
       academic_level: "",
       gender: "",
@@ -41,14 +26,7 @@ const SignupPage = () => {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      await api(env.API_URL + "/api/auth/register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
+      await signup(data);
     } catch (err) {
       setError("root", {
         type: "server",

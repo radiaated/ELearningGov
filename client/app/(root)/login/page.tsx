@@ -6,14 +6,8 @@ import * as yup from "yup";
 
 import { api } from "@/app/lib/api";
 import { env } from "@/env";
-
-const schema = yup.object({
-  username: yup.string().required("Username is required"),
-
-  password: yup.string().required("Password is required"),
-});
-
-type LoginFormData = yup.InferType<typeof schema>;
+import { loginSchema, LoginFormData } from "@/types/user";
+import login from "@/app/lib/login";
 
 const LoginPage = () => {
   const {
@@ -22,19 +16,12 @@ const LoginPage = () => {
     setError,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(loginSchema),
   });
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await api(env.API_URL + "/api/auth/token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
+      await login(data);
     } catch (err) {
       setError("root", {
         type: "server",

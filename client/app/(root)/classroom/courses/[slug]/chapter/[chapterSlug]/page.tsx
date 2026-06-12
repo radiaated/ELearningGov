@@ -8,6 +8,8 @@ import VideoPlayer from "./components/VideoPlayer";
 import { useEffect, useState } from "react";
 import type { Chapter, Course } from "@/types/course";
 import { useParams } from "next/navigation";
+import getCourse from "@/app/lib/getCourse";
+import getChapter from "@/app/lib/getChapter";
 
 const ClassRoomChapterPage = () => {
   const params = useParams<{ slug: string; chapterSlug: string }>();
@@ -17,31 +19,9 @@ const ClassRoomChapterPage = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [chapter, setChapter] = useState<Chapter | null>(null);
 
-  const fetchCourse = async () => {
-    const response = await api(env.API_URL + `/api/course/${slug}/`, {
-      credentials: "include",
-    });
-    const data = await response?.json();
-
-    setCourse(data);
-  };
-
-  const fetchChapters = async () => {
-    const response = await api(
-      env.API_URL + `/api/course/takechapter/${slug}/chapter/${chapterSlug}/`,
-      {
-        credentials: "include",
-      },
-    );
-
-    const chapter = await response?.json();
-
-    setChapter(chapter);
-  };
-
   useEffect(() => {
-    fetchCourse();
-    fetchChapters();
+    getCourse(slug).then((course) => setCourse(course));
+    getChapter(slug, chapterSlug).then((chapter) => setChapter(chapter));
   }, []);
 
   return (
