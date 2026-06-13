@@ -1,40 +1,54 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const authProtectRoutes = [
+const protectedRoutes = [
   "/admin",
   "/classroom",
   "/verifying-payment",
   "/profile",
   "/courses",
   "/cart",
-];
+] as const;
+
+const authRoutes = ["/login", "/signup"] as const;
+
+function matchesRoute(pathname: string, routes: readonly string[]) {
+  return routes.some((route) => pathname.startsWith(route));
+}
 
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   const token = request.cookies.get("access")?.value;
-  const pathname = request.nextUrl.pathname;
 
-  // check if route is protected
-  const isProtected = authProtectRoutes.some((route) =>
-    pathname.startsWith(route),
-  );
+  const isProtectedRoute = matchesRoute(pathname, protectedRoutes);
+  const isAuthRoute = matchesRoute(pathname, authRoutes);
 
-  // if route is protected and no token → redirect
-  if (isProtected && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  // Redirect unauthenticated users away from protected routes
+  if (isProtectedRoute && !token) {
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Redirect authenticated users away from auth pages
+  if (isAuthRoute && token) {
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = "/";
+    return NextResponse.redirect(homeUrl);
   }
 
   return NextResponse.next();
 }
 
-// Apply middleware to all routes (filter inside code)
 export const config = {
   matcher: [
     "/admin/:path*",
     "/classroom/:path*",
-    "/verifying-payment",
-    "/profile",
+    "/verifying-payment/:path*",
+    "/profile/:path*",
     "/courses/:path*",
-    "/cart",
+    "/cart/:path*",
+    "/login/:path*",
+    "/signup/:path*",
   ],
 };
