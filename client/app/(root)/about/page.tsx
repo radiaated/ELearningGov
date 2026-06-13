@@ -79,4 +79,14 @@ const AboutPage = () => {
   );
 };
 
+export const metadata = {
+  title: "About | Dur-Sanchar Elearning",
+  description: `Dur-Sanchar Elearning is a leading government-provided e-learning
+              platform dedicated to fostering education and empowering
+              individuals to reach their full potential. Our platform offers a
+              wide range of online video courses, study materials in the form of
+              PDFs, and software tools designed to enhance the learning
+              experience.`,
+};
+
 export default AboutPage;

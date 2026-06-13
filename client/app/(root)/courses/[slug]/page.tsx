@@ -2,6 +2,7 @@ import CourseReviewList from "@/components/CourseReviewList";
 import StarRating from "@/components/StarRating";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { Metadata } from "next";
 
 import courseCategories from "@/data/courseCategories";
 import ChapterList from "@/components/ChapterList";
@@ -154,5 +155,41 @@ const CoursePage = async ({
     </section>
   );
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const course = await getCourse(slug);
+
+  const title = `${course.title} | Dur-Sanchar Elearning`;
+
+  const description =
+    course.description?.slice(0, 160) ||
+    `Learn ${course.title} with Dur-Sanchar Elearning.`;
+
+  return {
+    title,
+    description,
+
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: `/courses/${slug}`,
+      images: [
+        {
+          url: course.thumbnail,
+          width: 1200,
+          height: 630,
+          alt: course.title,
+        },
+      ],
+    },
+  };
+}
 
 export default CoursePage;

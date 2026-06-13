@@ -4,6 +4,7 @@ import CourseReviewForm from "./components/CourseReviewForm";
 import getCourse from "@/app/lib/getCourse";
 import courseCategories from "@/data/courseCategories";
 import StarRating from "@/components/StarRating";
+import { Metadata } from "next";
 
 type Props = {
   params: Promise<{
@@ -110,5 +111,26 @@ const ClassroomCoursePage = async ({ params }: Props) => {
     </section>
   );
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const course = await getCourse(slug);
+
+  const title = `${course.title} | Dur-Sanchar Elearning`;
+
+  const description =
+    course.description?.slice(0, 160) ||
+    `Learn ${course.title} with Dur-Sanchar Elearning.`;
+
+  return {
+    title,
+    description,
+  };
+}
 
 export default ClassroomCoursePage;

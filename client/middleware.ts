@@ -6,7 +6,6 @@ const protectedRoutes = [
   "/classroom",
   "/verifying-payment",
   "/profile",
-  "/courses",
   "/cart",
 ] as const;
 

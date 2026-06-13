@@ -5,6 +5,7 @@ import getCourse from "@/app/lib/getCourse";
 import getChapter from "@/app/lib/getChapter";
 import type { Chapter, Course } from "@/types/course";
 import formatDuration from "@/utils/formatDuration";
+import { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{
@@ -71,5 +72,27 @@ const ClassRoomChapterPage = async ({ params }: PageProps) => {
     </section>
   );
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; chapterSlug: string }>;
+}): Promise<Metadata> {
+  const { slug, chapterSlug } = await params;
+
+  const course = await getCourse(slug);
+  const chapter = await getChapter({ courseSlug: slug, chapterSlug });
+
+  const title = `${chapter.title} - ${course.title} | Dur-Sanchar Elearning`;
+
+  const description =
+    chapter.description?.slice(0, 160) ||
+    `Learn ${course.title} with Dur-Sanchar Elearning.`;
+
+  return {
+    title,
+    description,
+  };
+}
 
 export default ClassRoomChapterPage;

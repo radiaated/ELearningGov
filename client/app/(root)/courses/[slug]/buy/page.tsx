@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
 
 import courseCategories from "@/data/courseCategories";
 import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
@@ -69,5 +70,26 @@ const BuyCoursePage = async ({ params }: Props) => {
     </section>
   );
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const course = await getCourse(slug);
+
+  const title = `Buy ${course.title} | Dur-Sanchar Elearning`;
+
+  const description =
+    course.description?.slice(0, 160) ||
+    `Learn ${course.title} with Dur-Sanchar Elearning.`;
+
+  return {
+    title,
+    description,
+  };
+}
 
 export default BuyCoursePage;
