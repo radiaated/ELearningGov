@@ -2,68 +2,91 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { api } from "@/app/lib/api";
-import { env } from "@/env";
+import Image from "next/image";
+
 import type { CurrentUser } from "@/types/user";
 import { useCartStore } from "@/store/cartStore";
 import getUser from "@/app/lib/getUser";
 
-const Header = () => {
-  const [headerColor, setHeaderColor] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/courses", label: "Online Courses" },
+  { href: "/about", label: "About" },
+];
 
+const Header = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<CurrentUser | null>(null);
 
   const cartItems = useCartStore((state) => state.items);
 
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
+
   useEffect(() => {
-    getUser().then((user) => setUser(user));
-    window.addEventListener("scroll", () => {
-      if (window.scrollY >= 200) {
-        setHeaderColor(true);
-      } else {
-        setHeaderColor(false);
+    const loadUser = async () => {
+      try {
+        const currentUser = await getUser();
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Failed to load user:", error);
       }
-    });
+    };
+
+    loadUser();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY >= 200);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-[80]">
-      <div className="w-full bg-primary-dark text-white flex flex-col md:flex-row justify-between text-xs px-2 py-1 md:items-center">
-        <div>01-4444444, 01-4444442</div>
-        <div className="flex gap-2 items-center justify-between w-full md:w-fit md:justify-normal">
-          <div>
-            <Link href="/cart">
-              Cart
-              <i className="fa-solid fa-cart-shopping"></i> ({cartItems.length})
-            </Link>
-          </div>
+    <header className="fixed top-0 left-0 z-50 w-screen">
+      {/* Top Bar */}
+      <div className="header-topbar">
+        <div className="hidden md:block">01-4444444, 01-4444442</div>
+
+        <div className="flex w-full items-center justify-between gap-2 md:w-fit md:justify-normal">
+          <Link href="/cart" className="flex items-center gap-1">
+            Cart
+            <i className="fa-solid fa-cart-shopping" />
+            <span>({cartItems.length})</span>
+          </Link>
+
           <div className="flex gap-2">
             {user ? (
               <>
                 {user.is_admin && (
                   <Link
                     href="/admin/dashboard"
-                    className="bg-primary-dark/50 px-4 py-1 rounded-sm"
+                    className="header-action header-action--filled"
                   >
                     Dashboard
                   </Link>
                 )}
+
                 <Link
-                  className=" px-4 py-1 rounded-sm"
                   href="/classroom/courses"
+                  className="header-action header-action--plain"
                 >
                   Your Courses
                 </Link>
+
                 <Link
-                  className="bg-primary-dark/50 px-4 py-1 rounded-sm"
                   href="/profile"
+                  className="header-action header-action--filled"
                 >
                   Profile
                 </Link>
+
                 <button
-                  className="bg-primary-dark/50 px-4 py-1 rounded-sm"
-                  // onClick={userCxt.logout}
+                  type="button"
+                  className="header-action header-action--filled"
                 >
                   Logout
                 </button>
@@ -71,14 +94,15 @@ const Header = () => {
             ) : (
               <>
                 <Link
-                  className="bg-primary-dark/50 px-4 py-1 rounded-sm"
                   href="/login"
+                  className="header-action header-action--filled"
                 >
                   Login
                 </Link>
+
                 <Link
-                  className="bg-primary-dark/50 px-4 py-1 rounded-sm"
                   href="/signup"
+                  className="header-action header-action--filled"
                 >
                   Signup
                 </Link>
@@ -88,97 +112,79 @@ const Header = () => {
         </div>
       </div>
 
+      {/* Main Header */}
       <div
-      // className={`flex items-center h-16 ${
-      //   location.pathname !== "/"
-      //     ? "bg-white border-b border-zinc-200 shadow-sm"
-      //     : `text-zinc-50 ${
-      //         headerColor
-      //           ? "bg-white text-zinc-800 transition-all duration-500"
-      //           : "transition-all duration-300"
-      //       }`
-      // }`}
+        className={`transition-all duration-300 ${
+          isScrolled ? "bg-white shadow-md" : "bg-transparent"
+        }`}
       >
-        <div className="w-[1400px] max-w-[90%] mx-auto flex justify-between items-center">
+        <div className="header-container">
           <Link href="/">
-            <div className="text-xl font-semibold">
-              {/* {location.pathname === "/" ? (
-                headerColor ? (
-                  <img src="logo-black.png" className="h-9 w-auto" />
-                ) : (
-                  <img src="logo-white.png" className="h-9 w-auto" />
-                )
-              ) : (
-                <img src="logo-black.png" className="h-9 w-auto" />
-              )} */}
-            </div>
+            <Image
+              src={isScrolled ? "/logo-black.png" : "/logo-white.png"}
+              alt="Logo"
+              width={140}
+              height={40}
+              priority
+              className="h-9 w-auto"
+            />
           </Link>
-          <button
-            className="block md:hidden bg-primary-dark text-lg text-white border border-primary-light rounded-md px-2 py-1 ml-2 mb-4"
-            onClick={() => setMobileMenu((state) => !state)}
-          >
-            <i className="fa-solid fa-bars"></i>
-          </button>
-          <nav className="hidden md:block">
-            <ul className="flex gap-8 text-sm font-medium">
-              <li>
-                <Link href="/">Home</Link>
-              </li>
-              <li>
-                <Link href="/courses">Online Courses</Link>
-              </li>
-              {/* <li>
-                <NavLink
-                  to="/studymaterials"
-                  className={({ isActive }) =>
-                    isActive
-                      ? "border-b-4 border-primary-light/75 pb-5 px-2"
-                      : "hover:border-b-4 hover:border-zinc-400 pb-5 px-2 transition-all eas ease-in-out"
-                  }
-                >
-                  Study Materials
-                </NavLink>
-              </li> */}
 
-              <li>
-                <Link href="/about">About</Link>
-              </li>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:block">
+            <ul className="flex gap-20 text-sm font-medium">
+              {navLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={`header-nav-link ${isScrolled ? "header-nav-link-dark" : ""}`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            aria-label="Toggle menu"
+            className="ml-2 rounded-md border border-primary-light bg-primary-dark px-2 py-1 text-lg text-white md:hidden"
+            onClick={toggleMobileMenu}
+          >
+            <i className="fa-solid fa-bars" />
+          </button>
         </div>
       </div>
+
+      {/* Mobile Navigation */}
       <nav
-        className={`block fixed md:hidden top-0 left-50% ${
-          mobileMenu ? "translate-x-[35%]" : "translate-x-[100%]"
-        } w-screen h-screen bg-primary-dark pt-4 transition-all`}
+        className={`fixed top-0 right-0 h-screen w-full bg-primary-dark pt-4 transition-transform duration-300 md:hidden ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
       >
         <button
-          className="text-xl text-white border border-primary-main rounded-md px-2 py-1 ml-2 mb-4"
-          onClick={() => setMobileMenu((state) => !state)}
+          type="button"
+          aria-label="Close menu"
+          className="mb-4 ml-2 rounded-md border border-primary-main px-2 py-1 text-xl text-white"
+          onClick={toggleMobileMenu}
         >
-          <i className="fa-solid fa-arrow-left"></i>
+          <i className="fa-solid fa-arrow-left" />
         </button>
-        <ul className="flex flex-col text-2xl font-medium  text-white divide-y divide-zinc-100">
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/courses">Online Courses</Link>
-          </li>
-          {/* <li>
-            <NavLink
-              to="/studymaterials"
-              className={({ isActive }) =>
-                isActive ? "block p-4 bg-[#103d4e] " : "block p-4"
-              }
-            >
-              Study Materials
-            </NavLink>
-          </li> */}
 
-          <li>
-            <Link href="/about">About</Link>
-          </li>
+        <ul className="flex flex-col divide-y divide-zinc-100 text-2xl font-medium text-white">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="header-mobile-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </header>

@@ -8,9 +8,11 @@ const CoursesForYouSection = async () => {
   console.log(coursesData);
   const courses = coursesData.results;
   return (
-    <section className="section">
-      <h2 className="title">Courses for you</h2>
-      <CourseList courses={courses} />
+    <section>
+      <div className="section-container my-16">
+        <h2 className="title">Courses for you</h2>
+        <CourseList courses={courses} />
+      </div>
     </section>
   );
 };

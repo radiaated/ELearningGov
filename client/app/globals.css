@@ -32,6 +32,42 @@
     @apply font-[var(--font-montserrat)];
   }
 
+  button {
+    @apply cursor-pointer;
+  }
+
+  .header-action {
+    @apply rounded-sm px-4 py-1 transition-colors;
+  }
+
+  .header-action--filled {
+    @apply bg-primary-dark/50 hover:bg-primary-dark/70;
+  }
+
+  .header-action--plain {
+    @apply hover:bg-primary-dark/30;
+  }
+
+  .header-nav-link {
+    @apply text-zinc-50 transition-colors hover:text-primary-main;
+  }
+
+  .header-nav-link-dark {
+    @apply text-zinc-800 hover:text-primary-main;
+  }
+
+  .header-topbar {
+    @apply flex flex-col justify-between bg-primary-dark px-2 py-1 text-xs text-white md:flex-row md:items-center;
+  }
+
+  .header-container {
+    @apply mx-auto flex w-350 max-w-[90%] items-center justify-between py-4;
+  }
+
+  .header-mobile-link {
+    @apply block p-4;
+  }
+
   .sl-form {
     @apply flex flex-col gap-4;
   }
@@ -55,11 +91,15 @@
   }
 
   .btn {
-    @apply w-full cursor-pointer border border-primary-main bg-primary-main p-2 text-lg font-medium text-zinc-100 hover:bg-[#2187ab];
+    @apply inline-flex cursor-pointer items-center justify-center rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
-  .section {
-    @apply mx-auto my-4 w-350 max-w-[90%];
+  .btn-primary-outline {
+    @apply border-2 border-primary-main p-2 text-lg font-medium text-zinc-100 hover:bg-[#2187ab] active:bg-[#1d7696];
+  }
+
+  .section-container {
+    @apply mx-auto w-350 max-w-[90%];
   }
 
   .title {
@@ -84,7 +124,14 @@
   }
 
   .embla__dots {
-    @apply absolute bottom-4 right-1/2 flex gap-4 -translate-y-1/2;
+    @apply absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 gap-3;
+  }
+
+  .embla__dot {
+    @apply h-3 w-3 rounded-full transition-all duration-300 bg-white/50 hover:bg-white;
+  }
+  .embla__dot.active {
+    @apply w-8 bg-primary-main;
   }
 
   .embla__control {
@@ -106,13 +153,5 @@
 
   .embla__control i {
     @apply text-2xl;
-  }
-
-  .embla__dot {
-    @apply block h-3 w-3 cursor-pointer rounded-full bg-gray-300;
-  }
-
-  .embla__dot.active {
-    @apply bg-primary-dark;
   }
 }

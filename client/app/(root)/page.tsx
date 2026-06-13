@@ -7,14 +7,14 @@ import TestimonialsSection from "./components/TestimonialsSection";
 
 const HomePage = () => {
   return (
-    <div>
+    <>
       <ImageSliderSection />
       <Suspense fallback={<CoursesForYouSectionSkeleton />}>
         <CoursesForYouSection />
       </Suspense>
       <TestimonialsSection />
       <CategoriesSection />
-    </div>
+    </>
   );
 };
 

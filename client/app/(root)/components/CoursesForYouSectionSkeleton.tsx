@@ -2,10 +2,12 @@ import CourseListSkeleton from "@/app/components/CourseListSkeleton";
 
 const CoursesForYouSectionSkeleton = async () => {
   return (
-    <div>
-      <h2 className="title w-1/5 h-6 bg-gray-200"></h2>
-      <CourseListSkeleton />
-    </div>
+    <section>
+      <div className="section-container my-16">
+        <h2 className="title">Courses for you</h2>
+        <CourseListSkeleton />
+      </div>
+    </section>
   );
 };
 

@@ -3,7 +3,7 @@ import { env } from "@/env";
 import { Course } from "@/types/course";
 
 const getCourses = async (
-  searchParams: string,
+  searchParams?: string,
 ): Promise<{ count: number; results: Course[] }> => {
   const query = searchParams ? `?${searchParams}` : "";
 

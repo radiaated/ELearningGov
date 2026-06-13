@@ -2,8 +2,10 @@
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useState } from "react";
+
+const imgs = ["sld1.jpg", "sld2.jpg", "sld3.jpg"];
+
 const ImageSliderSection = () => {
-  const imgs = ["sld1.jpg", "sld2.jpg", "sld3.jpg"];
   const [emblaRef, emblaAPI] = useEmblaCarousel({ loop: true });
   const [currSlide, setCurrSlide] = useState<number>(0);
 
@@ -16,53 +18,64 @@ const ImageSliderSection = () => {
   }, [emblaAPI]);
 
   return (
-    <div className="h-[80vh] relative">
-      <div className="absolute z-2 top-64 left-16">
-        <h2 className="text-2xl md:text-3xl text-zinc-50 mb-8 italic">
-          <span className="text-4xl font-black">"</span> Learning is a lifelong
-          process.
-          <span className="text-4xl font-black">"</span>
-        </h2>
-        <Link
-          href="/signup"
-          className="text-lg py-4 px-8 border-2 border-primary-main w-full font-medium ml-8 rounded-sm text-blue-100 hover:bg-primary-main hover:text-zinc-100 shadow-md"
-        >
-          Join Courses
-        </Link>
-      </div>
-      <div className="block absolute z-2 bottom-20 right-0 bg-primary-main w-[50%] py-6">
-        <Link
-          href="/signup"
-          className="block font-semibold py-1 px-2 text-zinc-50 border-b-2 border-border-zinc-200 w-fit ml-8 text-xl md:text-3xl hover:bg-primary-light/40 hover:border-zinc-300"
-        >
-          Get Started <i className="fa-solid fa-chevron-right"></i>
-        </Link>
-      </div>
-      <div className="embla">
-        <div className="embla__viewport" ref={emblaRef}>
-          <div className="embla__container">
-            {imgs.map((im, ind) => (
-              <div className="embla__slide h-[80vh]" key={ind}>
-                <img
-                  src={im}
-                  alt="Image 1"
-                  className="h-full w-full object-cover brightness-50"
+    <section>
+      <div className="relative h-screen overflow-hidden">
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40 z-10" />
+
+        {/* Hero Content */}
+        <div className="absolute left-6 top-1/2 z-20 max-w-xl -translate-y-1/2 md:left-16">
+          <h2 className="mb-8 text-xl font-light italic leading-relaxed text-white md:text-5xl">
+            <span className="text-3xl font-black md:text-5xl">"</span>
+            Learning is a lifelong process.
+            <span className="text-3xl font-black md:text-5xl">"</span>
+          </h2>
+
+          <Link href="/signup" className="btn btn-primary-outline px-12 py-4">
+            Join Courses
+          </Link>
+        </div>
+
+        {/* CTA Button */}
+        <div className="absolute bottom-20 right-0 z-20">
+          <Link
+            href="/signup"
+            className="flex items-center gap-3 rounded-l-full bg-primary-main px-8 py-5 text-xl font-semibold text-white shadow-lg transition-all duration-300 hover:bg-primary-dark hover:pr-10"
+          >
+            Get Started
+            <i className="fa-solid fa-chevron-right"></i>
+          </Link>
+        </div>
+
+        {/* Slider */}
+        <div className="embla h-full">
+          <div className="embla__viewport h-full" ref={emblaRef}>
+            <div className="embla__container h-full">
+              {imgs.map((im, ind) => (
+                <div className="embla__slide h-full" key={ind}>
+                  <img
+                    src={im}
+                    alt={`Slide ${ind + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Dots */}
+            <div className="embla__dots">
+              {imgs.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => scrollTo(idx)}
+                  className={`embla__dot${currSlide === idx ? " active" : ""}`}
                 />
-              </div>
-            ))}
-          </div>
-          <div className="embla__dots">
-            {Array.from({ length: imgs.length }).map((_, idx) => (
-              <button
-                className={"embla__dot " + (currSlide === idx ? "active" : "")}
-                key={idx}
-                onClick={() => scrollTo(idx)}
-              />
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
