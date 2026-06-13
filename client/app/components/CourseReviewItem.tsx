@@ -4,45 +4,53 @@ import { useState } from "react";
 import StarRating from "./StarRating";
 import { CourseReview } from "@/types/course";
 
-const CourseReviewItem = ({
-  review,
-  deleteReview,
-}: {
+type Props = {
   review: CourseReview;
   deleteReview?: (id: number) => void;
-}) => {
-  const [revMenu, setRevMenu] = useState(false);
+};
 
-  const handleDelete = async () => {
-    if (!review.id) return;
+const CourseReviewItem = ({ review, deleteReview }: Props) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    deleteReview && deleteReview(review.id);
+  const formattedDate = review.date_created
+    ? new Date(review.date_created).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : null;
 
-    setRevMenu(false);
+  const handleDelete = () => {
+    if (!review.id || !deleteReview) return;
+    deleteReview(review.id);
+    setIsMenuOpen(false);
   };
 
   return (
-    <div className="bg-zinc-50 p-4 border border-zinc-100 relative">
+    <div className="relative rounded-lg bg-white p-4 hover:bg-zinc-50 transition">
       {/* Menu button */}
       <button
-        onClick={() => setRevMenu((state) => !state)}
-        className="absolute top-1 right-4 text-zinc-500 text-sm"
+        type="button"
+        onClick={() => setIsMenuOpen((p) => !p)}
+        className="absolute right-2 top-2 text-zinc-400 hover:text-zinc-600"
+        aria-label="Open menu"
       >
-        <i className="fa-solid fa-ellipsis"></i>
+        <i className="fa-solid fa-ellipsis text-sm" />
       </button>
 
       {/* Dropdown + overlay */}
-      {revMenu && (
+      {isMenuOpen && (
         <>
-          <div
-            className="w-full h-screen fixed top-0 left-0 z-[60]"
-            onClick={() => setRevMenu(false)}
+          <button
+            className="fixed inset-0 z-40"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu"
           />
 
-          <div className="bg-white border border-zinc-200 shadow-md rounded-md absolute right-2 top-6 text-zinc-700 text-sm z-[65]">
+          <div className="absolute right-2 top-7 z-50 w-28 rounded-md bg-white shadow-sm border border-zinc-100 text-sm">
             <button
-              className="block py-2 px-4 text-red-700"
               onClick={handleDelete}
+              className="w-full text-left px-3 py-2 text-red-500 hover:bg-zinc-50"
             >
               Delete
             </button>
@@ -50,26 +58,28 @@ const CourseReviewItem = ({
         </>
       )}
 
-      {/* Content */}
-      <div className="text-primary-main">{review.username}</div>
-
-      <div className="flex justify-between text-xs">
-        <StarRating rating={review.rating} />
-
-        {review.date_created && (
-          <div>
-            {new Date(review.date_created).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2 items-center">
+          <div className="text-sm font-medium text-zinc-800">
+            {review.username}
           </div>
-        )}
+          {formattedDate && (
+            <div className="text-xs text-zinc-400">{formattedDate}</div>
+          )}
+        </div>
+      </div>
+      <hr className="text-zinc-200 mt-2" />
+
+      {/* Rating */}
+      <div className="mt-1">
+        <StarRating rating={review.rating} />
       </div>
 
-      <hr className="my-2" />
-
-      <div className="text-[15px]">{review.comment}</div>
+      {/* Comment */}
+      <p className="mt-2 text-sm text-zinc-600 leading-relaxed">
+        {review.comment}
+      </p>
     </div>
   );
 };

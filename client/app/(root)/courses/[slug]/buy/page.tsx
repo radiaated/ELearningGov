@@ -5,12 +5,11 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import courseCategories from "@/data/courseCategories";
-import { api } from "@/app/lib/api";
-import { env } from "@/env";
 import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
 import getCourse from "@/app/lib/getCourse";
 import buyCourse from "@/app/lib/buyCourse";
-import { Course } from "@/types/course";
+import type { Course } from "@/types/course";
+import formatPrice from "@/utils/formatPrice";
 
 export default function BuyCoursePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -18,90 +17,89 @@ export default function BuyCoursePage() {
 
   const [course, setCourse] = useState<Course | null>(null);
 
-  useEffect(() => {
-    if (!slug) return;
-
-    const loadData = async () => {
-      try {
-        const purchaseStatusData = await getCoursePurchaseStatus(slug);
-
-        if (purchaseStatusData.purchase_status) {
-          router.push(`/classroom/course/${slug}`);
-          return;
-        }
-
-        const courseData = await getCourse(slug);
-        setCourse(courseData);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    loadData();
-  }, [slug, router]);
-
-  const purchaseCourse = async () => {
-    if (!course) return;
-
+  const loadData = async () => {
     try {
-      buyCourse({
-        course_id: [course.id],
-        price: course.price,
-      }).then((data) => {
-        window.location.href = data.payment_url;
-      });
+      const purchaseStatus = await getCoursePurchaseStatus(slug);
+
+      if (purchaseStatus?.purchase_status) {
+        router.push(`/classroom/course/${slug}`);
+        return;
+      }
+
+      const courseData = await getCourse(slug);
+
+      setCourse(courseData);
     } catch (error) {
-      console.error(error);
+      console.error("Failed to load course data:", error);
     }
   };
 
-  if (!course) {
-    return <div>Course not found.</div>;
-  }
+  const categoryLabel = course
+    ? courseCategories.find((cat) => cat.value === course?.category)?.label
+    : undefined;
+
+  const handlePurchase = async () => {
+    if (!course) return;
+
+    try {
+      const data = await buyCourse({
+        course_id: [course?.id],
+        price: course?.price,
+      });
+
+      if (data?.payment_url) {
+        window.location.href = data.payment_url;
+      }
+    } catch (error) {
+      console.error("Purchase failed:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
-    <div className="w-full md:w-[50%] mx-auto">
-      <div>
-        <div>
-          <h3 className="text-xl md:text-3xl font-semi-bold mb-4">Purchase</h3>
+    <section>
+      <div className="section-container my-8 w-full md:w-2/4">
+        <div className="w-full space-y-6">
+          <h3 className="title">Purchase Course</h3>
 
-          <hr className="mb-4" />
+          <hr className="text-zinc-200" />
 
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="grid grid-cols-8 gap-2">
             <img
-              src={course.thumbnail}
-              alt={course.title}
-              className="h-36 md:h-24 rounded-md object-cover"
+              src={course?.thumbnail}
+              alt={course?.title}
+              className="col-span-3 md:col-span-3 w-full h-20 rounded-md object-cover bg-zinc-100"
             />
 
-            <div className="flex flex-col gap-1">
+            <div className="col-span-5 md:col-span-3 flex-1 space-y-1">
               <Link href={`/course/${slug}`}>
-                <h3 className="text-xl font-medium">{course.title}</h3>
+                <h3 className="text-base font-medium text-zinc-900 hover:text-primary-main transition">
+                  {course?.title}
+                </h3>
               </Link>
 
-              <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1">
-                {
-                  courseCategories.find((cat) => cat.short === course.category)
-                    ?.title
-                }
-              </div>
+              {categoryLabel && (
+                <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-2 py-1 rounded">
+                  {categoryLabel}
+                </div>
+              )}
             </div>
 
-            <div>
-              <div className="text-xl font-medium text-center mb-2">
-                Rs. {course.price / 100}
-              </div>
-
-              <button
-                className="group border border-green-600 rounded-full w-full px-5 py-2 hover:bg-green-600 hover:text-zinc-100 duration-100 md:w-fit"
-                onClick={purchaseCourse}
-              >
-                Purchase
-              </button>
+            <div className="col-span-12 md:col-span-2 text-center md:text-right text-2xl font-bold text-zinc-900">
+              {course?.price && formatPrice(course.price)}
             </div>
           </div>
+          <button
+            onClick={handlePurchase}
+            className="btn w-full px-4 py-2 rounded-md text-zinc-100 bg-green-600 hover:bg-green-700"
+          >
+            Purchase
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

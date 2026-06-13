@@ -119,7 +119,9 @@ const Header = () => {
       {/* Main Header */}
       <div
         className={`transition-all duration-300 ${
-          isScrolled ? "bg-white shadow-md" : "bg-transparent"
+          isScrolled || pathname !== "/"
+            ? "bg-white shadow-md"
+            : "bg-transparent"
         }`}
       >
         <div className="header-container">

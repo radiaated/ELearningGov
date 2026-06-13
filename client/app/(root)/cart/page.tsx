@@ -6,8 +6,11 @@ import { env } from "@/env";
 import { api } from "@/app/lib/api";
 
 import { useCartStore } from "@/store/cartStore";
-import { Course } from "@/types/course";
+
+import type { Course } from "@/types/course";
+
 import buyCourse from "@/app/lib/buyCourse";
+import formatPrice from "@/utils/formatPrice";
 
 const CartPage = () => {
   const cartItems = useCartStore((state) => state.items);
@@ -43,14 +46,15 @@ const CartPage = () => {
                   <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1">
                     {
                       courseCategories.find(
-                        (cat) => cat.short === item.category,
-                      )?.title
+                        (cat) => cat.value === item.category,
+                      )?.label
                     }
                   </div>
                 </div>
                 <div className="text-center flex items-baseline">
-                  <span className="text-sm">Rs.</span>{" "}
-                  <span className="font-medim text-xl">{item.price / 100}</span>
+                  <span className="font-medim text-xl">
+                    {formatPrice(item.price)}
+                  </span>
                 </div>
               </div>
               <div>
@@ -67,11 +71,12 @@ const CartPage = () => {
             <div className="pb-2 w-full">
               <span className="block text-xl">Total</span>
               <span className="block text-4xl">
-                Rs.{" "}
-                {cartItems.reduce(
-                  (total: number, cartItem) => total + cartItem.price,
-                  0,
-                ) / 100}
+                {formatPrice(
+                  cartItems.reduce(
+                    (total: number, cartItem) => total + cartItem.price,
+                    0,
+                  ),
+                )}
               </span>
             </div>
             <button

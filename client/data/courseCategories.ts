@@ -1,13 +1,13 @@
 const courseCategories = [
-  { title: "Technology and IT", short: "tech_it" },
-  { title: "Professional Development", short: "prof_dev" },
-  { title: "Creative Arts", short: "creative_arts" },
-  { title: "Health and Wellness", short: "health_wellness" },
-  { title: "Language Learning", short: "language" },
-  { title: "Vocational and Trade Skills", short: "vocational_trade" },
-  { title: "Environmental Studies", short: "environmental_studies" },
-  { title: "Social Sciences", short: "social_sciences" },
-  { title: "Law and Legal Studies", short: "law_studies" },
-] as const;
+  { label: "Technology and IT", value: "tech_it" },
+  { label: "Professional Development", value: "prof_dev" },
+  { label: "Creative Arts", value: "creative_arts" },
+  { label: "Health and Wellness", value: "health_wellness" },
+  { label: "Language Learning", value: "language" },
+  { label: "Vocational and Trade Skills", value: "vocational_trade" },
+  { label: "Environmental Studies", value: "environmental_studies" },
+  { label: "Social Sciences", value: "social_sciences" },
+  { label: "Law and Legal Studies", value: "law_studies" },
+];
 
 export default courseCategories;

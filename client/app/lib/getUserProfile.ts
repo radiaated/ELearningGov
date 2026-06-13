@@ -1,7 +1,7 @@
 import { api } from "./api";
 import { env } from "@/env";
 
-import { ProfileFormData } from "@/types/user";
+import type { ProfileFormData } from "@/schemas/user";
 
 const getUserProfile = async (
   cookieHeader?: string | null,

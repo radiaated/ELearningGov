@@ -1,33 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import StarRating from "@/app/components/StarRating";
 import ChapterList from "@/app/components/ChapterList";
-
-import deleteCourseReview from "@/app/lib/deleteCourseReview";
-import postCoureReview from "@/app/lib/postCoureReview";
-import updateCoureReview from "@/app/lib/updateCoureReview";
+import CourseReviewList from "@/app/components/CourseReviewList";
+import SetStarRating from "@/app/components/SetStarRating";
 
 import getCourse from "@/app/lib/getCourse";
-import { Course } from "@/types/course";
+import postCoureReview from "@/app/lib/postCoureReview";
+
 import courseCategories from "@/data/courseCategories";
-import CourseReviewList from "@/app/components/CourseReviewList";
-import { useForm } from "react-hook-form";
-import {
-  courseReviewSchema,
-  CourseReview as CourseReviewFormData,
-} from "@/types/course";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useParams } from "next/navigation";
-import SetStarRating from "@/app/components/SetStarRating";
+
+import type { Course } from "@/types/course";
+
+import { courseReviewSchema } from "@/schemas/course";
+import type { CourseReviewFormData } from "@/schemas/course";
 
 const ClassroomCoursePageClient = () => {
   const { slug } = useParams<{ slug: string }>();
-
   const qs = useSearchParams();
   const router = useRouter();
 
@@ -38,7 +33,8 @@ const ClassroomCoursePageClient = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm({
+    reset,
+  } = useForm<CourseReviewFormData>({
     resolver: yupResolver(courseReviewSchema),
   });
 
@@ -47,134 +43,174 @@ const ClassroomCoursePageClient = () => {
   };
 
   const onSubmit = async (data: CourseReviewFormData) => {
-    console.log("a");
-    await postCoureReview(data, slug).then(() =>
-      getCourse(slug).then((course) => setCourse(course)),
-    );
+    await postCoureReview(data, slug);
+    const updated = await getCourse(slug);
+    setCourse(updated);
+    reset();
   };
 
+  const categoryTitle =
+    courseCategories.find((c) => c.value === course?.category)?.label ??
+    "Uncategorized";
+
   useEffect(() => {
-    console.log(slug);
-    getCourse(slug).then((course) => setCourse(course));
+    getCourse(slug).then(setCourse);
     router.replace("?view=content");
-  }, []);
+  }, [slug, router]);
 
   return (
-    <div className="grid grid-cols-12 gap-8">
-      <div className="col-span-12 md:col-span-6 flex flex-col gap-3">
-        <h3 className="text-2xl font-bold">{course?.title}</h3>
-        <p>{course?.description}</p>
+    <section>
+      <div className="section-container my-8">
+        <div className="grid grid-cols-12 gap-8">
+          {/* LEFT SIDE */}
+          <div className="col-span-12 lg:col-span-6 flex flex-col gap-4">
+            <h3 className="text-2xl font-bold">{course?.title}</h3>
 
-        <div className="flex gap-2 items-center">
-          <span className="text-yellow-700 font-medium">
-            {course?.avg_rating}
-          </span>
+            <p className="text-sm text-zinc-700">{course?.description}</p>
 
-          {course?.avg_rating && <StarRating rating={course.avg_rating} />}
+            {/* Rating */}
+            <div className="flex items-center gap-2">
+              {course?.avg_rating && (
+                <span className="font-medium text-yellow-700">
+                  {course.avg_rating}
+                </span>
+              )}
 
-          <span>
-            ({course?.reviews_count} review
-            {course?.reviews_count && course?.reviews_count > 1 && "s"})
-          </span>
-        </div>
+              {course?.avg_rating && <StarRating rating={course.avg_rating} />}
 
-        <div className="bg-zinc-100 text-xs w-fit px-2">
-          {courseCategories.find((c) => c.short === course?.category)?.title}
-        </div>
+              <span className="text-sm">
+                ({course?.reviews_count} review
+                {course?.reviews_count !== 1 ? "s" : ""})
+              </span>
+            </div>
 
-        <div className="text-xs">
-          by <span className="text-primary-main">John Smith</span>
-        </div>
+            {/* Category */}
+            <div className="bg-zinc-100 border border-zinc-300/30 text-xs w-fit px-2 py-1 rounded">
+              {categoryTitle}
+            </div>
 
-        <hr />
+            {/* Author / Meta */}
+            <div className="flex items-center gap-4 text-xs text-zinc-600">
+              <span>
+                <i className="fa-regular fa-user" />{" "}
+                <span className="text-primary-main">John Smith</span>
+              </span>
 
-        {/* CONTENT / REVIEWS TABS */}
-        <div className="flex gap-4 border-b my-4">
-          <Link
-            href="?view=content"
-            className={
-              qs.get("view") === "content" ? "border-b-2 border-orange-500" : ""
-            }
-          >
-            Contents
-          </Link>
+              <span>
+                <i className="fa-solid fa-globe" /> English
+              </span>
+            </div>
 
-          <Link
-            href="?view=review"
-            className={
-              qs.get("view") === "review" ? "border-b-2 border-orange-500" : ""
-            }
-          >
-            Reviews
-          </Link>
-        </div>
+            <hr className="text-zinc-300" />
 
-        {/* CONTENT */}
-        {qs.get("view") === "content" && course?.course_chapters && (
-          <ChapterList
-            chapters={course.course_chapters}
-            courseSlug={slug}
-            showWatchButton={true}
-          />
-        )}
+            {/* Tabs */}
+            <div className="flex gap-6 border-b text-sm">
+              <Link
+                href="?view=content"
+                className={`pb-2 ${
+                  qs.get("view") === "content"
+                    ? "border-b-2 border-primary-main font-medium"
+                    : ""
+                }`}
+              >
+                Contents
+              </Link>
 
-        {/* REVIEWS */}
-        {qs.get("view") === "review" && (
-          <div className="space-y-4">
-            {/* POST REVIEW */}
-            <form onSubmit={handleSubmit(onSubmit)} className="border p-3">
-              <div className="mb-2">
-                <SetStarRating onChange={onRatingChange} />
-              </div>
+              <Link
+                href="?view=review"
+                className={`pb-2 ${
+                  qs.get("view") === "review"
+                    ? "border-b-2 border-primary-main font-medium"
+                    : ""
+                }`}
+              >
+                Reviews
+              </Link>
+            </div>
 
-              <textarea
-                className="w-full border p-2"
-                {...register("comment")}
-                placeholder="Write your review"
-              />
-              {errors.comment?.message}
-
-              <input
-                type="submit"
-                value="Post"
-                className="mt-2 bg-orange-500 text-white px-4 py-1"
-              />
-            </form>
-
-            {/* REVIEW LIST (manual but still uses your logic) */}
-            {course && (
-              <CourseReviewList
-                courseReviews={course.course_reviews}
+            {/* CONTENT */}
+            {qs.get("view") === "content" && course?.course_chapters && (
+              <ChapterList
+                chapters={course.course_chapters}
                 courseSlug={slug}
+                showWatchButton
               />
             )}
+
+            {/* REVIEWS */}
+            {qs.get("view") === "review" && (
+              <div className="space-y-6">
+                {/* POST REVIEW */}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="border border-zinc-200 rounded p-4 space-y-3"
+                >
+                  <SetStarRating onChange={onRatingChange} />
+
+                  <textarea
+                    className="w-full border p-2 rounded text-sm"
+                    {...register("comment")}
+                    placeholder="Write your review..."
+                  />
+
+                  {errors.comment?.message && (
+                    <p className="text-xs text-red-500">
+                      {errors.comment.message}
+                    </p>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="bg-primary-main text-white px-4 py-2 text-sm rounded"
+                  >
+                    Post Review
+                  </button>
+                </form>
+
+                {course && (
+                  <CourseReviewList
+                    courseReviews={course.course_reviews}
+                    courseSlug={slug}
+                  />
+                )}
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* RIGHT */}
-      <div className="col-span-12 md:col-span-6">
-        <div className="border rounded-xl overflow-hidden shadow-lg">
-          <img src={course?.thumbnail} className="h-64 w-full object-cover" />
+          {/* RIGHT SIDE (sticky card like your original design) */}
+          <div className="col-span-12 lg:col-span-6">
+            <div className="md:sticky md:top-30">
+              <div className="border border-primary-dark rounded-xl overflow-hidden shadow-lg w-full lg:w-2/3 mx-auto divide-y divide-zinc-300">
+                <img
+                  src={course?.thumbnail}
+                  alt={course?.title}
+                  className="h-64 w-full object-cover"
+                />
 
-          <div className="p-4 text-sm space-y-2">
-            <div>
-              <i className="fa-solid fa-layer-group"></i> {course?.level}
+                {/* META */}
+                <div className="text-sm px-4 py-4 space-y-2">
+                  <span className="block">
+                    <i className="fa-solid fa-layer-group" /> {course?.level}
+                  </span>
+                </div>
+
+                {/* REQUIREMENTS */}
+                <div className="text-sm px-4 py-4 space-y-2">
+                  <span className="block text-base">
+                    <i className="fa-solid fa-info text-sm" /> Requirements
+                  </span>
+                  <span className="block">{course?.requirements}</span>
+                </div>
+
+                <div className="p-4 text-center text-zinc-500 text-sm">
+                  Enrolled <i className="fa-solid fa-graduation-cap" />
+                </div>
+              </div>
             </div>
-
-            <div>
-              <i className="fa-regular fa-clock"></i>{" "}
-              {course?.date_created &&
-                new Date(course?.date_created).toLocaleDateString()}
-            </div>
-          </div>
-
-          <div className="p-4 text-center text-gray-500">
-            Enrolled <i className="fa-solid fa-graduation-cap"></i>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

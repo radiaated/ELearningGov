@@ -1,7 +1,8 @@
 "use client";
 
-import { Chapter } from "@/types/course";
+import type { Chapter } from "@/types/course";
 import formatDuration from "@/utils/formatDuration";
+import Link from "next/link";
 import {
   Accordion,
   AccordionItem,
@@ -9,58 +10,70 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
-import Link from "next/link";
 
-const ChapterList = ({
-  chapters,
-  showWatchButton,
-  courseSlug,
-}: {
+interface ChapterListProps {
   chapters: Chapter[];
   showWatchButton?: boolean;
   courseSlug?: string;
-}) => {
+}
+
+const ChapterList = ({
+  chapters,
+  showWatchButton = false,
+  courseSlug,
+}: ChapterListProps) => {
+  if (!chapters?.length) {
+    return <p className="text-sm text-zinc-500">No chapters available.</p>;
+  }
+
   return (
-    <div className="">
-      <h3 className="text-xl font-medium my-4">Contents:</h3>
-      <Accordion allowMultipleExpanded={false}>
-        {chapters.map((chapter: Chapter, idx: number) => (
-          <AccordionItem key={idx}>
+    <section>
+      <h3 className="text-xl font-medium my-4">Contents</h3>
+
+      <Accordion allowMultipleExpanded={false} allowZeroExpanded>
+        {chapters.map((chapter) => (
+          <AccordionItem key={chapter.slug}>
             <AccordionItemHeading>
               <AccordionItemButton className="bg-zinc-50 border border-zinc-200 rounded-t-md py-4 px-3">
-                <div className="font-medium text-xl flex justify-between">
+                <div className="flex justify-between gap-4">
                   <div>
-                    <div className="mb-1">
+                    <p className="font-medium text-xl">
                       {chapter.chpt}. {chapter.title}
-                    </div>
-                    <div className="align-middle text-xs text-zinc-400">
-                      <i className="fa-regular fa-clock mr-2"></i>
-                      <span className="">
-                        {formatDuration(chapter.duration)}
-                      </span>
+                    </p>
+
+                    <div className="flex items-center text-xs text-zinc-400 mt-1">
+                      <i
+                        className="fa-regular fa-clock mr-2"
+                        aria-hidden="true"
+                      />
+                      <span>{formatDuration(chapter.duration)}</span>
                     </div>
                   </div>
-                  <div>
-                    <i className="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125"></i>
+
+                  <div aria-hidden="true">
+                    <i className="fa-solid fa-grip text-zinc-400 hover:text-zinc-500 active:scale-125" />
                   </div>
                 </div>
               </AccordionItemButton>
             </AccordionItemHeading>
-            <AccordionItemPanel className="bg-white border-b border-x border-zinc-200 p-4 pl-6">
-              <p>{chapter.description}</p>
-              {showWatchButton && (
+
+            <AccordionItemPanel className="relative bg-white border-b border-x border-zinc-200 p-4 pb-12 pl-6">
+              <p className="text-sm text-zinc-700">{chapter.description}</p>
+
+              {showWatchButton && courseSlug && (
                 <Link
                   href={`/classroom/courses/${courseSlug}/chapter/${chapter.slug}`}
-                  className="block align-middle  text-white bg-orange-500 px-4 py-2 w-fit rounded-sm absolute hover:border-b-4 hover:border-orange-600 bottom-5 right-4"
+                  className="absolute right-2 bottom-2 inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-sm hover:bg-orange-600 transition"
                 >
-                  Take <i className="fa-solid fa-arrow-right"></i>
+                  Take{" "}
+                  <i className="fa-solid fa-arrow-right" aria-hidden="true" />
                 </Link>
               )}
             </AccordionItemPanel>
           </AccordionItem>
         ))}
       </Accordion>
-    </div>
+    </section>
   );
 };
 

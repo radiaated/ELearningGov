@@ -1,6 +1,6 @@
 import { api } from "./api";
 import { env } from "@/env";
-import { Chapter } from "@/types/course";
+import type { Chapter } from "@/types/course";
 
 type GetChapterPayload = {
   courseSlug: string;

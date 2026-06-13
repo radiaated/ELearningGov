@@ -1,38 +1,46 @@
 import type { Course } from "@/types/course";
-import StarRating from "./StarRating";
 import Link from "next/link";
+import StarRating from "./StarRating";
 import courseCategories from "@/data/courseCategories";
+import formatPrice from "@/utils/formatPrice";
 
-const CourseItem = ({ course }: { course: Course }) => {
-  const rating = course.avg_rating ?? 0;
-  const reviewCount = course.reviews_count ?? 0;
+type CourseItemProps = {
+  course: Course;
+};
+
+const CourseItem = ({ course }: CourseItemProps) => {
+  const { slug, thumbnail, title, avg_rating, reviews_count, category, price } =
+    course;
+
+  const rating = avg_rating ?? 0;
+  const reviewCount = reviews_count ?? 0;
+  const priceInRupees = formatPrice(price);
 
   const categoryTitle =
-    courseCategories.find((cat) => cat.short === course.category)?.title || "-";
+    courseCategories.find((cat) => cat.value === category)?.label ?? "-";
 
-  const priceInRupees = (course.price ?? 0) / 100;
+  const reviewLabel = reviewCount === 1 ? "Review" : "Reviews";
 
   return (
-    <div>
-      <Link href={`/courses/${course.slug}`} className="block">
+    <article className="group">
+      <Link href={`/courses/${slug}`} className="block">
         <img
-          src={course.thumbnail}
-          alt={course.title}
-          className="h-32 w-full object-cover rounded-md mb-1 hover:outline hover:outline-primary-light"
+          src={thumbnail}
+          alt={title}
+          loading="lazy"
+          className="h-32 w-full object-cover rounded-md mb-1 group-hover:outline group-hover:outline-primary-light"
         />
 
-        <h3 className="font-medium text-[15px] text-primary-dark hover:underline underline-offset-1">
-          {course.title}
+        <h3 className="font-medium text-[15px] text-primary-dark group-hover:underline underline-offset-1">
+          {title}
         </h3>
       </Link>
 
       <div className="text-xs flex gap-1 mt-1 items-center">
         <span className="text-yellow-700 font-medium">{rating}</span>
-
         <StarRating rating={rating} />
-
         <span className="text-yellow-700">
-          ({reviewCount} Review{reviewCount === 1 ? "" : "s"})
+          ({reviewCount} {reviewLabel})
         </span>
       </div>
 
@@ -43,12 +51,9 @@ const CourseItem = ({ course }: { course: Course }) => {
       </div>
 
       <div className="mt-1">
-        <span className="text-lg font-medium">
-          <span className="text-sm">Rs. </span>
-          {priceInRupees.toLocaleString()}
-        </span>
+        <span className="text-lg font-medium">{priceInRupees}</span>
       </div>
-    </div>
+    </article>
   );
 };
 

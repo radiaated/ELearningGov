@@ -1,8 +1,8 @@
 import { api } from "./api";
 import { env } from "@/env";
-import { LoginFormData } from "@/types/user";
+import type { SignupFormData } from "@/schemas/user";
 
-const signup = async (data: LoginFormData): Promise<void> => {
+const signup = async (data: SignupFormData): Promise<void> => {
   await api(env.API_URL + "/api/auth/register/", {
     method: "POST",
     headers: {

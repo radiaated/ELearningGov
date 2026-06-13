@@ -1,6 +1,6 @@
 import { api } from "./api";
 import { env } from "@/env";
-import { LoginFormData } from "@/types/user";
+import type { LoginFormData } from "@/schemas/user";
 
 const login = async (data: LoginFormData): Promise<void> => {
   await api(env.API_URL + "/api/auth/token/", {

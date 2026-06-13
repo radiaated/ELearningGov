@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+
 import type { CourseReview } from "@/types/course";
 import CourseReviewItem from "./CourseReviewItem";
 import deleteCourseReview from "../lib/deleteCourseReview";
@@ -10,21 +11,22 @@ const CourseReviewList = ({
   courseReviews: CourseReview[];
   courseSlug?: string;
 }) => {
+  const handleDelete = async (reviewId?: number) => {
+    if (!courseSlug || !reviewId) return;
+    await deleteCourseReview(courseSlug, reviewId);
+  };
+
   return (
     <div>
       <h3 className="text-lg font-medium my-3">Reviews</h3>
 
       <div className="flex flex-col gap-2">
-        {courseReviews?.length > 0 ? (
+        {courseReviews.length > 0 ? (
           courseReviews.map((review) => (
             <CourseReviewItem
               key={review.id}
               review={review}
-              deleteReview={() =>
-                review.id &&
-                courseSlug &&
-                deleteCourseReview(courseSlug, review.id)
-              }
+              deleteReview={() => handleDelete(review.id)}
             />
           ))
         ) : (

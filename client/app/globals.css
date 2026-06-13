@@ -68,26 +68,47 @@
     @apply block p-4;
   }
 
-  .sl-form {
-    @apply flex flex-col gap-4;
+  .form-container {
+    @apply space-y-4;
   }
 
-  .sl-form input[type="text"],
-  .sl-form input[type="username"],
-  .sl-form input[type="email"],
-  .sl-form input[type="password"],
-  .sl-form input[type="number"],
-  .sl-form textarea,
-  .sl-form select {
-    @apply w-full rounded-sm border border-zinc-400 border-b-[3px] border-b-zinc-500 bg-zinc-50 p-2 text-base focus:border-b-zinc-950 focus:outline-none;
+  /* Labels */
+  .form-label {
+    @apply block text-sm font-medium text-gray-700;
   }
 
-  .sl-form label {
-    @apply mb-2 block text-xl;
+  /* Text inputs */
+  .form-input {
+    @apply w-full mt-1 px-4 py-2 border border-gray-400 rounded-md shadow
+  focus:outline-none focus:ring-2 focus:ring-primary-main
+  focus:border-primary-main transition;
   }
 
-  .sl-form div div label {
-    @apply block text-lg;
+  /* Error text */
+  .form-error {
+    @apply text-red-500 text-xs mt-1;
+  }
+
+  /* Radio group wrapper */
+  .form-radio-group {
+    @apply flex flex-col gap-2 mt-1;
+  }
+
+  /* Radio label */
+  .form-radio-label {
+    @apply flex items-center gap-2 text-sm text-gray-700 cursor-pointer;
+  }
+
+  /* Checkbox label */
+  .form-checkbox-label {
+    @apply flex items-center gap-2 text-sm text-gray-700 cursor-pointer;
+  }
+
+  /* Submit button */
+  .form-button {
+    @apply w-full mt-4 bg-primary-main text-white py-2.5 rounded-md
+  font-medium cursor-pointer hover:bg-primary-dark transition
+  disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn {
@@ -103,7 +124,7 @@
   }
 
   .title {
-    @apply mt-8 mb-4 text-xl font-medium;
+    @apply my-4 text-xl font-medium;
   }
 
   .embla {

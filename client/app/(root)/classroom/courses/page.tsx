@@ -3,7 +3,8 @@ import { cookies } from "next/headers";
 
 import courseCategories from "@/data/courseCategories";
 import { env } from "@/env";
-import { Course } from "@/types/course";
+import type { Course } from "@/types/course";
+import { api } from "@/app/lib/api";
 
 const ClassroomCourses = async () => {
   // Get cookies from incoming request
@@ -11,7 +12,7 @@ const ClassroomCourses = async () => {
   const cookieHeader = cookieStore.toString();
 
   // Fetch API with forwarded cookies
-  const response = await fetch(env.API_URL + "/api/user/course", {
+  const response = await api(env.API_URL + "/api/user/course", {
     method: "GET",
     headers: {
       Cookie: cookieHeader,
@@ -19,50 +20,57 @@ const ClassroomCourses = async () => {
     },
   });
 
-  const courses: Course[] = await response.json();
+  const courses: Course[] = await response?.json();
 
   return (
-    <div className="w-full md:w-[60%] mx-auto mb-60">
-      <h2 className="text-xl font-semibold">Your Courses</h2>
-      <hr className="my-2" />
+    <section>
+      <div className="section-container lg:w-2/3 my-8">
+        <h2 className="title">Your Courses</h2>
+        <hr className="text-zinc-300" />
 
-      <div className="flex flex-col gap-2 divide-y divide-zinc-300">
-        {courses &&
-          courses.map((course, idx) => (
+        <div className="divide-y divide-zinc-200">
+          {courses?.map((course) => (
             <div
-              key={idx}
-              className="flex flex-col md:flex-row gap-2 relative py-4"
+              key={course.slug}
+              className="flex flex-col md:flex-row gap-4 py-6"
             >
               <img
-                className="block h-24 w-full md:w-32 object-cover mr-2"
                 src={course.thumbnail}
                 alt={course.title}
+                className="h-40 md:h-24 w-full md:w-40 rounded-lg object-cover bg-zinc-100"
               />
 
-              <div className="flex-1">
-                <h3 className="text-xl font-medium">{course.title}</h3>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-medium text-zinc-900">
+                  {course.title}
+                </h3>
 
-                <p className="text-sm">{course.description?.slice(0, 75)}...</p>
+                <p className="mt-1 text-sm text-zinc-600 line-clamp-2">
+                  {course.description}
+                </p>
 
-                <div className="bg-zinc-100 border border-zinc-300/25 text-sm w-fit px-1 mt-2">
-                  {course.category &&
-                    courseCategories.find(
-                      (cat) => cat.short === course.category,
-                    )?.title}
-                </div>
+                {course.category && (
+                  <div className="mt-1 bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1 py-0 rounded">
+                    {
+                      courseCategories.find(
+                        (cat) => cat.value === course.category,
+                      )?.label
+                    }
+                  </div>
+                )}
               </div>
 
               <Link
                 href={`/classroom/courses/${course.slug}`}
-                className="flex h-fit items-center gap-2 border border-primary-dark bg-primary-main px-4 py-2 w-fit rounded-sm text-white hover:bg-primary-dark duration-75"
+                className="self-start md:self-center text-sm text-zinc-100 font-medium text-center w-full md:w-fit bg-primary-main hover:bg-primary-dark transition-colors rounded-md px-8 py-4"
               >
-                Watch
-                <i className="fa-solid fa-arrow-right" />
+                Watch →
               </Link>
             </div>
           ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

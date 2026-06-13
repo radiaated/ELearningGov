@@ -80,13 +80,7 @@ export default function CoursePage() {
     });
   }, [searchParams]);
 
-  const categoryOptions = [
-    { value: "", label: "All" },
-    ...courseCategories.map((c) => ({
-      value: c.short,
-      label: c.title,
-    })),
-  ];
+  const categoryOptions = [{ value: "", label: "All" }, ...courseCategories];
 
   return (
     <section className="w-full">
@@ -151,7 +145,7 @@ export default function CoursePage() {
               pageRangeDisplayed={3}
               previousLabel="Prev"
               nextLabel="Next"
-              containerClassName="flex items-center gap-2 text-sm"
+              containerClassName="flex items-center gap-2 text-sm mb-8 max-w-[90%]"
               pageClassName="rounded-lg overflow-hidden"
               pageLinkClassName="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
               activeClassName="bg-primary-main text-white"

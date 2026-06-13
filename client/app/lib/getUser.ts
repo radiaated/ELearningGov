@@ -1,13 +1,8 @@
 import { api } from "./api";
 import { env } from "@/env";
+import type { CurrentUser } from "@/types/user";
 
-export type User = {
-  username: string;
-  email: string;
-  is_admin: boolean;
-};
-
-const getUser = async (cookieHeader?: string | null): Promise<User> => {
+const getUser = async (cookieHeader?: string | null): Promise<CurrentUser> => {
   const res = await api(`${env.API_URL}/api/user/me/`, {
     headers: {
       ...(cookieHeader ? { Cookie: cookieHeader } : {}),

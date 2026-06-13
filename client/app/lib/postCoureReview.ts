@@ -1,6 +1,6 @@
 import { api } from "./api";
 import { env } from "@/env";
-import type { CourseReview as CourseReviewFormData } from "@/types/course";
+import type { CourseReviewFormData } from "@/schemas/course";
 
 const postCoureReview = async (
   payload: CourseReviewFormData,

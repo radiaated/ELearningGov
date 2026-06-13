@@ -1,78 +1,74 @@
-"use client";
-
-import ClassroomChapterList from "./components/ClassroomChapterList";
-import { api } from "@/app/lib/api";
-import { env } from "@/env";
-import formatDuration from "@/utils/formatDuration";
+import Link from "next/link";
 import VideoPlayer from "./components/VideoPlayer";
-import { useEffect, useState } from "react";
-import type { Chapter, Course } from "@/types/course";
-import { useParams } from "next/navigation";
+import ClassroomChapterList from "./components/ClassroomChapterList";
 import getCourse from "@/app/lib/getCourse";
 import getChapter from "@/app/lib/getChapter";
+import type { Chapter, Course } from "@/types/course";
+import formatDuration from "@/utils/formatDuration";
 
-const ClassRoomChapterPage = () => {
-  const params = useParams<{ slug: string; chapterSlug: string }>();
+interface PageProps {
+  params: Promise<{
+    slug: string;
+    chapterSlug: string;
+  }>;
+}
 
-  const { slug, chapterSlug } = params;
+const ClassRoomChapterPage = async ({ params }: PageProps) => {
+  const { slug, chapterSlug } = await params;
 
-  const [course, setCourse] = useState<Course | null>(null);
-  const [chapter, setChapter] = useState<Chapter | null>(null);
-
-  useEffect(() => {
-    getCourse(slug).then((course) => setCourse(course));
-    getChapter({ courseSlug: slug, chapterSlug }).then((chapter) =>
-      setChapter(chapter),
-    );
-  }, []);
+  const [course, chapter]: [Course | null, Chapter | null] = await Promise.all([
+    getCourse(slug),
+    getChapter({ courseSlug: slug, chapterSlug }),
+  ]);
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-10">
-      {course && (
-        <ClassroomChapterList
-          courseSlug={slug}
-          chapters={course.course_chapters}
-          currentChapterSlug={chapterSlug}
-        />
-      )}
-      <div className="w-full md:w-[70%]">
-        <div className="w-[70%] mb-4">
-          {/* <div className="text-4xl font-semibold border border-zinc-700 rounded-full h-10 w-10 p-10 flex items-center justify-center"> */}
+    <section>
+      <div className="section-container my-8">
+        <Link
+          href={`/classroom/courses/${slug}`}
+          className="flex gap-2 items-center w-fit text-xs hover:bg-zinc-100 transition-all py-2 pr-2 hover:pl-2 rounded"
+        >
+          <i className="fa-solid fa-angle-left text-zinc-500"></i>
+          <img src={course?.thumbnail} className="h-6 rounded-sm" />
+          <span className="text-zinc-800">{course?.title}</span>
+        </Link>
 
-          <h3 className="text-xl font-semibold mb-2">
-            {chapter?.chpt}. {chapter?.title}
-          </h3>
-          <p className="md:pl-5 text-[15px]">{chapter?.description}</p>
+        <div className="grid grid-cols-12 mt-4 gap-x-4">
+          <div className="col-span-12 md:col-span-4 order-2 md:order-1">
+            {course && (
+              <ClassroomChapterList
+                courseSlug={slug}
+                chapters={course.course_chapters}
+                currentChapterSlug={chapterSlug}
+              />
+            )}
+          </div>
+
+          <div className="col-span-12 md:col-span-8 mt-0 md:-mt-12 order-1 md:order-2">
+            <div className="flex flex-col gap-2">
+              <h3 className="text-xl font-semibold">
+                {chapter?.chpt}. {chapter?.title}
+              </h3>
+
+              <p className="pl-5 text-sm text-zinc-800">
+                {chapter?.description}
+              </p>
+
+              <div className="pl-5 text-sm text-zinc-500">
+                <i className="fa-regular fa-clock mr-2" />
+                <span>
+                  {chapter?.duration ? formatDuration(chapter.duration) : null}
+                </span>
+              </div>
+
+              <hr className="border-zinc-300" />
+
+              {chapter?.video && <VideoPlayer video={chapter.video} />}
+            </div>
+          </div>
         </div>
-        <hr />
-
-        <div className="align-middle text-sm text-zinc-500 my-3">
-          <i className="fa-regular fa-clock mr-2"></i>
-          <span className="">
-            {chapter?.duration && formatDuration(chapter.duration)}
-          </span>
-        </div>
-
-        {/* <ReactPlayer
-            className="react-player fixed-bottom"
-            width="100%"
-            height="100%"
-            controls={true}
-            url={`${import.meta.env.VITE_API_URL}${
-              chapter.video
-            }`}
-          /> */}
-        {chapter?.video && <VideoPlayer video={chapter.video} />}
-
-        {/* <video controls>
-            <source
-              src={`${import.meta.env.VITE_API_URL}${
-                chapter.video
-              }`}
-            />
-          </video> */}
       </div>
-    </div>
+    </section>
   );
 };
 

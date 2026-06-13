@@ -9,11 +9,11 @@ const CategoriesSection = () => {
         <hr />
 
         <div className="grid grid-cols-12 gap-6 my-8">
-          {courseCategories.map(({ short, title }) => (
+          {courseCategories.map(({ value, label }) => (
             <Link
-              key={short}
-              href={`/courses?category=${short}`}
-              aria-label={`Browse ${title} courses`}
+              key={value}
+              href={`/courses?category=${value}`}
+              aria-label={`Browse ${label} courses`}
               className="
               group relative col-span-6 md:col-span-3
               block overflow-hidden
@@ -25,7 +25,7 @@ const CategoriesSection = () => {
             "
             >
               {/* Base label */}
-              <span className="relative z-10">{title}</span>
+              <span className="relative z-10">{label}</span>
 
               {/* Hover overlay */}
               <div
@@ -39,7 +39,7 @@ const CategoriesSection = () => {
                 transition-opacity
               "
               >
-                <span>{title}</span>
+                <span>{label}</span>
                 <i className="fa-solid fa-magnifying-glass" />
               </div>
             </Link>

@@ -1,7 +1,7 @@
 import { api } from "./api";
 import { env } from "@/env";
 
-import { PasswordFormData } from "@/types/user";
+import type { PasswordFormData } from "@/schemas/user";
 
 const updateUserPassword = async (
   data: PasswordFormData,

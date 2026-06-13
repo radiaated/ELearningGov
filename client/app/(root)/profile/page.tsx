@@ -3,19 +3,12 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 
 import { academicLevelCategories } from "@/data/user";
-import { api } from "@/app/lib/api";
-import { env } from "@/env";
 
-import {
-  profileSchema,
-  ProfileFormData,
-  passwordSchema,
-  PasswordFormData,
-} from "@/types/user";
-import getUser from "@/app/lib/getUser";
+import { profileSchema, passwordSchema } from "@/schemas/user";
+import type { ProfileFormData, PasswordFormData } from "@/schemas/user";
+
 import getUserProfile from "@/app/lib/getUserProfile";
 import updateUser from "@/app/lib/updateUser";
 import updateUserPassword from "@/app/lib/updatePassword";
@@ -25,7 +18,7 @@ const ProfilePage = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
     resolver: yupResolver(profileSchema),
     defaultValues: {
@@ -43,7 +36,7 @@ const ProfilePage = () => {
     register: registerPwd,
     handleSubmit: handlePwdSubmit,
     reset: resetPwd,
-    formState: { errors: pwdErrors },
+    formState: { errors: pwdErrors, isSubmitting: pwdSubmitting },
   } = useForm<PasswordFormData>({
     resolver: yupResolver(passwordSchema),
   });
@@ -65,19 +58,12 @@ const ProfilePage = () => {
       console.error("Failed to fetch profile:", err);
     }
   };
-  // ----------------------
-  // Update profile
-  // ----------------------
   const updateUserProfile = async (data: ProfileFormData) => {
     await updateUser(data);
   };
 
-  // ----------------------
-  // Update password
-  // ----------------------
   const updatePassword = async (data: PasswordFormData) => {
     await updateUserPassword(data);
-
     resetPwd();
   };
 
@@ -86,102 +72,177 @@ const ProfilePage = () => {
   }, []);
 
   return (
-    <div className="w-full md:w-[60%] mx-auto">
-      <h2 className="text-3xl font-semibold mb-4">Profile</h2>
+    <section>
+      <div className="section-container my-8 md:w-1/2">
+        <div className="fixed bg-primary-light w-full h-[50%] top-0 left-0 -z-10" />
 
-      {/* ---------------- PROFILE FORM ---------------- */}
-      <form className="sl-form" onSubmit={handleSubmit(updateUserProfile)}>
-        <div>
-          <label>Username</label>
-          <input {...register("username")} />
-          <p>{errors.username?.message}</p>
+        <div className="bg-white drop-shadow-2xl py-10 pb-12 px-12 rounded-md relative">
+          <h2 className="text-3xl font-semibold">Profile</h2>
+          <hr className="my-4 text-zinc-400" />
+
+          {/* Profile form */}
+          <form
+            className="form-container"
+            onSubmit={handleSubmit(updateUserProfile)}
+          >
+            {/* Username */}
+            <div>
+              <label className="form-label">Username</label>
+              <input
+                {...register("username")}
+                className="form-input"
+                placeholder="Username"
+              />
+              <p className="form-error">{errors.username?.message}</p>
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="form-label">Email</label>
+              <input
+                {...register("email")}
+                className="form-input"
+                placeholder="Email"
+              />
+              <p className="form-error">{errors.email?.message}</p>
+            </div>
+
+            {/* Full Name */}
+            <div>
+              <label className="form-label">Full Name</label>
+              <input
+                {...register("first_name")}
+                className="form-input"
+                placeholder="Full name"
+              />
+              <p className="form-error">{errors.first_name?.message}</p>
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="form-label">Gender</label>
+
+              <div className="flex gap-4 text-sm">
+                <label className="flex items-center gap-2">
+                  <input type="radio" value="m" {...register("gender")} />
+                  Male
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input type="radio" value="f" {...register("gender")} />
+                  Female
+                </label>
+
+                <label className="flex items-center gap-2">
+                  <input type="radio" value="o" {...register("gender")} />
+                  Other
+                </label>
+              </div>
+
+              <p className="form-error">{errors.gender?.message}</p>
+            </div>
+
+            {/* Address */}
+            <div>
+              <label className="form-label">Address</label>
+              <input
+                {...register("address")}
+                className="form-input"
+                placeholder="Address"
+              />
+              <p className="form-error">{errors.address?.message}</p>
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="form-label">Phone</label>
+              <input
+                {...register("phone")}
+                className="form-input"
+                placeholder="Phone"
+              />
+              <p className="form-error">{errors.phone?.message}</p>
+            </div>
+
+            {/* Academic Level */}
+            <div>
+              <label className="form-label">Academic Level</label>
+              <select {...register("academic_level")} className="form-input">
+                <option value="">Select</option>
+                {academicLevelCategories.map((item, idx) => (
+                  <option key={idx} value={item.value}>
+                    {item.value}
+                  </option>
+                ))}
+              </select>
+              <p className="form-error">{errors.academic_level?.message}</p>
+            </div>
+
+            {/* Submit */}
+            <input
+              type="submit"
+              value={isSubmitting ? "Updating..." : "Update Profile"}
+              disabled={isSubmitting}
+              className="form-button"
+            />
+          </form>
+
+          <hr className="my-8 text-zinc-300" />
+
+          {/* Password section */}
+          <h3 className="text-2xl font-semibold mb-4">Change Password</h3>
+
+          <form
+            className="form-container"
+            onSubmit={handlePwdSubmit(updatePassword)}
+          >
+            {/* Old Password */}
+            <div>
+              <label className="form-label">Old Password</label>
+              <input
+                type="password"
+                {...registerPwd("old_password")}
+                className="form-input"
+                placeholder="Old password"
+              />
+              <p className="form-error">{pwdErrors.old_password?.message}</p>
+            </div>
+
+            {/* New Password */}
+            <div>
+              <label className="form-label">New Password</label>
+              <input
+                type="password"
+                {...registerPwd("password")}
+                className="form-input"
+                placeholder="New password"
+              />
+              <p className="form-error">{pwdErrors.password?.message}</p>
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="form-label">Confirm Password</label>
+              <input
+                type="password"
+                {...registerPwd("password2")}
+                className="form-input"
+                placeholder="Confirm password"
+              />
+              <p className="form-error">{pwdErrors.password2?.message}</p>
+            </div>
+
+            {/* Submit */}
+            <input
+              type="submit"
+              value={pwdSubmitting ? "Updating..." : "Update Password"}
+              disabled={pwdSubmitting}
+              className="form-button"
+            />
+          </form>
         </div>
-
-        <div>
-          <label>Email</label>
-          <input {...register("email")} />
-          <p>{errors.email?.message}</p>
-        </div>
-
-        <div>
-          <label>Full Name</label>
-          <input {...register("first_name")} />
-          <p>{errors.first_name?.message}</p>
-        </div>
-
-        <div>
-          <label>Gender</label>
-          <label>
-            <input type="radio" value="m" {...register("gender")} /> Male
-          </label>
-          <label>
-            <input type="radio" value="f" {...register("gender")} /> Female
-          </label>
-          <label>
-            <input type="radio" value="o" {...register("gender")} /> Other
-          </label>
-          <p>{errors.gender?.message}</p>
-        </div>
-
-        <div>
-          <label>Address</label>
-          <input {...register("address")} />
-          <p>{errors.address?.message}</p>
-        </div>
-
-        <div>
-          <label>Phone</label>
-          <input {...register("phone")} />
-          <p>{errors.phone?.message}</p>
-        </div>
-
-        <div>
-          <label>Academic Level</label>
-          <select {...register("academic_level")}>
-            <option value="">Select</option>
-            {academicLevelCategories.map((item, idx) => (
-              <option key={idx} value={item.short}>
-                {item.title}
-              </option>
-            ))}
-          </select>
-          <p>{errors.academic_level?.message}</p>
-        </div>
-
-        <button className="btn" type="submit">
-          Update
-        </button>
-      </form>
-
-      <hr className="my-6" />
-
-      {/* ---------------- PASSWORD FORM ---------------- */}
-      <h3 className="text-2xl font-semibold mb-4">Change Password</h3>
-
-      <form className="sl-form" onSubmit={handlePwdSubmit(updatePassword)}>
-        <div>
-          <label>Old Password</label>
-          <input type="password" {...registerPwd("old_password")} />
-          <p>{pwdErrors.old_password?.message}</p>
-        </div>
-
-        <div>
-          <label>New Password</label>
-          <input type="password" {...registerPwd("password")} />
-          <p>{pwdErrors.password?.message}</p>
-        </div>
-
-        <div>
-          <label>Confirm Password</label>
-          <input type="password" {...registerPwd("password2")} />
-          <p>{pwdErrors.password2?.message}</p>
-        </div>
-
-        <button className="btn" type="submit">
-          Update Password
-        </button>
-      </form>
-    </div>
+      </div>
+    </section>
   );
 };
 
