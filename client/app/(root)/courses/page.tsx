@@ -1,148 +1,167 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
-import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 import ReactPaginate from "react-paginate";
 
 import type { Course } from "@/types/course";
-import CourseItem from "@/app/components/CourseItem";
+import CourseList from "@/app/components/CourseList";
 
 import useDebounce from "@/hook/useDebounce";
-
-import { api } from "@/app/lib/api";
-import { env } from "@/env";
-
-import courseCategories from "@/data/courseCategories";
-import CourseList from "@/app/components/CourseList";
 import getCourses from "@/app/lib/getCourses";
+import courseCategories from "@/data/courseCategories";
 
-const formSchema = yup.object({
+const schema = yup.object({
   q: yup.string().default(""),
   category: yup.string().default(""),
 });
 
-type FormData = yup.InferType<typeof formSchema>;
+type FormData = yup.InferType<typeof schema>;
 
-const CoursePage = () => {
+const PAGE_SIZE = 5;
+
+export default function CoursePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [count, setCount] = useState<number>(0);
+  const page = Number(searchParams.get("page") ?? 1);
+  const q = searchParams.get("q") ?? "";
+  const category = searchParams.get("category") ?? "";
 
-  const { register, watch, handleSubmit, reset } = useForm<FormData>({
-    defaultValues: {
-      q: searchParams.get("q") ?? "",
-      category: searchParams.get("category") ?? "",
-    },
-    resolver: yupResolver(formSchema),
+  const { register, control, watch, setValue } = useForm<FormData>({
+    defaultValues: { q, category },
+    resolver: yupResolver(schema),
   });
 
-  // Build query string from form data
-  const setSearchParams = (searchParamsObj: Record<string, any>) => {
-    const params = new URLSearchParams();
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [count, setCount] = useState(0);
 
-    Object.entries(searchParamsObj).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === "") return;
-      params.set(key, String(value));
+  const updateURL = (params: Partial<Record<string, string | number>>) => {
+    const next = new URLSearchParams(searchParams.toString());
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (!value) next.delete(key);
+      else next.set(key, String(value));
     });
 
-    router.replace(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${next.toString()}`);
   };
-
-  const pageParam = searchParams.get("page");
 
   const handlePageClick = (event: any) => {
-    setSearchParams({ page: event.selected + 1 });
+    updateURL({ page: event.selected + 1 });
   };
-
-  const onSubmit = (formData: FormData) => {
-    setSearchParams(formData);
-  };
-
-  // Fetch when URL changes
-  useEffect(() => {
-    getCourses(searchParams.toString()).then((data) => {
-      console.log(data);
-      setCourses(data.results);
-      setCount(data.count);
-    });
-  }, [searchParams.toString()]);
 
   const values = watch();
 
   useDebounce(
     () => {
-      handleSubmit(onSubmit)();
+      updateURL({
+        q: values.q,
+        category: values.category,
+        page: 1,
+      });
     },
     [values.q, values.category],
-    300,
+    400,
   );
+
+  useEffect(() => {
+    const query = searchParams.toString();
+
+    getCourses(query).then((data) => {
+      setCourses(data.results);
+      setCount(data.count);
+    });
+  }, [searchParams]);
+
+  const categoryOptions = [
+    { value: "", label: "All" },
+    ...courseCategories.map((c) => ({
+      value: c.short,
+      label: c.title,
+    })),
+  ];
 
   return (
-    <div className="md:p-4 flex flex-col gap-2">
-      <div className="mb-4">
-        <h2 className="text-2xl font-medium mb-2">Online Courses</h2>
+    <section className="w-full">
+      <div className="section-container md:p-6 flex flex-col gap-6">
+        <h2 className="text-3xl font-semibold tracking-tight text-gray-900">
+          Online Courses
+        </h2>
 
-        <form className="flex gap-2">
-          <div className="w-full flex justify-end items-center relative">
+        {/* Filters */}
+        <div className="flex flex-col gap-4">
+          {/* Search */}
+          <div className="relative w-full col-span-6">
             <input
-              placeholder="Search"
-              className="border border-gray-400 rounded-lg p-4 pl-12 w-full"
+              placeholder="Search courses..."
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pl-12 text-gray-700 shadow-sm outline-none transition focus:border-primary-main focus:ring-2 focus:ring-primary-main/20"
               {...register("q")}
             />
-
-            <i className="fa-solid fa-magnifying-glass absolute left-0 ml-4 w-10"></i>
+            <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
           </div>
 
-          <div>
-            Filter:
-            <select
-              className="bg-zinc-100 text-md border border-zinc-200 p-2 rounded-xl mb-1"
-              {...register("category")}
-            >
-              <option value="">All</option>
-              {courseCategories.map((item) => (
-                <option key={item.short} value={item.short}>
-                  {item.title}
-                </option>
-              ))}
-            </select>
+          {/* Category Select wrapper for better spacing */}
+          <div className="flex flex-wrap gap-2">
+            {categoryOptions.map((item) => {
+              const isActive = watch("category") === item.value;
+
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => setValue("category", item.value)}
+                  className={`
+          rounded-full px-4 py-1.5 text-sm font-medium transition
+          border focus:outline-none focus:ring-2 focus:ring-primary-main/30
+          ${
+            isActive
+              ? "bg-primary-main text-white border-primary-main shadow-sm"
+              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+          }
+        `}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </div>
-        </form>
+        </div>
+
+        <hr className="border-gray-200" />
+
+        {/* List */}
+        <div className="min-h-50">
+          <CourseList courses={courses} />
+        </div>
+
+        {/* Pagination */}
+        {count > 0 && (
+          <div className="flex justify-center pt-4">
+            <ReactPaginate
+              forcePage={page - 1}
+              pageCount={Math.ceil(count / PAGE_SIZE)}
+              onPageChange={handlePageClick}
+              pageRangeDisplayed={3}
+              previousLabel="Prev"
+              nextLabel="Next"
+              containerClassName="flex items-center gap-2 text-sm"
+              pageClassName="rounded-lg overflow-hidden"
+              pageLinkClassName="px-3 py-1.5 rounded-lg hover:bg-gray-100 transition"
+              activeClassName="bg-primary-main text-white"
+              previousClassName="px-3 py-1.5 rounded-lg hover:bg-gray-100"
+              nextClassName="px-3 py-1.5 rounded-lg hover:bg-gray-100"
+              disabledClassName="opacity-40 cursor-not-allowed"
+            />
+          </div>
+        )}
       </div>
-
-      <hr className="my-2" />
-
-      <CourseList courses={courses} />
-      {courses && (
-        <ReactPaginate
-          forcePage={pageParam ? Number(pageParam) - 1 : 0}
-          containerClassName="w-full block space-x-4"
-          nextClassName="inline-block after:block after:h-[2px] after:bg-primary-main text-sm"
-          previousClassName="inline-block after:block after:h-[2px] after:bg-primary-main text-sm"
-          activeClassName="bg-primary-main text-white"
-          pageLinkClassName="block h-7 w-7 leading-7 align-middle text-center"
-          pageClassName={"inline-block rounded-full cursor-pointer "}
-          disabledClassName="text-zinc-400 after:block after:h-[2px] after:bg-zinc-400"
-          breakLabel="..."
-          breakClassName="inline-block"
-          nextLabel="Next"
-          onPageChange={handlePageClick}
-          pageRangeDisplayed={5}
-          pageCount={Math.ceil(count / 5)}
-          previousLabel="Prev"
-          renderOnZeroPageCount={null}
-        />
-      )}
-    </div>
+    </section>
   );
-};
-
-export default CoursePage;
+}

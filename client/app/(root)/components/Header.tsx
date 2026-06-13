@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 import type { CurrentUser } from "@/types/user";
 import { useCartStore } from "@/store/cartStore";
@@ -18,6 +19,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<CurrentUser | null>(null);
+  const pathname = usePathname();
 
   const cartItems = useCartStore((state) => state.items);
 
@@ -46,7 +48,9 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-screen">
+    <header
+      className={`fixed top-0 left-0 z-50 w-screen ${pathname !== "/" ? "shadow" : ""}`}
+    >
       {/* Top Bar */}
       <div className="header-topbar">
         <div className="hidden md:block">01-4444444, 01-4444442</div>
@@ -121,7 +125,11 @@ const Header = () => {
         <div className="header-container">
           <Link href="/">
             <Image
-              src={isScrolled ? "/logo-black.png" : "/logo-white.png"}
+              src={
+                isScrolled || pathname !== "/"
+                  ? "/logo-black.png"
+                  : "/logo-white.png"
+              }
               alt="Logo"
               width={140}
               height={40}
@@ -137,7 +145,7 @@ const Header = () => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className={`header-nav-link ${isScrolled ? "header-nav-link-dark" : ""}`}
+                    className={`header-nav-link ${isScrolled || pathname !== "/" ? "header-nav-link-dark" : ""}`}
                   >
                     {link.label}
                   </Link>

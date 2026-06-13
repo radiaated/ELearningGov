@@ -19,7 +19,7 @@ const ImageSliderSection = () => {
 
   return (
     <section>
-      <div className="relative h-screen overflow-hidden">
+      <div className="relative -mt-26 h-screen overflow-hidden">
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/40 z-10" />
 
