@@ -57,10 +57,21 @@ class CourseSerializer(serializers.ModelSerializer):
         if "course_chapters" not in exclude_fields and not self.context.get(
             "include_chapter_video"
         ):
-
             self.fields["course_chapters"] = ChapterSerializer(
                 many=True, read_only=True, exclude_fields=["video"]
             )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        value = data.get("avg_rating")
+
+        if value is None:
+            data["avg_rating"] = 0.0
+        else:
+            data["avg_rating"] = round(float(value), 2)
+
+        return data
 
 
 # TODO
