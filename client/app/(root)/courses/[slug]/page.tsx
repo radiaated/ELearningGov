@@ -1,10 +1,10 @@
-import CourseReviewList from "@/app/components/CourseReviewList";
-import StarRating from "@/app/components/StarRating";
+import CourseReviewList from "@/components/CourseReviewList";
+import StarRating from "@/components/StarRating";
 import Link from "next/link";
 import { cookies } from "next/headers";
 
 import courseCategories from "@/data/courseCategories";
-import ChapterList from "@/app/components/ChapterList";
+import ChapterList from "@/components/ChapterList";
 
 import getCourse from "@/app/lib/getCourse";
 import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
@@ -72,6 +72,7 @@ const CoursePage = async ({
                 <i className="fa-solid fa-globe" /> English
               </div>
             </div>
+            <hr className="text-zinc-300" />
             <ChapterList chapters={course.course_chapters} />
             <hr className="text-zinc-300" />
             <CourseReviewList courseReviews={course.course_reviews} />

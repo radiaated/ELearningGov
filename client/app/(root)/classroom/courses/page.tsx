@@ -64,7 +64,7 @@ const ClassroomCourses = async () => {
                 href={`/classroom/courses/${course.slug}`}
                 className="self-start md:self-center text-sm text-zinc-100 font-medium text-center w-full md:w-fit bg-primary-main hover:bg-primary-dark transition-colors rounded-md px-8 py-4"
               >
-                Watch →
+                Watch <i className="fa-solid fa-arrow-right"></i>
               </Link>
             </div>
           ))}

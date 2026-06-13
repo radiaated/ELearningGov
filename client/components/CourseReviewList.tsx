@@ -2,7 +2,7 @@
 
 import type { CourseReview } from "@/types/course";
 import CourseReviewItem from "./CourseReviewItem";
-import deleteCourseReview from "../lib/deleteCourseReview";
+import deleteCourseReview from "../app/lib/deleteCourseReview";
 
 const CourseReviewList = ({
   courseReviews,

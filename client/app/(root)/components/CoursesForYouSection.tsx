@@ -1,6 +1,6 @@
 import { env } from "@/env";
 import { api } from "@/app/lib/api";
-import CourseList from "@/app/components/CourseList";
+import CourseList from "@/components/CourseList";
 import getCourses from "@/app/lib/getCourses";
 
 const CoursesForYouSection = async () => {

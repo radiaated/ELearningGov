@@ -1,4 +1,4 @@
-import CourseListSkeleton from "@/app/components/CourseListSkeleton";
+import CourseListSkeleton from "@/components/CourseListSkeleton";
 
 const CoursesForYouSectionSkeleton = async () => {
   return (
