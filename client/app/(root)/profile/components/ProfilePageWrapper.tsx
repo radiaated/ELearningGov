@@ -1,35 +1,31 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { academicLevelCategories } from "@/data/user";
+import { toast } from "sonner";
 
-import { profileSchema, passwordSchema } from "@/schemas/user";
 import type { ProfileFormData, PasswordFormData } from "@/schemas/user";
+import { profileSchema, passwordSchema } from "@/schemas/user";
 
+import { BadRequestError } from "@/app/lib/api";
 import getUserProfile from "@/app/lib/getUserProfile";
 import updateUser from "@/app/lib/updateUser";
 import updateUserPassword from "@/app/lib/updatePassword";
+
+import { academicLevelCategories, genderOptions } from "@/data/user";
 
 const ProfilePageWrapper = () => {
   const {
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormData>({
     resolver: yupResolver(profileSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      first_name: "",
-      gender: "",
-      address: "",
-      phone: "",
-      academic_level: "",
-    },
   });
 
   const {
@@ -37,6 +33,7 @@ const ProfilePageWrapper = () => {
     handleSubmit: handlePwdSubmit,
     reset: resetPwd,
     formState: { errors: pwdErrors, isSubmitting: pwdSubmitting },
+    setError: setPwdError,
   } = useForm<PasswordFormData>({
     resolver: yupResolver(passwordSchema),
   });
@@ -55,17 +52,45 @@ const ProfilePageWrapper = () => {
         academic_level: userProfile.academic_level ?? "",
       });
     } catch (err) {
+      toast.error("Failed to fetch profile");
       console.error("Failed to fetch profile:", err);
     }
   };
 
   const updateUserProfile = async (data: ProfileFormData) => {
-    await updateUser(data);
+    try {
+      const profile = await updateUser(data);
+      reset(profile);
+      toast.success("Profile updated successfully!");
+    } catch (err) {
+      if (err instanceof BadRequestError) {
+        const validationMessage = await err.response?.json();
+        Object.entries(validationMessage).forEach(([field, messages]) => {
+          setError(field as keyof ProfileFormData, {
+            type: "server",
+            message: Array.isArray(messages) ? messages[0] : String(messages),
+          });
+        });
+        return;
+      }
+      setError("root", {
+        type: "server",
+        message: "Something went wrong. Please try again.",
+      });
+    }
   };
 
   const updatePassword = async (data: PasswordFormData) => {
-    await updateUserPassword(data);
-    resetPwd();
+    try {
+      await updateUserPassword(data);
+      resetPwd();
+      toast.success("Password updated successfully!");
+    } catch (err) {
+      setPwdError("root", {
+        type: "server",
+        message: "Something went wrong. Please try again.",
+      });
+    }
   };
 
   useEffect(() => {
@@ -88,19 +113,31 @@ const ProfilePageWrapper = () => {
           >
             <div>
               <label className="form-label">Username</label>
-              <input {...register("username")} className="form-input" />
+              <input
+                {...register("username")}
+                className="form-input"
+                placeholder="Enter username"
+              />
               <p className="form-error">{errors.username?.message}</p>
             </div>
 
             <div>
               <label className="form-label">Email</label>
-              <input {...register("email")} className="form-input" />
+              <input
+                {...register("email")}
+                className="form-input"
+                placeholder="Enter email address"
+              />
               <p className="form-error">{errors.email?.message}</p>
             </div>
 
             <div>
               <label className="form-label">Full Name</label>
-              <input {...register("first_name")} className="form-input" />
+              <input
+                {...register("first_name")}
+                className="form-input"
+                placeholder="Enter full name"
+              />
               <p className="form-error">{errors.first_name?.message}</p>
             </div>
 
@@ -108,16 +145,16 @@ const ProfilePageWrapper = () => {
               <label className="form-label">Gender</label>
 
               <div className="flex gap-4 text-sm">
-                <label>
-                  <input type="radio" value="m" {...register("gender")} /> Male
-                </label>
-                <label>
-                  <input type="radio" value="f" {...register("gender")} />{" "}
-                  Female
-                </label>
-                <label>
-                  <input type="radio" value="o" {...register("gender")} /> Other
-                </label>
+                {genderOptions.map((g) => (
+                  <label key={g.value} className="form-radio-label">
+                    <input
+                      type="radio"
+                      value={g.value}
+                      {...register("gender")}
+                    />
+                    {g.label}
+                  </label>
+                ))}
               </div>
 
               <p className="form-error">{errors.gender?.message}</p>
@@ -125,13 +162,21 @@ const ProfilePageWrapper = () => {
 
             <div>
               <label className="form-label">Address</label>
-              <input {...register("address")} className="form-input" />
+              <input
+                {...register("address")}
+                className="form-input"
+                placeholder="Enter address"
+              />
               <p className="form-error">{errors.address?.message}</p>
             </div>
 
             <div>
               <label className="form-label">Phone</label>
-              <input {...register("phone")} className="form-input" />
+              <input
+                {...register("phone")}
+                className="form-input"
+                placeholder="Enter phone number"
+              />
               <p className="form-error">{errors.phone?.message}</p>
             </div>
 
@@ -147,7 +192,9 @@ const ProfilePageWrapper = () => {
               </select>
               <p className="form-error">{errors.academic_level?.message}</p>
             </div>
-
+            {errors.root?.message && (
+              <div className="form-error">{errors.root.message}</div>
+            )}
             <input
               type="submit"
               value={isSubmitting ? "Updating..." : "Update Profile"}
@@ -171,6 +218,7 @@ const ProfilePageWrapper = () => {
                 type="password"
                 {...registerPwd("old_password")}
                 className="form-input"
+                placeholder="Enter old password"
               />
               <p className="form-error">{pwdErrors.old_password?.message}</p>
             </div>
@@ -181,6 +229,7 @@ const ProfilePageWrapper = () => {
                 type="password"
                 {...registerPwd("password")}
                 className="form-input"
+                placeholder="Enter new password"
               />
               <p className="form-error">{pwdErrors.password?.message}</p>
             </div>
@@ -191,9 +240,14 @@ const ProfilePageWrapper = () => {
                 type="password"
                 {...registerPwd("password2")}
                 className="form-input"
+                placeholder="Confirm new password"
               />
               <p className="form-error">{pwdErrors.password2?.message}</p>
             </div>
+
+            {pwdErrors.root?.message && (
+              <div className="form-error">{pwdErrors.root.message}</div>
+            )}
 
             <input
               type="submit"

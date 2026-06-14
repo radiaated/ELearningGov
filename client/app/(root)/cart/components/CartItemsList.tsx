@@ -1,6 +1,7 @@
 import type { Course } from "@/types/course";
 
 import formatPrice from "@/utils/formatPrice";
+
 interface Props {
   cartItems: Course[];
   removeItem: (id: number) => void;

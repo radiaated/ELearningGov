@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useForm, SubmitHandler } from "react-hook-form";
+
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 
-import { signupSchema } from "@/schemas/user";
 import type { SignupFormData } from "@/schemas/user";
+import { signupSchema } from "@/schemas/user";
 
+import { BadRequestError } from "@/app/lib/api";
 import signup from "@/app/lib/signup";
+import login from "@/app/lib/login";
 
 import { academicLevelCategories, genderOptions } from "@/data/user";
 
@@ -19,16 +22,25 @@ const SingupPageWrapper = () => {
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: yupResolver(signupSchema),
-    defaultValues: {
-      academic_level: "",
-      gender: "",
-    },
   });
 
-  const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
+  const onSubmit = async (data: SignupFormData) => {
     try {
       await signup(data);
-    } catch {
+      await login(data);
+      window.location.href = "/";
+    } catch (err) {
+      if (err instanceof BadRequestError) {
+        const validationMessage = await err.response?.json();
+        Object.entries(validationMessage).forEach(([field, messages]) => {
+          setError(field as keyof SignupFormData, {
+            type: "server",
+            message: Array.isArray(messages) ? messages[0] : String(messages),
+          });
+        });
+        return;
+      }
+
       setError("root", {
         type: "server",
         message: "Something went wrong. Please try again.",
@@ -58,7 +70,11 @@ const SingupPageWrapper = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="form-container">
             <div>
               <label className="form-label">Username</label>
-              <input {...register("username")} className="form-input" />
+              <input
+                {...register("username")}
+                className="form-input"
+                placeholder="Enter username"
+              />
               <p className="form-error">{errors.username?.message}</p>
             </div>
 
@@ -68,13 +84,18 @@ const SingupPageWrapper = () => {
                 type="email"
                 {...register("email")}
                 className="form-input"
+                placeholder="Enter email address"
               />
               <p className="form-error">{errors.email?.message}</p>
             </div>
 
             <div>
               <label className="form-label">Full Name</label>
-              <input {...register("first_name")} className="form-input" />
+              <input
+                {...register("first_name")}
+                className="form-input"
+                placeholder="Enter full name"
+              />
               <p className="form-error">{errors.first_name?.message}</p>
             </div>
 
@@ -99,13 +120,21 @@ const SingupPageWrapper = () => {
 
             <div>
               <label className="form-label">Address</label>
-              <input {...register("address")} className="form-input" />
+              <input
+                {...register("address")}
+                className="form-input"
+                placeholder="Enter address"
+              />
               <p className="form-error">{errors.address?.message}</p>
             </div>
 
             <div>
               <label className="form-label">Phone</label>
-              <input {...register("phone")} className="form-input" />
+              <input
+                {...register("phone")}
+                className="form-input"
+                placeholder="Enter phone number"
+              />
               <p className="form-error">{errors.phone?.message}</p>
             </div>
 
@@ -115,7 +144,7 @@ const SingupPageWrapper = () => {
                 <option value="">Select academic level</option>
                 {academicLevelCategories.map((item) => (
                   <option key={item.value} value={item.value}>
-                    {item.value}
+                    {item.label}
                   </option>
                 ))}
               </select>
@@ -128,6 +157,7 @@ const SingupPageWrapper = () => {
                 type="password"
                 {...register("password")}
                 className="form-input"
+                placeholder="Enter password"
               />
               <p className="form-error">{errors.password?.message}</p>
             </div>
@@ -138,6 +168,7 @@ const SingupPageWrapper = () => {
                 type="password"
                 {...register("password2")}
                 className="form-input"
+                placeholder="Confirm password"
               />
               <p className="form-error">{errors.password2?.message}</p>
             </div>
@@ -148,7 +179,7 @@ const SingupPageWrapper = () => {
             </label>
 
             {errors.root?.message && (
-              <div className="text-red-500 text-xs">{errors.root.message}</div>
+              <div className="form-error">{errors.root.message}</div>
             )}
 
             <input

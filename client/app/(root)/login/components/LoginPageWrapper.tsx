@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import type { LoginFormData } from "@/schemas/user";
 import { loginSchema } from "@/schemas/user";
 
+import { UnauthorizedError } from "@/app/lib/api";
 import login from "@/app/lib/login";
 
 type FormValues = LoginFormData;
@@ -19,21 +21,24 @@ const LoginPageWrapper = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: yupResolver(loginSchema),
-    mode: "onBlur",
   });
 
   const onSubmit = async (data: FormValues) => {
     try {
       await login(data);
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Something went wrong. Please try again.";
-
+      window.location.href = "/";
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        const errorMessage = await error.response?.json();
+        setError("root", {
+          type: "server",
+          message: errorMessage.detail,
+        });
+        return;
+      }
       setError("root", {
         type: "server",
-        message,
+        message: "Something went wrong. Please try again.",
       });
     }
   };

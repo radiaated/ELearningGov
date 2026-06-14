@@ -1,9 +1,50 @@
 import { env } from "@/env";
 
-export class NotFoundError extends Error {
-  constructor(message = "Resource not found") {
-    super(message);
+export class HttpError extends Error {
+  response: Response;
+
+  constructor(response: Response, message?: string) {
+    super(message ?? `HTTP Error ${response.status}`);
+    this.name = "HttpError";
+    this.response = response;
+
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+
+  get status(): number {
+    return this.response.status;
+  }
+}
+export class BadRequestError extends HttpError {
+  constructor(response: Response) {
+    super(response, "Bad Request");
+    this.name = "BadRequestError";
+  }
+}
+export class UnauthorizedError extends HttpError {
+  constructor(response: Response) {
+    super(response, "Unauthorized Error");
+    this.name = "UnauthorizedError";
+  }
+}
+
+export class NotFoundError extends HttpError {
+  constructor(response: Response) {
+    super(response, "Not Found");
     this.name = "NotFoundError";
+  }
+}
+
+export function createHttpError(response: Response): HttpError {
+  switch (response.status) {
+    case 400:
+      return new BadRequestError(response);
+    case 401:
+      return new UnauthorizedError(response);
+    case 404:
+      return new NotFoundError(response);
+    default:
+      return new HttpError(response);
   }
 }
 
@@ -17,7 +58,7 @@ export async function refreshAccessToken({
   cookieHeader,
 }: {
   cookieHeader?: string;
-}): Promise<void> {
+}): Promise<Response> {
   const res = await fetch(env.API_URL + "/api/auth/token/refresh/", {
     method: "POST",
     headers: {
@@ -30,6 +71,8 @@ export async function refreshAccessToken({
   if (!res.ok) {
     console.log("Refresh failed");
   }
+
+  return res;
 }
 
 export const api = async (
@@ -37,10 +80,6 @@ export const api = async (
   options: ApiOptions = {},
 ): Promise<Response | null> => {
   let response = await fetch(url, options);
-
-  if (response.status === 404) {
-    throw new NotFoundError();
-  }
 
   if (response.status === 401) {
     try {
@@ -63,7 +102,7 @@ export const api = async (
   }
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    throw createHttpError(response);
   }
 
   return response;

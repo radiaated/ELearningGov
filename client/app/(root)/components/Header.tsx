@@ -7,7 +7,9 @@ import { usePathname } from "next/navigation";
 
 import type { CurrentUser } from "@/types/user";
 import { useCartStore } from "@/store/cartStore";
+
 import getUser from "@/app/lib/getUser";
+import logout from "@/app/lib/logout";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -31,6 +33,15 @@ const Header = () => {
       setUser(currentUser);
     } catch (error) {
       console.error("Failed to load user:", error);
+    }
+  };
+
+  const logoutHandler = async () => {
+    try {
+      await logout();
+      window.location.href = "/";
+    } catch (err) {
+      console.error("Error occured!", err);
     }
   };
 
@@ -91,6 +102,7 @@ const Header = () => {
                 <button
                   type="button"
                   className="header-action header-action--filled"
+                  onClick={logoutHandler}
                 >
                   Logout
                 </button>
