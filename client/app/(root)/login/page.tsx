@@ -12,6 +12,8 @@ export const metadata: Metadata = {
               experience.`,
 };
 
-export default function LoginPage() {
+const LoginPage = () => {
   return <LoginPageWrapper />;
-}
+};
+
+export default LoginPage;

@@ -13,7 +13,7 @@ type Props = {
   slug: string;
 };
 
-export default function CourseReviewForm({ slug }: Props) {
+const CourseReviewForm = ({ slug }: Props) => {
   const {
     register,
     handleSubmit,
@@ -58,4 +58,6 @@ export default function CourseReviewForm({ slug }: Props) {
       </button>
     </form>
   );
-}
+};
+
+export default CourseReviewForm;

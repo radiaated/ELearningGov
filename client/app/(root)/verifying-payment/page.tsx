@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     "Verifying your payment for Dur-Sanchar Elearning courses. Please wait while we confirm your transaction.",
 };
 
-export default function VerifyPaymentPage() {
+const VerifyPaymentPage = () => {
   return <VerifyPaymentPageWrapper />;
-}
+};
+
+export default VerifyPaymentPage;

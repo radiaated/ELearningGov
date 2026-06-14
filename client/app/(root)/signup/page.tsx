@@ -12,6 +12,8 @@ export const metadata: Metadata = {
               experience.`,
 };
 
-export default function SignupPage() {
+const SignupPage = () => {
   return <SingupPageWrapper />;
-}
+};
+
+export default SignupPage;

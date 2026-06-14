@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: `View and manage your cart on Dur-Sanchar Elearning. Review selected courses, check total price, and proceed to secure checkout to complete your purchase.`,
 };
 
-export default function CartPage() {
+const CartPage = () => {
   return <CartPageWrapper />;
-}
+};
+
+export default CartPage;

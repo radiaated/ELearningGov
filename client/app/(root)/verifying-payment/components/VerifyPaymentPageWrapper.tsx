@@ -7,7 +7,7 @@ import { useCartStore } from "@/store/cartStore";
 
 import verifyPayment from "@/app/lib/verifyPayment";
 
-export default function VerifyPaymentPageWrapper() {
+const VerifyPaymentPageWrapper = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -76,4 +76,6 @@ export default function VerifyPaymentPageWrapper() {
       </div>
     </section>
   );
-}
+};
+
+export default VerifyPaymentPageWrapper;

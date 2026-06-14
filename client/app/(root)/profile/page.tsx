@@ -10,6 +10,9 @@ export const metadata: Metadata = {
               PDFs, and software tools designed to enhance the learning
               experience.`,
 };
-export default function ProfilePage() {
+
+export const ProfilePage = () => {
   return <ProfilePageWrapper />;
-}
+};
+
+export default ProfilePage;
