@@ -1,7 +1,10 @@
 "use client";
+import { toast } from "sonner";
 
 import type { CourseReview } from "@/types/course";
+
 import CourseReviewItem from "./CourseReviewItem";
+
 import deleteCourseReview from "../app/lib/deleteCourseReview";
 
 const CourseReviewList = ({
@@ -11,9 +14,15 @@ const CourseReviewList = ({
   courseReviews: CourseReview[];
   courseSlug?: string;
 }) => {
-  const handleDelete = async (reviewId?: number) => {
-    if (!courseSlug || !reviewId) return;
-    await deleteCourseReview(courseSlug, reviewId);
+  const handleDelete = async (reviewId: number) => {
+    if (!courseSlug) return;
+
+    try {
+      await deleteCourseReview(courseSlug, reviewId);
+    } catch (err) {
+      toast.error("Failed to delete the course review.");
+      console.error("Error occured.", err);
+    }
   };
 
   return (

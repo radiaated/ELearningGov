@@ -11,7 +11,7 @@ import login from "@/app/lib/login";
 
 type FormValues = LoginFormData;
 
-const LoginPageClient = () => {
+const LoginPageWrapper = () => {
   const {
     register,
     handleSubmit,
@@ -102,4 +102,4 @@ const LoginPageClient = () => {
   );
 };
 
-export default LoginPageClient;
+export default LoginPageWrapper;

@@ -14,7 +14,7 @@ const buyCourse = async (
   payload: BuyCoursePayload,
   cookieHeader?: string | null,
 ): Promise<BuyCourseResponse> => {
-  const res = await api(`${env.API_URL}/api/purchase/purchase-course/`, {
+  const res = await api(`${env.API_URL}/api/purchase/urchase-course/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

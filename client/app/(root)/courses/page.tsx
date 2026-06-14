@@ -1,10 +1,10 @@
-import CoursesPageClient from "./components/CoursesPageClient";
+import CoursesPageWrapper from "./components/CoursesPageWrapper";
 export const metadata = {
   title: "Courses | Dur-Sanchar Elearning",
   description:
-    "Dur-Sanchar Elearning is a leading government-provided e-learning platform offering online courses, PDFs, and software tools to enhance learning.",
+    "View all the courses on Dur-Sanchar Elearning. Dur-Sanchar Elearning is a leading government-provided e-learning platform offering online courses, PDFs, and software tools to enhance learning.",
 };
 
 export default function Page() {
-  return <CoursesPageClient />;
+  return <CoursesPageWrapper />;
 }

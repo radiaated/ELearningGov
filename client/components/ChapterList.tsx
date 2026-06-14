@@ -1,7 +1,5 @@
 "use client";
 
-import type { Chapter } from "@/types/course";
-import formatDuration from "@/utils/formatDuration";
 import Link from "next/link";
 import {
   Accordion,
@@ -10,6 +8,10 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
+
+import type { Chapter } from "@/types/course";
+
+import formatDuration from "@/utils/formatDuration";
 
 interface ChapterListProps {
   chapters: Chapter[];
@@ -22,10 +24,6 @@ const ChapterList = ({
   showWatchButton = false,
   courseSlug,
 }: ChapterListProps) => {
-  if (!chapters?.length) {
-    return <p className="text-sm text-zinc-500">No chapters available.</p>;
-  }
-
   return (
     <section>
       <h3 className="text-xl font-medium my-4">Contents</h3>
@@ -65,7 +63,7 @@ const ChapterList = ({
                   href={`/classroom/courses/${courseSlug}/chapter/${chapter.slug}`}
                   className="absolute right-2 bottom-2 inline-flex items-center gap-2 bg-orange-500 text-white px-4 py-2 rounded-sm hover:bg-orange-600 transition"
                 >
-                  Take{" "}
+                  Watch{" "}
                   <i className="fa-solid fa-arrow-right" aria-hidden="true" />
                 </Link>
               )}

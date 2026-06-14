@@ -1,5 +1,6 @@
 import Link from "next/link";
-import courseCategories from "@/data/courseCategories";
+
+import courseCategories from "@/data/course";
 
 const CategoriesSection = () => {
   return (

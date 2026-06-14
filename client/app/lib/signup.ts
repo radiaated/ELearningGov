@@ -1,6 +1,7 @@
+import type { SignupFormData } from "@/schemas/user";
+
 import { api } from "./api";
 import { env } from "@/env";
-import type { SignupFormData } from "@/schemas/user";
 
 const signup = async (data: SignupFormData): Promise<void> => {
   await api(env.API_URL + "/api/auth/register/", {

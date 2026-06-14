@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import VerifyPaymentPageClient from "./components/VerifyPaymentPageClient";
+import VerifyPaymentPageWrapper from "./components/VerifyPaymentPageWrapper";
 
 export const metadata: Metadata = {
   title: "Verify Payment | Dur-Sanchar Elearning",
@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function VerifyPaymentPage() {
-  return <VerifyPaymentPageClient />;
+  return <VerifyPaymentPageWrapper />;
 }

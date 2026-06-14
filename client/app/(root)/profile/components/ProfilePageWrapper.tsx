@@ -13,7 +13,7 @@ import getUserProfile from "@/app/lib/getUserProfile";
 import updateUser from "@/app/lib/updateUser";
 import updateUserPassword from "@/app/lib/updatePassword";
 
-const ProfilePageClient = () => {
+const ProfilePageWrapper = () => {
   const {
     register,
     handleSubmit,
@@ -208,4 +208,4 @@ const ProfilePageClient = () => {
   );
 };
 
-export default ProfilePageClient;
+export default ProfilePageWrapper;

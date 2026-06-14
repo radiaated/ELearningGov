@@ -1,26 +1,23 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 
-import courseCategories from "@/data/courseCategories";
-import { env } from "@/env";
 import type { Course } from "@/types/course";
-import { api } from "@/app/lib/api";
+
+import getUserCourses from "@/app/lib/getUserCourses";
+
+import courseCategories from "@/data/course";
 
 const ClassroomCourses = async () => {
-  // Get cookies from incoming request
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
 
-  // Fetch API with forwarded cookies
-  const response = await api(env.API_URL + "/api/user/course", {
-    method: "GET",
-    headers: {
-      Cookie: cookieHeader,
-      "Content-Type": "application/json",
-    },
-  });
+  let courses: Course[];
 
-  const courses: Course[] = await response?.json();
+  try {
+    courses = await getUserCourses(cookieHeader);
+  } catch (err) {
+    throw err;
+  }
 
   return (
     <section>
@@ -29,7 +26,7 @@ const ClassroomCourses = async () => {
         <hr className="text-zinc-300" />
 
         <div className="divide-y divide-zinc-200">
-          {courses?.map((course) => (
+          {courses.map((course) => (
             <div
               key={course.slug}
               className="flex flex-col md:flex-row gap-4 py-6"
@@ -49,15 +46,13 @@ const ClassroomCourses = async () => {
                   {course.description}
                 </p>
 
-                {course.category && (
-                  <div className="mt-1 bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1 py-0 rounded">
-                    {
-                      courseCategories.find(
-                        (cat) => cat.value === course.category,
-                      )?.label
-                    }
-                  </div>
-                )}
+                <div className="mt-1 bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-1 py-0 rounded">
+                  {
+                    courseCategories.find(
+                      (cat) => cat.value === course.category,
+                    )?.label
+                  }
+                </div>
               </div>
 
               <Link
@@ -76,12 +71,7 @@ const ClassroomCourses = async () => {
 
 export const metadata = {
   title: "Yours courses | Dur-Sanchar Elearning",
-  description: `Dur-Sanchar Elearning is a leading government-provided e-learning
-              platform dedicated to fostering education and empowering
-              individuals to reach their full potential. Our platform offers a
-              wide range of online video courses, study materials in the form of
-              PDFs, and software tools designed to enhance the learning
-              experience.`,
+  description: `Watch all your courses on Dur-Sanchar Elearning.`,
 };
 
 export default ClassroomCourses;

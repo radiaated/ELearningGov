@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-import courseCategories from "@/data/courseCategories";
+import courseCategories from "@/data/course";
 
 /**
  * Course Schema

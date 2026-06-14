@@ -1,15 +1,20 @@
-import CourseReviewList from "@/components/CourseReviewList";
-import StarRating from "@/components/StarRating";
+import { Metadata } from "next";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-import courseCategories from "@/data/courseCategories";
+import type { Course } from "@/types/course";
+
+import CourseReviewList from "@/components/CourseReviewList";
 import ChapterList from "@/components/ChapterList";
+import StarRating from "@/components/StarRating";
+import courseCategories from "@/data/course";
+import CartButton from "./components/CartButton";
+
+import { NotFoundError } from "@/app/lib/api";
 
 import getCourse from "@/app/lib/getCourse";
 import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
-import CartButton from "./components/CartButton";
 
 import formatDate from "@/utils/formatDate";
 import formatPrice from "@/utils/formatPrice";
@@ -24,26 +29,46 @@ const CoursePage = async ({
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
 
-  const course = await getCourse(slug);
-  const purchaseStatusData = await getCoursePurchaseStatus(slug, cookieHeader);
+  let course: Course;
 
-  const isEnrolled = Boolean(purchaseStatusData?.purchase_status);
+  let categoryTitle: string;
+  let priceLabel: string;
+  let enrollHref: string;
+  let isEnrolled: boolean = false;
 
-  const categoryTitle =
-    courseCategories.find((cat) => cat.value === course.category)?.label ??
-    "Uncategorized";
+  try {
+    course = await getCourse(slug);
+    categoryTitle =
+      courseCategories.find((cat) => cat.value === course.category)?.label ??
+      "-";
 
-  const priceLabel = formatPrice(course.price);
+    priceLabel = formatPrice(course.price);
 
-  const enrollHref = isEnrolled
-    ? `/classroom/course/${slug}`
-    : `/courses/${slug}/buy`;
+    enrollHref = isEnrolled
+      ? `/classroom/course/${slug}`
+      : `/courses/${slug}/buy`;
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      notFound();
+    }
+    throw err;
+  }
+  try {
+    const purchaseStatusData = await getCoursePurchaseStatus(
+      slug,
+      cookieHeader,
+    );
+
+    isEnrolled = purchaseStatusData.purchase_status;
+  } catch (err) {
+    console.error("Error occured!", err);
+  }
 
   return (
     <section>
       <div className="section-container my-8">
         <div className="grid grid-cols-12 gap-8">
-          {/* LEFT SIDE */}
+          {/* Left side */}
           <div className="flex flex-col gap-3 col-span-12 lg:col-span-6">
             <h3 className="text-2xl font-bold">{course.title}</h3>{" "}
             <p>{course.description}</p>
@@ -51,13 +76,11 @@ const CoursePage = async ({
               {categoryTitle}
             </div>
             <div className="flex items-center gap-2">
-              {course.avg_rating && (
-                <span className="font-medium text-yellow-700">
-                  {course.avg_rating}
-                </span>
-              )}
+              <span className="font-medium text-yellow-700">
+                {course.avg_rating}
+              </span>
 
-              {course.avg_rating && <StarRating rating={course.avg_rating} />}
+              <StarRating rating={course.avg_rating} />
               <span>
                 ({course.reviews_count} review
                 {course.reviews_count !== 1 ? "s" : ""})
@@ -79,7 +102,7 @@ const CoursePage = async ({
             <CourseReviewList courseReviews={course.course_reviews} />
           </div>
 
-          {/* RIGHT SIDE */}
+          {/* Right side */}
           <div className="col-span-12 lg:col-span-6">
             <div className="md:sticky md:top-30">
               <div className="border border-primary-dark rounded-xl overflow-hidden shadow-lg w-full lg:w-2/3 mx-auto divide-y divide-zinc-300">
@@ -89,19 +112,13 @@ const CoursePage = async ({
                   className="h-64 w-full object-cover"
                 />
 
-                {/* PRICE */}
+                {/* Price */}
                 <div className="px-4 py-4">
-                  {course.price === 0 ? (
-                    <span className="block font-medium">Free</span>
-                  ) : (
-                    <>
-                      <h5 className="text-sm">Price</h5>
-                      <span className="block font-medium">{priceLabel}</span>
-                    </>
-                  )}
+                  <h5 className="text-sm">Price</h5>
+                  <span className="block font-medium">{priceLabel}</span>
                 </div>
 
-                {/* META */}
+                {/* Meta */}
                 <div className="text-sm px-4 py-4 space-y-2">
                   <span className="block">
                     <i className="fa-solid fa-layer-group" /> {course.level}
@@ -113,7 +130,7 @@ const CoursePage = async ({
                   </span>
                 </div>
 
-                {/* REQUIREMENTS */}
+                {/* Requirements */}
                 <div className="text-sm px-4 py-4 space-y-2">
                   <span className="block text-base">
                     <i className="fa-solid fa-info text-sm" /> Requirements
@@ -168,7 +185,7 @@ export async function generateMetadata({
   const title = `${course.title} | Dur-Sanchar Elearning`;
 
   const description =
-    course.description?.slice(0, 160) ||
+    course.description.slice(0, 160) ||
     `Learn ${course.title} with Dur-Sanchar Elearning.`;
 
   return {

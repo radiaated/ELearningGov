@@ -25,16 +25,16 @@ const Header = () => {
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = await getUser();
-        setUser(currentUser);
-      } catch (error) {
-        console.error("Failed to load user:", error);
-      }
-    };
+  const loadUser = async () => {
+    try {
+      const currentUser = await getUser();
+      setUser(currentUser);
+    } catch (error) {
+      console.error("Failed to load user:", error);
+    }
+  };
 
+  useEffect(() => {
     loadUser();
   }, []);
 

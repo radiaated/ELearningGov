@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import CartPageClient from "./components/page";
+import CartPageWrapper from "./components/CartPageWrapper";
 
 export const metadata: Metadata = {
   title: "Cart | Dur-Sanchar Elearning",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function CartPage() {
-  return <CartPageClient />;
+  return <CartPageWrapper />;
 }

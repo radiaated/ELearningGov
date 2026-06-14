@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+
+import type { CourseReview } from "@/types/course";
+
 import StarRating from "./StarRating";
-import { CourseReview } from "@/types/course";
+
+import formatDate from "@/utils/formatDate";
 
 type Props = {
   review: CourseReview;
@@ -11,14 +15,6 @@ type Props = {
 
 const CourseReviewItem = ({ review, deleteReview }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const formattedDate = review.date_created
-    ? new Date(review.date_created).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    : null;
 
   const handleDelete = () => {
     if (!review.id || !deleteReview) return;
@@ -64,9 +60,10 @@ const CourseReviewItem = ({ review, deleteReview }: Props) => {
           <div className="text-sm font-medium text-zinc-800">
             {review.username}
           </div>
-          {formattedDate && (
-            <div className="text-xs text-zinc-400">{formattedDate}</div>
-          )}
+
+          <div className="text-xs text-zinc-400">
+            {formatDate(review.date_created)}
+          </div>
         </div>
       </div>
       <hr className="text-zinc-200 mt-2" />

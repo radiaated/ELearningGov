@@ -1,8 +1,11 @@
-import type { Course } from "@/types/course";
 import Link from "next/link";
+
+import type { Course } from "@/types/course";
 import StarRating from "./StarRating";
-import courseCategories from "@/data/courseCategories";
+
 import formatPrice from "@/utils/formatPrice";
+
+import courseCategories from "@/data/course";
 
 type CourseItemProps = {
   course: Course;
@@ -12,14 +15,12 @@ const CourseItem = ({ course }: CourseItemProps) => {
   const { slug, thumbnail, title, avg_rating, reviews_count, category, price } =
     course;
 
-  const rating = avg_rating ?? 0;
-  const reviewCount = reviews_count ?? 0;
   const priceInRupees = formatPrice(price);
 
   const categoryTitle =
     courseCategories.find((cat) => cat.value === category)?.label ?? "-";
 
-  const reviewLabel = reviewCount === 1 ? "Review" : "Reviews";
+  const reviewLabel = reviews_count === 1 ? "Review" : "Reviews";
 
   return (
     <article className="group">
@@ -37,10 +38,10 @@ const CourseItem = ({ course }: CourseItemProps) => {
       </Link>
 
       <div className="text-xs flex gap-1 mt-1 items-center">
-        <span className="text-yellow-700 font-medium">{rating}</span>
-        <StarRating rating={rating} />
+        <span className="text-yellow-700 font-medium">{avg_rating}</span>
+        <StarRating rating={avg_rating} />
         <span className="text-yellow-700">
-          ({reviewCount} {reviewLabel})
+          ({reviews_count} {reviewLabel})
         </span>
       </div>
 

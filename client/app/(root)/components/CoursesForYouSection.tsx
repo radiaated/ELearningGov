@@ -1,11 +1,9 @@
-import { env } from "@/env";
-import { api } from "@/app/lib/api";
 import CourseList from "@/components/CourseList";
+
 import getCourses from "@/app/lib/getCourses";
 
 const CoursesForYouSection = async () => {
   const coursesData = await getCourses();
-  console.log(coursesData);
   const courses = coursesData.results;
   return (
     <section>

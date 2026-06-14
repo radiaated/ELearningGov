@@ -1,14 +1,14 @@
 "use client";
 
+import { toast } from "sonner";
+import CartItemsList from "./CartItemsList";
+
 import { useCartStore } from "@/store/cartStore";
 
 import buyCourse from "@/app/lib/buyCourse";
 import formatPrice from "@/utils/formatPrice";
-import CartItemsList from "./CartItemsList";
-import { Suspense } from "react";
-import CartItemsListSkeleton from "./CartItemsListSkeleton";
 
-const CartPageClient = () => {
+const CartPageWrapper = () => {
   const { items: cartItems, removeItem, clearCart } = useCartStore();
 
   const totalPrice = cartItems.reduce((t, i) => t + i.price, 0);
@@ -21,12 +21,12 @@ const CartPageClient = () => {
         price: totalPrice,
       });
 
-      if (data?.payment_url) {
+      if (data.payment_url) {
         window.location.href = data.payment_url;
       }
     } catch (err) {
+      toast.error("Checkout failed.");
       console.error(err);
-      alert("Checkout failed");
     }
   };
 
@@ -38,10 +38,7 @@ const CartPageClient = () => {
 
         {/* Main layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {/* Left: Items */}
-          <Suspense fallback={<CartItemsListSkeleton />}>
-            <CartItemsList cartItems={cartItems} removeItem={removeItem} />
-          </Suspense>
+          <CartItemsList cartItems={cartItems} removeItem={removeItem} />
 
           {/* Right: Summary */}
           {cartItems.length > 0 && (
@@ -78,4 +75,4 @@ const CartPageClient = () => {
   );
 };
 
-export default CartPageClient;
+export default CartPageWrapper;

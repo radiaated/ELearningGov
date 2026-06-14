@@ -1,6 +1,7 @@
+import type { Course } from "@/types/course";
+
 import { api } from "./api";
 import { env } from "@/env";
-import type { Course } from "@/types/course";
 
 const getCourses = async (
   searchParams?: string,

@@ -1,6 +1,7 @@
+import type { CourseReviewFormData } from "@/schemas/course";
+
 import { api } from "./api";
 import { env } from "@/env";
-import type { CourseReviewFormData } from "@/schemas/course";
 
 const updateCoureReview = async (
   payload: CourseReviewFormData,

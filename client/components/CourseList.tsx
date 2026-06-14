@@ -1,4 +1,5 @@
 import type { Course } from "@/types/course";
+
 import CourseItem from "./CourseItem";
 
 const CourseList = ({ courses }: { courses: Course[] }) => {

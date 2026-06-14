@@ -1,5 +1,12 @@
 import { env } from "@/env";
 
+export class NotFoundError extends Error {
+  constructor(message = "Resource not found") {
+    super(message);
+    this.name = "NotFoundError";
+  }
+}
+
 type ApiOptions = RequestInit & {
   headers?: HeadersInit & {
     Cookie?: string;
@@ -21,7 +28,7 @@ export async function refreshAccessToken({
   });
 
   if (!res.ok) {
-    throw new Error("Refresh failed");
+    console.log("Refresh failed");
   }
 }
 
@@ -31,10 +38,16 @@ export const api = async (
 ): Promise<Response | null> => {
   let response = await fetch(url, options);
 
+  if (response.status === 404) {
+    throw new NotFoundError();
+  }
+
   if (response.status === 401) {
     try {
       const cookieHeader =
-        typeof options.headers === "object" && "Cookie" in options.headers
+        typeof options.headers === "object" &&
+        options.headers &&
+        "Cookie" in options.headers
           ? options.headers.Cookie
           : undefined;
 
@@ -42,10 +55,9 @@ export const api = async (
         cookieHeader,
       });
 
-      // Retry original request
       response = await fetch(url, options);
-    } catch {
-      console.log("Session expired...");
+    } catch (error) {
+      console.log("Session expired:", error);
       return null;
     }
   }

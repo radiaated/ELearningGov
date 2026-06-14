@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import buyCourse from "@/app/lib/buyCourse";
+import { toast } from "sonner";
 
 type Props = {
   courseId: number;
@@ -21,10 +22,11 @@ const PurchaseButton = ({ courseId, price }: Props) => {
         price,
       });
 
-      if (data?.payment_url) {
+      if (data.payment_url) {
         window.location.href = data.payment_url;
       }
     } catch (error) {
+      toast.error("Purchase failed!");
       console.error("Purchase failed:", error);
     } finally {
       setLoading(false);

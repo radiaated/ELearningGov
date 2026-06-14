@@ -1,10 +1,17 @@
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import type { Course } from "@/types/course";
+
 import ChapterList from "@/components/ChapterList";
 import CourseReviewList from "@/components/CourseReviewList";
 import CourseReviewForm from "./components/CourseReviewForm";
-import getCourse from "@/app/lib/getCourse";
-import courseCategories from "@/data/courseCategories";
 import StarRating from "@/components/StarRating";
-import { Metadata } from "next";
+
+import { NotFoundError } from "@/app/lib/api";
+import getCourse from "@/app/lib/getCourse";
+
+import courseCategories from "@/data/course";
 
 type Props = {
   params: Promise<{
@@ -15,11 +22,19 @@ type Props = {
 const ClassroomCoursePage = async ({ params }: Props) => {
   const { slug } = await params;
 
-  const course = await getCourse(slug);
+  let course: Course;
+  let categoryTitle: string;
 
-  const categoryTitle =
-    courseCategories.find((c) => c.value === course?.category)?.label ??
-    "Uncategorized";
+  try {
+    course = await getCourse(slug);
+
+    categoryTitle =
+      courseCategories.find((c) => c.value === course?.category)?.label ?? "-";
+  } catch (err) {
+    if (err instanceof NotFoundError) notFound();
+
+    throw err;
+  }
 
   return (
     <section>
@@ -33,13 +48,11 @@ const ClassroomCoursePage = async ({ params }: Props) => {
               {categoryTitle}
             </div>
             <div className="flex items-center gap-2">
-              {course.avg_rating && (
-                <span className="font-medium text-yellow-700">
-                  {course.avg_rating}
-                </span>
-              )}
+              <span className="font-medium text-yellow-700">
+                {course.avg_rating}
+              </span>
 
-              {course.avg_rating && <StarRating rating={course.avg_rating} />}
+              <StarRating rating={course.avg_rating} />
               <span>
                 ({course.reviews_count} review
                 {course.reviews_count !== 1 ? "s" : ""})
@@ -124,7 +137,7 @@ export async function generateMetadata({
   const title = `${course.title} | Dur-Sanchar Elearning`;
 
   const description =
-    course.description?.slice(0, 160) ||
+    course.description.slice(0, 160) ||
     `Learn ${course.title} with Dur-Sanchar Elearning.`;
 
   return {

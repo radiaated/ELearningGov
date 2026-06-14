@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+
 import ReactPaginate from "react-paginate";
 
 import type { Course } from "@/types/course";
+
 import CourseList from "@/components/CourseList";
-import getCourses from "@/app/lib/getCourses";
 import PaginatedCoursesSkeleton from "./PaginatedCoursesSkeleton";
+
+import getCourses from "@/app/lib/getCourses";
 
 const PAGE_SIZE = 5;
 
@@ -42,11 +45,15 @@ const PaginatedCourses = () => {
 
     const query = searchParams.toString();
 
-    getCourses(query).then((data) => {
-      setCourses(data.results);
-      setCount(data.count);
-      setLoading(false);
-    });
+    try {
+      getCourses(query).then((data) => {
+        setCourses(data.results);
+        setCount(data.count);
+        setLoading(false);
+      });
+    } catch (err) {
+      throw err;
+    }
   }, [searchParams]);
 
   if (loading) {

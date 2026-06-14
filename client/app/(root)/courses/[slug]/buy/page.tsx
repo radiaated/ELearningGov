@@ -1,13 +1,19 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 
-import courseCategories from "@/data/courseCategories";
-import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
-import getCourse from "@/app/lib/getCourse";
-import formatPrice from "@/utils/formatPrice";
+import type { Course } from "@/types/course";
 
 import PurchaseButton from "./components/PurchaseButton";
+
+import { NotFoundError } from "@/app/lib/api";
+import getCourse from "@/app/lib/getCourse";
+
+import courseCategories from "@/data/course";
+import getCoursePurchaseStatus from "@/app/lib/getCoursePurchaseStatus";
+
+import formatPrice from "@/utils/formatPrice";
 
 type Props = {
   params: Promise<{
@@ -18,17 +24,33 @@ type Props = {
 const BuyCoursePage = async ({ params }: Props) => {
   const { slug } = await params;
 
-  const purchaseStatus = await getCoursePurchaseStatus(slug);
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
 
-  if (purchaseStatus?.purchase_status) {
-    redirect(`/classroom/course/${slug}`);
+  let course: Course;
+  let categoryTitle: string;
+
+  try {
+    course = await getCourse(slug);
+    categoryTitle =
+      courseCategories.find((cat) => cat.value === course.category)?.label ??
+      "-";
+  } catch (err) {
+    if (err instanceof NotFoundError) {
+      notFound();
+    }
+    throw err;
   }
 
-  const course = await getCourse(slug);
+  try {
+    const purchaseStatus = await getCoursePurchaseStatus(slug, cookieHeader);
 
-  const categoryLabel = courseCategories.find(
-    (cat) => cat.value === course?.category,
-  )?.label;
+    if (purchaseStatus.purchase_status) {
+      redirect(`/classroom/course/${slug}`);
+    }
+  } catch (err) {
+    console.error("Error occured!", err);
+  }
 
   return (
     <section>
@@ -52,11 +74,9 @@ const BuyCoursePage = async ({ params }: Props) => {
                 </h3>
               </Link>
 
-              {categoryLabel && (
-                <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-2 py-1 rounded">
-                  {categoryLabel}
-                </div>
-              )}
+              <div className="bg-zinc-100 border border-zinc-300/25 text-xs w-fit px-2 py-1 rounded">
+                {categoryTitle}
+              </div>
             </div>
 
             <div className="col-span-12 md:col-span-2 text-center md:text-right text-2xl font-bold text-zinc-900">
@@ -83,8 +103,8 @@ export async function generateMetadata({
   const title = `Buy ${course.title} | Dur-Sanchar Elearning`;
 
   const description =
-    course.description?.slice(0, 160) ||
-    `Learn ${course.title} with Dur-Sanchar Elearning.`;
+    course.description.slice(0, 160) ||
+    `Buy and learn ${course.title} with Dur-Sanchar Elearning.`;
 
   return {
     title,

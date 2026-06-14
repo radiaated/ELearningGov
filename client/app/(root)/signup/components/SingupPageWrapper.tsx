@@ -11,7 +11,7 @@ import signup from "@/app/lib/signup";
 
 import { academicLevelCategories, genderOptions } from "@/data/user";
 
-const SingupPageClient = () => {
+const SingupPageWrapper = () => {
   const {
     register,
     handleSubmit,
@@ -164,4 +164,4 @@ const SingupPageClient = () => {
   );
 };
 
-export default SingupPageClient;
+export default SingupPageWrapper;

@@ -3,12 +3,14 @@
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+
 import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import PaginatedCourses from "./PaginatedCourses";
 
 import useDebounce from "@/hook/useDebounce";
-import courseCategories from "@/data/courseCategories";
-import PaginatedCourses from "./PaginatedCourses";
+import courseCategories from "@/data/course";
 
 const schema = yup.object({
   q: yup.string().default(""),
@@ -17,7 +19,7 @@ const schema = yup.object({
 
 type FormData = yup.InferType<typeof schema>;
 
-const CoursesPageClient = () => {
+const CoursesPageWrapper = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -30,23 +32,38 @@ const CoursesPageClient = () => {
     resolver: yupResolver(schema),
   });
 
+  const categoryOptions = [{ value: "", label: "All" }, ...courseCategories];
+
   const values = watch();
 
   useDebounce(
     () => {
-      const next = new URLSearchParams(searchParams.toString());
+      const newSearchParams = new URLSearchParams(searchParams.toString());
 
-      next.set("q", values.q);
-      next.set("category", values.category);
-      next.set("page", "1");
+      if (values.q.trim()) {
+        newSearchParams.set("q", values.q);
+      } else {
+        newSearchParams.delete("q");
+      }
 
-      router.replace(`${pathname}?${next.toString()}`);
+      if (values.category) {
+        newSearchParams.set("category", values.category);
+      } else {
+        newSearchParams.delete("category");
+      }
+
+      const current = searchParams.toString();
+      const next = newSearchParams.toString();
+
+      if (current !== next) {
+        router.replace(next ? `${pathname}?${next}` : pathname, {
+          scroll: false,
+        });
+      }
     },
     [values.q, values.category],
     400,
   );
-
-  const categoryOptions = [{ value: "", label: "All" }, ...courseCategories];
 
   return (
     <section className="w-full">
@@ -100,4 +117,4 @@ const CoursesPageClient = () => {
   );
 };
 
-export default CoursesPageClient;
+export default CoursesPageWrapper;
