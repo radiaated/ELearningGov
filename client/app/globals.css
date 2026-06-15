@@ -127,6 +127,10 @@
     @apply my-4 text-xl font-medium;
   }
 
+  .skeleton {
+    @apply bg-gray-200 rounded-sm animate-pulse w-full;
+  }
+
   .embla {
     @apply relative;
   }

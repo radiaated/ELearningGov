@@ -25,19 +25,16 @@ const PaginatedCourses = () => {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const updateURL = (params: Partial<Record<string, string | number>>) => {
-    const next = new URLSearchParams(searchParams.toString());
+  const handlePageChange = (event: any) => {
+    const pageN = event.selected + 1;
 
-    Object.entries(params).forEach(([key, value]) => {
-      if (!value) next.delete(key);
-      else next.set(key, String(value));
-    });
+    const newSearchParams = new URLSearchParams(searchParams.toString());
 
-    router.replace(`${pathname}?${next.toString()}`);
-  };
+    newSearchParams.set("page", String(pageN));
 
-  const handlePageClick = (event: any) => {
-    updateURL({ page: event.selected + 1 });
+    const newSearchParamsString = newSearchParams.toString();
+
+    router.replace(`${pathname}?${newSearchParamsString}`, { scroll: false });
   };
 
   useEffect(() => {
@@ -71,7 +68,7 @@ const PaginatedCourses = () => {
           <ReactPaginate
             forcePage={page - 1}
             pageCount={Math.ceil(count / PAGE_SIZE)}
-            onPageChange={handlePageClick}
+            onPageChange={handlePageChange}
             pageRangeDisplayed={3}
             previousLabel="Prev"
             nextLabel="Next"

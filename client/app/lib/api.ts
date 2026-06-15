@@ -90,11 +90,13 @@ export const api = async (
           ? options.headers.Cookie
           : undefined;
 
-      await refreshAccessToken({
+      const res = await refreshAccessToken({
         cookieHeader,
       });
 
-      response = await fetch(url, options);
+      if (res?.ok) {
+        response = await fetch(url, options);
+      }
     } catch (error) {
       console.log("Session expired:", error);
       return null;

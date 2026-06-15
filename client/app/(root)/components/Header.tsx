@@ -78,7 +78,7 @@ const Header = () => {
               <>
                 {user.is_admin && (
                   <Link
-                    href="/admin/dashboard"
+                    href="/admin/course"
                     className="header-action header-action--filled"
                   >
                     Dashboard

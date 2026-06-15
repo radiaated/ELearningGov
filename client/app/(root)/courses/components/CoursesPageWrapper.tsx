@@ -11,59 +11,63 @@ import PaginatedCourses from "./PaginatedCourses";
 
 import useDebounce from "@/hook/useDebounce";
 import courseCategories from "@/data/course";
+import { useEffect, useRef } from "react";
 
 const schema = yup.object({
   q: yup.string().default(""),
   category: yup.string().default(""),
 });
 
-type FormData = yup.InferType<typeof schema>;
+type FilterFormData = yup.InferType<typeof schema>;
 
 const CoursesPageWrapper = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const q = searchParams.get("q") ?? "";
-  const category = searchParams.get("category") ?? "";
-
-  const { register, watch, setValue } = useForm<FormData>({
-    defaultValues: { q, category },
+  const { register, watch, setValue } = useForm({
+    defaultValues: {
+      q: searchParams.get("q") ?? "",
+      category: searchParams.get("category") ?? "",
+    },
     resolver: yupResolver(schema),
   });
 
   const categoryOptions = [{ value: "", label: "All" }, ...courseCategories];
 
+  const handleFilterChange = (data: FilterFormData) => {
+    const newSearchParams = new URLSearchParams(searchParams.toString());
+
+    if (data.q.trim().length > 0) {
+      newSearchParams.set("q", data.q.trim());
+    } else {
+      newSearchParams.delete("q");
+    }
+
+    if (data.category.length > 0) {
+      newSearchParams.set("category", data.category);
+    } else {
+      newSearchParams.delete("category");
+    }
+
+    newSearchParams.delete("page");
+
+    const newSearchParamsString = newSearchParams.toString();
+
+    router.replace(`${pathname}?${newSearchParamsString}`, { scroll: false });
+  };
+
+  const isMounted = useRef<boolean>(false);
+
   const values = watch();
 
-  useDebounce(
-    () => {
-      const newSearchParams = new URLSearchParams(searchParams.toString());
+  useEffect(() => {
+    if (isMounted.current) {
+      useDebounce(() => handleFilterChange(values), 400);
+    }
 
-      if (values.q.trim()) {
-        newSearchParams.set("q", values.q);
-      } else {
-        newSearchParams.delete("q");
-      }
-
-      if (values.category) {
-        newSearchParams.set("category", values.category);
-      } else {
-        newSearchParams.delete("category");
-      }
-
-      const current = searchParams.toString();
-      const next = newSearchParams.toString();
-
-      if (current !== next) {
-        router.replace(next ? `${pathname}?${next}` : pathname, {
-          scroll: false,
-        });
-      }
-    },
-    [values.q, values.category],
-    400,
-  );
+    isMounted.current = true;
+  }, [values.category, values.q]);
 
   return (
     <section className="w-full">

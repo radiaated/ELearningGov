@@ -1,13 +1,9 @@
-import { useEffect } from "react";
+const useDebounce = (fn: Function, delay: number) => {
+  const timeout = setTimeout(() => {
+    fn();
+  }, delay);
 
-const useDebounce = (fn: Function, dependencies: any[], delay: number) => {
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      fn();
-    }, delay);
-
-    return () => clearTimeout(timeout);
-  }, dependencies);
+  return () => clearTimeout(timeout);
 };
 
 export default useDebounce;
