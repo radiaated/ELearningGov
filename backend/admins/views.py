@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 
 
 from course.models import Course
@@ -10,12 +11,34 @@ from course.serializers import CourseSerializer, ChapterSerializer
 import json
 
 
+class AdminCoursePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class CourseViewSet(ModelViewSet):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsAdminUser]
     lookup_field = "slug"
+    pagination_class = AdminCoursePagination
+
+    def get_queryset(self):
+        queryset = Course.objects.all()
+
+        if self.action == "list":
+            q = self.request.query_params.get("q", "").strip()
+            category = self.request.query_params.get("category", "").strip()
+
+            if q:
+                queryset = queryset.filter(title__icontains=q)
+
+            if category:
+                queryset = queryset.filter(category=category)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
 
@@ -31,7 +54,9 @@ class CourseViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         course_data = request.data.dict()
-        chapters_data = json.loads(course_data.pop("chapters", "[]"))
+        chapters_data = json.loads(course_data.pop("course_chapters", "[]"))
+
+        print(chapters_data)
 
         # Create course
         course_serializer = CourseSerializer(data=course_data)
@@ -53,7 +78,7 @@ class CourseViewSet(ModelViewSet):
         course = self.get_object()
 
         course_data = request.data.dict()
-        chapters_data = json.loads(course_data.pop("chapters", "[]"))
+        chapters_data = json.loads(course_data.pop("course_chapters", "[]"))
 
         # ---------- UPDATE COURSE ----------
         course_serializer = CourseSerializer(course, data=course_data, partial=True)
