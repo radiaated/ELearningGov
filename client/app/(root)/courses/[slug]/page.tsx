@@ -138,21 +138,18 @@ const CoursePage = async ({
                   <span className="block">{course.requirements}</span>
                 </div>
 
-                {/* CTA */}
-                <Link
-                  href={enrollHref}
-                  className="block w-full text-center px-5 py-4 bg-primary-main text-zinc-100 hover:bg-primary-main/90 transition"
-                >
-                  {isEnrolled ? (
-                    <>
-                      Enrolled <i className="fa-solid fa-check" />
-                    </>
-                  ) : (
-                    <>
-                      Enroll <i className="fa-solid fa-graduation-cap" />
-                    </>
-                  )}
-                </Link>
+                {isEnrolled ? (
+                  <div className="block w-full text-center px-5 py-4 bg-gray-400 text-zinc-200 cursor-not-allowed">
+                    Enrolled <i className="fa-solid fa-check" />
+                  </div>
+                ) : (
+                  <Link
+                    href={enrollHref}
+                    className="block w-full text-center px-5 py-4 bg-primary-main text-zinc-100 hover:bg-primary-main/90"
+                  >
+                    Enroll <i className="fa-solid fa-graduation-cap" />
+                  </Link>
+                )}
               </div>
 
               <CartButton

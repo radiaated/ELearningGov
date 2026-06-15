@@ -19,23 +19,23 @@ const CartButton = ({
 
   return (
     <button
-      className="btn w-fit mx-auto text-center px-5 py-4"
+      className="btn block w-fit mx-auto text-center px-5 py-4 text-sm font-medium"
       onClick={() => {
         if (inCart) {
-          removeItem(course.slug);
+          removeItem(course.id);
         } else {
           addItem(course);
         }
       }}
     >
       {inCart ? (
-        <>
+        <span className="text-red-600 hover:text-red-700">
           Remove from cart <i className="fa-solid fa-trash"></i>
-        </>
+        </span>
       ) : (
-        <>
+        <span className="hover:text-primary-dark">
           Add to cart <i className="fa-solid fa-cart-plus"></i>
-        </>
+        </span>
       )}
     </button>
   );

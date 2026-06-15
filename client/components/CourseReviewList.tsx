@@ -1,4 +1,5 @@
 "use client";
+import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import type { CourseReview } from "@/types/course";
@@ -14,11 +15,17 @@ const CourseReviewList = ({
   courseReviews: CourseReview[];
   courseSlug?: string;
 }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const handleDelete = async (reviewId: number) => {
     if (!courseSlug) return;
 
     try {
       await deleteCourseReview(courseSlug, reviewId);
+      toast.success("Course review delete successfully.");
+
+      router.push(pathname);
     } catch (err) {
       toast.error("Failed to delete the course review.");
       console.error("Error occured.", err);

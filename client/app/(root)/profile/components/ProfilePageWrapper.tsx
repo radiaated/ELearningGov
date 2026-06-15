@@ -86,6 +86,16 @@ const ProfilePageWrapper = () => {
       resetPwd();
       toast.success("Password updated successfully!");
     } catch (err) {
+      if (err instanceof BadRequestError) {
+        const validationMessage = await err.response?.json();
+        Object.entries(validationMessage).forEach(([field, messages]) => {
+          setPwdError(field as keyof PasswordFormData, {
+            type: "server",
+            message: Array.isArray(messages) ? messages[0] : String(messages),
+          });
+        });
+        return;
+      }
       setPwdError("root", {
         type: "server",
         message: "Something went wrong. Please try again.",
@@ -186,7 +196,7 @@ const ProfilePageWrapper = () => {
                 <option value="">Select</option>
                 {academicLevelCategories.map((item, idx) => (
                   <option key={idx} value={item.value}>
-                    {item.value}
+                    {item.label}
                   </option>
                 ))}
               </select>

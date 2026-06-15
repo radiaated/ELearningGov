@@ -42,14 +42,10 @@ const BuyCoursePage = async ({ params }: Props) => {
     throw err;
   }
 
-  try {
-    const purchaseStatus = await getCoursePurchaseStatus(slug, cookieHeader);
+  const purchaseStatus = await getCoursePurchaseStatus(slug, cookieHeader);
 
-    if (purchaseStatus.purchase_status) {
-      redirect(`/classroom/course/${slug}`);
-    }
-  } catch (err) {
-    console.error("Error occured!", err);
+  if (purchaseStatus?.purchase_status) {
+    redirect(`/classroom/courses/${slug}`);
   }
 
   return (

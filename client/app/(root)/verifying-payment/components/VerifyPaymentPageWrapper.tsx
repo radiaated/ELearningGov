@@ -12,7 +12,7 @@ const VerifyPaymentPageWrapper = () => {
   const searchParams = useSearchParams();
 
   const cartItems = useCartStore((state) => state.items);
-  const removeItem = useCartStore((state) => state.removeItem);
+  const clearCart = useCartStore((state) => state.clearCart);
 
   const [verificationStatus, setVerificationStatus] = useState<
     "pending" | "success" | "rejected"
@@ -27,18 +27,10 @@ const VerifyPaymentPageWrapper = () => {
       return;
     }
 
-    const purchasedCourseIds = purchaseOrderName
-      .split("_")
-      .map((item) => parseInt(item, 10));
-
     try {
       await verifyPayment({ pidx }, purchaseOrderName);
 
-      purchasedCourseIds.forEach((id) => {
-        if (cartItems.some((item) => item.id === id)) {
-          removeItem(id);
-        }
-      });
+      clearCart();
 
       setVerificationStatus("success");
     } catch (error) {
@@ -57,8 +49,8 @@ const VerifyPaymentPageWrapper = () => {
 
   return (
     <section>
-      <div className="section-container min-h-[50vh] text-center">
-        <p className="flex gap-2 items-center">
+      <div className="section-container my-8 min-h-[50vh]">
+        <p className="flex gap-2 items-center justify-center">
           {verificationStatus === "pending" ? (
             "Verifying payment..."
           ) : verificationStatus === "success" ? (
