@@ -22,9 +22,10 @@ The platform enables students to browse and enroll in online video courses, secu
   - Django
   - Django Rest Framework
 - Javascript
+  - NextJS
   - React
+  - Zustand
   - Tailwind CSS
-  - Redux Toolkit
 - PostgreSQL
 - JWT Authentication
 - Khalti Payment Gateway
