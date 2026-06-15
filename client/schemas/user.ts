@@ -1,4 +1,5 @@
 import * as yup from "yup";
+
 import { academicLevelCategories, genderOptions } from "@/data/user";
 
 export const loginSchema = yup.object({

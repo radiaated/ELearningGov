@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 export default function AppNotFound({ message }: { message: string }) {
-  console.log(message);
   return (
     <section>
       <div className="section-container my-16 flex flex-col items-center gap-4 text-center">

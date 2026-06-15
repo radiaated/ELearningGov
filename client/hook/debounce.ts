@@ -1,4 +1,4 @@
-const useDebounce = (fn: Function, delay: number) => {
+const debounce = (fn: Function, delay: number) => {
   const timeout = setTimeout(() => {
     fn();
   }, delay);
@@ -6,4 +6,4 @@ const useDebounce = (fn: Function, delay: number) => {
   return () => clearTimeout(timeout);
 };
 
-export default useDebounce;
+export default debounce;

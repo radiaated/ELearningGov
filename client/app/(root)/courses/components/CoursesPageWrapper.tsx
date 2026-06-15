@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
@@ -9,9 +11,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import PaginatedCourses from "./PaginatedCourses";
 
-import useDebounce from "@/hook/useDebounce";
+import debounce from "@/hook/debounce";
 import courseCategories from "@/data/course";
-import { useEffect, useRef } from "react";
 
 const schema = yup.object({
   q: yup.string().default(""),
@@ -63,7 +64,7 @@ const CoursesPageWrapper = () => {
 
   useEffect(() => {
     if (isMounted.current) {
-      useDebounce(() => handleFilterChange(values), 400);
+      debounce(() => handleFilterChange(values), 400);
     }
 
     isMounted.current = true;

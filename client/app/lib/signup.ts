@@ -13,9 +13,8 @@ const signup = async (formData: SignupFormData): Promise<void> => {
     credentials: "include",
   });
 
-  console.log(response);
   const data = await response?.json();
-  console.log(data);
+
   return data;
 };
 

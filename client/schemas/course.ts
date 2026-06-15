@@ -1,5 +1,6 @@
-import courseCategories from "@/data/course";
 import * as yup from "yup";
+
+import courseCategories from "@/data/course";
 
 export const chapterSchema = yup.object({
   chpt: yup
@@ -151,9 +152,6 @@ export const courseReviewSchema = yup.object({
   comment: yup.string().max(1000).required("Comment is required"),
 });
 
-/**
- * Types
- */
 export type CourseFormData = yup.InferType<typeof courseSchema>;
 export type CourseUpdateFormData = yup.InferType<typeof courseUpdateSchema>;
 export type ChapterFormData = yup.InferType<typeof chapterSchema>;

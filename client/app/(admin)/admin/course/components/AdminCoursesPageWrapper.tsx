@@ -21,7 +21,7 @@ import type { Course } from "@/types/course";
 import ReactPaginate from "react-paginate";
 
 import getAdminCourses from "@/app/lib/getAdminCourses";
-import useDebounce from "@/hook/useDebounce";
+import debounce from "@/hook/debounce";
 
 import courseCategories from "@/data/course";
 import Link from "next/link";
@@ -181,7 +181,7 @@ const AdminCoursesPageWrapper = () => {
 
   useEffect(() => {
     if (isMounted.current) {
-      useDebounce(() => handleFilterChange(values), 500);
+      debounce(() => handleFilterChange(values), 500);
     }
     isMounted.current = true;
   }, [values.category, values.q]);
