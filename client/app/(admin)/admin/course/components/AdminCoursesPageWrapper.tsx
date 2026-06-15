@@ -108,7 +108,7 @@ const AdminCoursesPageWrapper = () => {
 
               <button
                 onClick={() => hanldeDeleteCourse(course.slug)}
-                className="px-3 py-1 text-xs rounded-md bg-red-600 text-white hover:bg-red-700"
+                className="btn px-3 py-1 text-xs rounded-md bg-red-600 text-white hover:bg-red-700"
               >
                 <i className="fa-solid fa-xmark"></i>
               </button>

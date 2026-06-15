@@ -19,7 +19,7 @@ const CartButton = ({
 
   return (
     <button
-      className="block w-fit mx-auto text-center px-5 py-4"
+      className="btn w-fit mx-auto text-center px-5 py-4"
       onClick={() => {
         if (inCart) {
           removeItem(course.slug);

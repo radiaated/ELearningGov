@@ -255,7 +255,7 @@ const AdminCourseCreatePageWrapper = () => {
                       },
                     ])
                   }
-                  className="text-primary-dark underline"
+                  className="btn border-2 border-primary-main text-primary-main hover:bg-primary-main hover:text-zinc-50 p-1"
                 >
                   Add +
                 </button>
@@ -290,7 +290,7 @@ const AdminCourseCreatePageWrapper = () => {
 
                     <button
                       type="button"
-                      className="col-span-1 text-red-500 hover:text-red-700 rounded-md"
+                      className="col-span-1 text-xs btn border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-zinc-50 w-fit px-1"
                       onClick={() =>
                         setChapters((prev) =>
                           prev.filter((_, idx) => idx !== i),

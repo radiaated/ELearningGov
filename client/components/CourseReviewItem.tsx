@@ -28,7 +28,7 @@ const CourseReviewItem = ({ review, deleteReview }: Props) => {
       <button
         type="button"
         onClick={() => setIsMenuOpen((p) => !p)}
-        className="absolute right-2 top-2 text-zinc-400 hover:text-zinc-600"
+        className="btn absolute right-2 top-2 text-zinc-400 hover:text-zinc-600"
         aria-label="Open menu"
       >
         <i className="fa-solid fa-ellipsis text-sm" />
@@ -38,7 +38,7 @@ const CourseReviewItem = ({ review, deleteReview }: Props) => {
       {isMenuOpen && (
         <>
           <button
-            className="fixed inset-0 z-40"
+            className="btn fixed inset-0 z-40"
             onClick={() => setIsMenuOpen(false)}
             aria-label="Close menu"
           />
@@ -46,7 +46,7 @@ const CourseReviewItem = ({ review, deleteReview }: Props) => {
           <div className="absolute right-2 top-7 z-50 w-28 rounded-md bg-white shadow-sm border border-zinc-100 text-sm">
             <button
               onClick={handleDelete}
-              className="w-full text-left px-3 py-2 text-red-500 hover:bg-zinc-50"
+              className="btn w-full text-left px-3 py-2 text-red-500 hover:bg-zinc-50"
             >
               Delete
             </button>

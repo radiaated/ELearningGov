@@ -98,7 +98,7 @@ const CoursesPageWrapper = () => {
                   key={item.value}
                   type="button"
                   onClick={() => setValue("category", item.value)}
-                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition border ${
+                  className={`btn rounded-full px-4 py-1.5 text-sm font-medium transition border ${
                     isActive
                       ? "bg-primary-main text-white border-primary-main"
                       : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"

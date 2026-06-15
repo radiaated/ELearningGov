@@ -36,7 +36,7 @@ const CartItemsList = ({ cartItems, removeItem }: Props) => {
             {/* Remove */}
             <button
               onClick={() => removeItem(item.id)}
-              className="text-red-500 hover:text-red-700 transition"
+              className="btn text-red-500 hover:text-red-700"
             >
               <i className="fa-regular fa-circle-xmark"></i>
             </button>

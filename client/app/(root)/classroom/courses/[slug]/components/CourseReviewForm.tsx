@@ -52,7 +52,7 @@ const CourseReviewForm = ({ slug }: Props) => {
 
       <button
         type="submit"
-        className="bg-primary-main text-white px-4 py-2 text-sm rounded"
+        className="btn bg-primary-main hover:bg-primary-dark text-white px-4 py-2 text-sm rounded"
       >
         Post Review
       </button>

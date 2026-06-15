@@ -22,7 +22,7 @@ const SetStarRating = ({ onChange }: Props) => {
           <button
             key={idx}
             type="button"
-            className="text-yellow-400 text-xl"
+            className="btn text-yellow-400 text-xl"
             onClick={() => {
               (onChange(value), setStarRating(value));
             }}
