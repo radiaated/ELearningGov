@@ -52,7 +52,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
             expires=timezone.now() + timedelta(hours=1),
             secure=True,
             httponly=True,
-            samesite="None",
+            samesite="Lax",
             path="/",
         )
 
@@ -62,7 +62,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
             expires=timezone.now() + timedelta(days=30),
             secure=True,
             httponly=True,
-            samesite="None",
+            samesite="Lax",
             path="/",
         )
         return response
@@ -95,7 +95,7 @@ class MyTokenRefreshView(TokenRefreshView):
                 expires=timezone.now() + timezone(hours=1),
                 secure=True,
                 httponly=True,
-                samesite="None",
+                samesite="Lax",
                 path="/",
             )
 
@@ -105,7 +105,7 @@ class MyTokenRefreshView(TokenRefreshView):
                 expires=timezone.now() + timedelta(days=30),
                 secure=True,
                 httponly=True,
-                samesite="None",
+                samesite="Lax",
                 path="/",
             )
 

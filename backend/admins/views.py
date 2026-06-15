@@ -80,16 +80,16 @@ class CourseViewSet(ModelViewSet):
         course_data = request.data.dict()
         chapters_data = json.loads(course_data.pop("course_chapters", "[]"))
 
-        # ---------- UPDATE COURSE ----------
+        # Update course
         course_serializer = CourseSerializer(course, data=course_data, partial=True)
         course_serializer.is_valid(raise_exception=True)
         course = course_serializer.save()
 
-        # ---------- GET EXISTING CHAPTERS ----------
+        # Get existing chapters
         existing_chapters = {c.id: c for c in course.course_chapters.all()}
         incoming_ids = []
 
-        # ---------- CREATE / UPDATE ----------
+        # Create/Update
         for i, chapter_data in enumerate(chapters_data):
             chapter_id = chapter_data.get("id", None)
             chapter_data["chpt"] = i
@@ -97,7 +97,7 @@ class CourseViewSet(ModelViewSet):
             chapter_data["video"] = request.FILES.get(f"chpt_no{i + 1}")
 
             if chapter_id and chapter_id in existing_chapters:
-                # UPDATE
+                # Update
                 chapter_instance = existing_chapters[chapter_id]
                 serializer = ChapterSerializer(
                     chapter_instance, data=chapter_data, partial=True
@@ -107,13 +107,13 @@ class CourseViewSet(ModelViewSet):
                 incoming_ids.append(chapter_id)
 
             else:
-                # CREATE
+                # Create
                 serializer = ChapterSerializer(data=chapter_data)
                 serializer.is_valid(raise_exception=True)
                 chapter = serializer.save()
                 incoming_ids.append(chapter.id)
 
-        # ---------- DELETE REMOVED CHAPTERS ----------
+        # Delete removed chapters
         for chapter_id, chapter in existing_chapters.items():
             if chapter_id not in incoming_ids:
                 chapter.delete()
