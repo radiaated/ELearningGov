@@ -76,7 +76,7 @@ class Chapter(models.Model):
     title = models.CharField(max_length=200, null=False, blank=False)
     description = models.CharField(max_length=5000, null=False, blank=False)
     video = models.FileField(upload_to=get_file_path, null=False, blank=False)
-    duration = models.PositiveSmallIntegerField(default=1, null=False, blank=False)
+    duration = models.PositiveSmallIntegerField(default=200, null=False, blank=False)
     date_created = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     class Meta:

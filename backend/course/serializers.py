@@ -20,10 +20,17 @@ class ChapterSerializer(serializers.ModelSerializer):
 
 class CourseReviewSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField(source="user.username")
+    is_author = serializers.SerializerMethodField()
 
     class Meta:
         model = CourseReview
-        fields = ["id", "username", "date_created", "rating", "comment"]
+        fields = ["id", "username", "date_created", "rating", "comment", "is_author"]
+
+    def get_is_author(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+        return obj.user == request.user
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -50,10 +57,21 @@ class CourseSerializer(serializers.ModelSerializer):
         if "course_chapters" not in exclude_fields and not self.context.get(
             "include_chapter_video"
         ):
-
             self.fields["course_chapters"] = ChapterSerializer(
                 many=True, read_only=True, exclude_fields=["video"]
             )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        value = data.get("avg_rating")
+
+        if value is None:
+            data["avg_rating"] = 0.0
+        else:
+            data["avg_rating"] = round(float(value), 2)
+
+        return data
 
 
 # TODO

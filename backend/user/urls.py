@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("me/", views.CurrentUserAPIView.as_view(), name="user-me"),
     path("profile/", views.ProfileAPIView.as_view(), name="user-profile"),
     path(
         "password-update/",
@@ -12,5 +13,10 @@ urlpatterns = [
         "course/",
         views.UserCoursesListAPIView.as_view(),
         name="user-user-course-list",
+    ),
+    path(
+        "course/<slug:slug>/purchase-status/",
+        views.UserCoursesPurchaseStatusAPIView.as_view(),
+        name="user-user-course-purchase-status",
     ),
 ]

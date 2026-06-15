@@ -14,7 +14,7 @@ urlpatterns = [
         name="course-takecourse-retrieve",
     ),
     path(
-        "takechapter/<slug:course_slug>/<slug:chapter_slug>/",
+        "takechapter/<slug:course_slug>/chapter/<slug:chapter_slug>/",
         views.TakeChapterRetreiveView.as_view(),
         name="course-takechapter-retrieve",
     ),

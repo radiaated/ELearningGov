@@ -1,4 +1,5 @@
 from django.db.models import Avg, Count
+from django.db.models.functions import Round
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
@@ -8,7 +9,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Course, Chapter
+from .models import Course, Chapter, CourseReview
 from .serializers import CourseSerializer, ChapterSerializer, CourseReviewSerializer
 
 
@@ -26,7 +27,7 @@ class CourseListView(ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        search = self.request.GET.get("search")
+        search = self.request.GET.get("q")
         category = self.request.GET.get("category")
 
         if search:
@@ -106,24 +107,30 @@ class TakeChapterRetreiveView(RetrieveAPIView):
 
 
 class CourseReviewCreateUpdateDestroyView(APIView):
-
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, course_slug):
+    def get_object(self, course, user, review_id=None):
+        qs = CourseReview.objects.filter(course=course, user=user)
 
+        if review_id:
+            return get_object_or_404(qs, id=review_id)
+
+        return qs.order_by("-id").first()
+
+    def post(self, request, course_slug):
         course = get_object_or_404(Course, slug=course_slug)
 
         serializer = CourseReviewSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user, course=course)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def put(self, request):
-        course_slug = request.GET.get("course")
+    def put(self, request, course_slug):
+        review_id = request.query_params.get("id")
+
         course = get_object_or_404(Course, slug=course_slug)
-
-        review = self.get_object(course, request.user)
+        review = self.get_object(course, request.user, review_id)
 
         serializer = CourseReviewSerializer(review, data=request.data, partial=False)
         serializer.is_valid(raise_exception=True)
@@ -131,11 +138,12 @@ class CourseReviewCreateUpdateDestroyView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request):
-        course_slug = request.GET.get("course")
-        course = get_object_or_404(Course, slug=course_slug)
+    def delete(self, request, course_slug):
+        review_id = request.query_params.get("id")
 
-        review = self.get_object(course, request.user)
+        course = get_object_or_404(Course, slug=course_slug)
+        review = self.get_object(course, request.user, review_id)
+
         review.delete()
 
         return Response(

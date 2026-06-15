@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser
+from rest_framework.pagination import PageNumberPagination
 
 
 from course.models import Course
@@ -10,12 +11,34 @@ from course.serializers import CourseSerializer, ChapterSerializer
 import json
 
 
+class AdminCoursePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 class CourseViewSet(ModelViewSet):
 
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsAdminUser]
     lookup_field = "slug"
+    pagination_class = AdminCoursePagination
+
+    def get_queryset(self):
+        queryset = Course.objects.all()
+
+        if self.action == "list":
+            q = self.request.query_params.get("q", "").strip()
+            category = self.request.query_params.get("category", "").strip()
+
+            if q:
+                queryset = queryset.filter(title__icontains=q)
+
+            if category:
+                queryset = queryset.filter(category=category)
+
+        return queryset
 
     def get_serializer(self, *args, **kwargs):
 
@@ -31,7 +54,9 @@ class CourseViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         course_data = request.data.dict()
-        chapters_data = json.loads(course_data.pop("chapters", "[]"))
+        chapters_data = json.loads(course_data.pop("course_chapters", "[]"))
+
+        print(chapters_data)
 
         # Create course
         course_serializer = CourseSerializer(data=course_data)
@@ -53,18 +78,18 @@ class CourseViewSet(ModelViewSet):
         course = self.get_object()
 
         course_data = request.data.dict()
-        chapters_data = json.loads(course_data.pop("chapters", "[]"))
+        chapters_data = json.loads(course_data.pop("course_chapters", "[]"))
 
-        # ---------- UPDATE COURSE ----------
+        # Update course
         course_serializer = CourseSerializer(course, data=course_data, partial=True)
         course_serializer.is_valid(raise_exception=True)
         course = course_serializer.save()
 
-        # ---------- GET EXISTING CHAPTERS ----------
+        # Get existing chapters
         existing_chapters = {c.id: c for c in course.course_chapters.all()}
         incoming_ids = []
 
-        # ---------- CREATE / UPDATE ----------
+        # Create/Update
         for i, chapter_data in enumerate(chapters_data):
             chapter_id = chapter_data.get("id", None)
             chapter_data["chpt"] = i
@@ -72,7 +97,7 @@ class CourseViewSet(ModelViewSet):
             chapter_data["video"] = request.FILES.get(f"chpt_no{i + 1}")
 
             if chapter_id and chapter_id in existing_chapters:
-                # UPDATE
+                # Update
                 chapter_instance = existing_chapters[chapter_id]
                 serializer = ChapterSerializer(
                     chapter_instance, data=chapter_data, partial=True
@@ -82,13 +107,13 @@ class CourseViewSet(ModelViewSet):
                 incoming_ids.append(chapter_id)
 
             else:
-                # CREATE
+                # Create
                 serializer = ChapterSerializer(data=chapter_data)
                 serializer.is_valid(raise_exception=True)
                 chapter = serializer.save()
                 incoming_ids.append(chapter.id)
 
-        # ---------- DELETE REMOVED CHAPTERS ----------
+        # Delete removed chapters
         for chapter_id, chapter in existing_chapters.items():
             if chapter_id not in incoming_ids:
                 chapter.delete()

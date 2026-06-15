@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 from rest_framework import status, exceptions
@@ -19,7 +20,7 @@ from rest_framework_simplejwt.views import (
 from .serializers import RegisterSerializer
 
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # Create your views here.
 
@@ -48,19 +49,21 @@ class MyTokenObtainPairView(TokenObtainPairView):
         response.set_cookie(
             key="access",
             value=access_token,
-            expires=datetime.now() + timedelta(hours=1),
+            expires=timezone.now() + timedelta(hours=1),
             secure=True,
             httponly=True,
-            samesite="strict",
+            samesite="Lax",
+            path="/",
         )
 
         response.set_cookie(
             key="refresh",
             value=refresh_token,
-            expires=datetime.now() + timedelta(days=30),
+            expires=timezone.now() + timedelta(days=30),
             secure=True,
             httponly=True,
-            samesite="strict",
+            samesite="Lax",
+            path="/",
         )
         return response
 
@@ -89,19 +92,21 @@ class MyTokenRefreshView(TokenRefreshView):
             response.set_cookie(
                 key="access",
                 value=access_token,
-                expires=datetime.now() + timedelta(hours=1),
+                expires=timezone.now() + timezone(hours=1),
                 secure=True,
                 httponly=True,
-                samesite="strict",
+                samesite="Lax",
+                path="/",
             )
 
             response.set_cookie(
                 key="refresh",
                 value=refresh_token,
-                expires=datetime.now() + timedelta(days=30),
+                expires=timezone.now() + timedelta(days=30),
                 secure=True,
                 httponly=True,
-                samesite="strict",
+                samesite="Lax",
+                path="/",
             )
 
             return response
