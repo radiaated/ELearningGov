@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import VerifyPaymentPageWrapper from "./components/VerifyPaymentPageWrapper";
 
@@ -9,7 +10,11 @@ export const metadata: Metadata = {
 };
 
 const VerifyPaymentPage = () => {
-  return <VerifyPaymentPageWrapper />;
+  return (
+    <Suspense>
+      <VerifyPaymentPageWrapper />
+    </Suspense>
+  );
 };
 
 export default VerifyPaymentPage;

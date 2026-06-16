@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import CoursesPageWrapper from "./components/CoursesPageWrapper";
 
 export const metadata = {
@@ -7,7 +8,11 @@ export const metadata = {
 };
 
 const CoursePage = () => {
-  return <CoursesPageWrapper />;
+  return (
+    <Suspense>
+      <CoursesPageWrapper />
+    </Suspense>
+  );
 };
 
 export default CoursePage;

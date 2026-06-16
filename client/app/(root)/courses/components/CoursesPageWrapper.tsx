@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
@@ -115,8 +115,9 @@ const CoursesPageWrapper = () => {
         <hr className="border-gray-200" />
 
         {/* Paginated List */}
-
-        <PaginatedCourses />
+        <Suspense>
+          <PaginatedCourses />
+        </Suspense>
       </div>
     </section>
   );

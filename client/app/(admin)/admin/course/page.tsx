@@ -1,9 +1,14 @@
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 import AdminCoursesPageWrapper from "./components/AdminCoursesPageWrapper";
 
 const AdminCoursesPage = () => {
-  return <AdminCoursesPageWrapper />;
+  return (
+    <Suspense>
+      <AdminCoursesPageWrapper />
+    </Suspense>
+  );
 };
 
 export default AdminCoursesPage;
