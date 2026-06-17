@@ -1,9 +1,4 @@
-from datetime import timedelta
-
-from django.utils import timezone
-
-
-class CookieTokenMixin:
+class AuthCookieTokenMixin:
     ACCESS_COOKIE = "access"
     REFRESH_COOKIE = "refresh"
 
@@ -16,7 +11,7 @@ class CookieTokenMixin:
         response.set_cookie(
             key=self.ACCESS_COOKIE,
             value=access_token,
-            expires=timezone.now() + timedelta(hours=1),
+            max_age=60 * 60 * 24 * 30,
             secure=True,
             httponly=True,
             samesite="Lax",
@@ -26,7 +21,7 @@ class CookieTokenMixin:
         response.set_cookie(
             key=self.REFRESH_COOKIE,
             value=refresh_token,
-            expires=timezone.now() + timedelta(days=30),
+            max_age=60 * 60 * 24 * 30,
             secure=True,
             httponly=True,
             samesite="Lax",

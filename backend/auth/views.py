@@ -1,16 +1,17 @@
-from django.utils import timezone
 from django.contrib.auth.models import User
 
 from rest_framework import status, exceptions
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.generics import (
     CreateAPIView,
 )
 from rest_framework.response import Response
+
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
     TokenRefreshSerializer,
-    TokenBlacklistSerializer,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -18,58 +19,35 @@ from rest_framework_simplejwt.views import (
 )
 
 from .serializers import RegisterSerializer
-from .mixins import CookieTokenMixin
+from .mixins import AuthCookieTokenMixin
 
-
-from datetime import timedelta
 
 # Create your views here.
-
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
 
-        data["username"] = self.user.username
+        # data["username"] = self.user.username
         return data
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
+class MyTokenObtainPairView(AuthCookieTokenMixin, TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-
         response = super().post(request, *args, **kwargs)
 
-        access_token = response.data["access"]
-        refresh_token = response.data["refresh"]
+        access_token = response.data.pop("access")
+        refresh_token = response.data.pop("refresh")
 
-        del response.data["access"]
-        del response.data["refresh"]
-
-        response.set_cookie(
-            key="access",
-            value=access_token,
-            expires=timezone.now() + timedelta(hours=1),
-            secure=True,
-            httponly=True,
-            samesite="Lax",
-            path="/",
+        return self.set_token_cookies(
+            response,
+            access_token=access_token,
+            refresh_token=refresh_token,
         )
 
-        response.set_cookie(
-            key="refresh",
-            value=refresh_token,
-            expires=timezone.now() + timedelta(days=30),
-            secure=True,
-            httponly=True,
-            samesite="Lax",
-            path="/",
-        )
-        return response
 
-
-class MyTokenRefreshView(CookieTokenMixin, TokenRefreshView):
+class MyTokenRefreshView(AuthCookieTokenMixin, TokenRefreshView):
     serializer_class = TokenRefreshSerializer
 
     def post(self, request, *args, **kwargs):
@@ -106,18 +84,25 @@ class MyTokenRefreshView(CookieTokenMixin, TokenRefreshView):
             return self.clear_cookies(response)
 
 
-class MyTokenBlacklistView(CookieTokenMixin, TokenRefreshView):
-    serializer_class = TokenBlacklistSerializer
+class LogoutView(AuthCookieTokenMixin, APIView):
+
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         try:
-            request.data["refresh"] = request.COOKIES.get(self.REFRESH_COOKIE)
+            refresh_token = request.COOKIES.get("refresh")
 
-            super().post(request, *args, **kwargs)
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
 
-        finally:
-            response = Response({"detail": "Logged out"})
-            return self.clear_cookies(response)
+        except Exception:
+            pass
+
+        response = Response({"detail": "Logged out"}, status=status.HTTP_200_OK)
+
+        response = self.clear_cookies(response)
+        return response
 
 
 class RegisterView(CreateAPIView):
