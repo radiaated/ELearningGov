@@ -18,6 +18,7 @@ from rest_framework_simplejwt.views import (
 )
 
 from .serializers import RegisterSerializer
+from .mixins import CookieTokenMixin
 
 
 from datetime import timedelta
@@ -68,88 +69,55 @@ class MyTokenObtainPairView(TokenObtainPairView):
         return response
 
 
-class MyTokenRefreshView(TokenRefreshView):
+class MyTokenRefreshView(CookieTokenMixin, TokenRefreshView):
     serializer_class = TokenRefreshSerializer
 
     def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get(self.REFRESH_COOKIE)
+
+        if not refresh_token or not request.COOKIES.get(self.ACCESS_COOKIE):
+            response = Response(
+                {"detail": "Tokens do not exist"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+            return self.clear_cookies(response)
 
         try:
+            request.data["refresh"] = refresh_token
 
-            if not request.COOKIES.get("access") or not request.COOKIES.get("refresh"):
-                raise exceptions.AuthenticationFailed(
-                    detail={"Tokens do not exist"}, code=status.HTTP_401_UNAUTHORIZED
-                )
-
-            request.data["refresh"] = request.COOKIES.get("refresh")
             response = super().post(request, *args, **kwargs)
 
-            access_token = response.data["access"]
-            refresh_token = response.data["refresh"]
+            access_token = response.data.pop("access")
+            refresh_token = response.data.pop("refresh")
 
-            del response.data["access"]
-            del response.data["refresh"]
-
-            response.set_cookie(
-                key="access",
-                value=access_token,
-                expires=timezone.now() + timezone(hours=1),
-                secure=True,
-                httponly=True,
-                samesite="Lax",
-                path="/",
-            )
-
-            response.set_cookie(
-                key="refresh",
-                value=refresh_token,
-                expires=timezone.now() + timedelta(days=30),
-                secure=True,
-                httponly=True,
-                samesite="Lax",
-                path="/",
+            self.set_token_cookies(
+                response,
+                access_token=access_token,
+                refresh_token=refresh_token,
             )
 
             return response
-        except exceptions.AuthenticationFailed as ex:
 
-            response = Response(ex.detail, status=status.HTTP_401_UNAUTHORIZED)
-            response.delete_cookie("access")
+        except exceptions.AuthenticationFailed as exc:
+            response = Response(
+                exc.detail,
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+            return self.clear_cookies(response)
 
-            response.delete_cookie("refresh")
 
-            return response
-
-
-class MyTokenBacklistView(TokenRefreshView):
+class MyTokenBlacklistView(CookieTokenMixin, TokenRefreshView):
     serializer_class = TokenBlacklistSerializer
 
-    def clear_cookies(self, response):
-
-        response.delete_cookie("access")
-
-        response.delete_cookie("refresh")
-
-        return response
-
     def post(self, request, *args, **kwargs):
-
         try:
+            request.data["refresh"] = request.COOKIES.get(self.REFRESH_COOKIE)
 
-            raw_refresh_token = request.COOKIES.get("refresh")
+            super().post(request, *args, **kwargs)
 
-            request.data["refresh"] = raw_refresh_token
-
-            response = super().post(request, *args, **kwargs)
-            response.data = {"detail": "Logged out"}
-            response = self.clear_cookies(response)
-            return response
-        except Exception as ex:
-
+        finally:
             response = Response({"detail": "Logged out"})
-
-            response = self.clear_cookies(response)
-
-            return Response({"detail": "Logged out"})
+            return self.clear_cookies(response)
 
 
 class RegisterView(CreateAPIView):
