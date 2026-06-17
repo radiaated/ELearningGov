@@ -19,6 +19,7 @@ const navLinks = [
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [userLoading, setUserLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<CurrentUser | null>(null);
   const pathname = usePathname();
@@ -29,10 +30,13 @@ const Header = () => {
 
   const loadUser = async () => {
     try {
+      setUserLoading(true);
       const currentUser = await getUser();
       setUser(currentUser);
     } catch (error) {
       console.error("Failed to load user:", error);
+    } finally {
+      setUserLoading(false);
     }
   };
 
@@ -66,66 +70,68 @@ const Header = () => {
       <div className="header-topbar">
         <div className="hidden md:block">01-4444444, 01-4444442</div>
 
-        <div className="flex w-full items-center justify-between gap-2 md:w-fit md:justify-normal">
-          <Link href="/cart" className="flex items-center gap-1">
-            Cart
-            <i className="fa-solid fa-cart-shopping" />
-            <span>({cartItems.length})</span>
-          </Link>
+        {!userLoading && (
+          <div className="flex w-full items-center justify-between gap-2 md:w-fit md:justify-normal">
+            <Link href="/cart" className="flex items-center gap-1">
+              Cart
+              <i className="fa-solid fa-cart-shopping" />
+              <span>({cartItems.length})</span>
+            </Link>
 
-          <div className="flex gap-2">
-            {user ? (
-              <>
-                {user.is_admin && (
+            <div className="flex gap-2">
+              {user ? (
+                <>
+                  {user.is_admin && (
+                    <Link
+                      href="/admin/course"
+                      className="header-action header-action--filled"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
+
                   <Link
-                    href="/admin/course"
+                    href="/classroom/courses"
+                    className="header-action header-action--plain"
+                  >
+                    Your Courses
+                  </Link>
+
+                  <Link
+                    href="/profile"
                     className="header-action header-action--filled"
                   >
-                    Dashboard
+                    Profile
                   </Link>
-                )}
 
-                <Link
-                  href="/classroom/courses"
-                  className="header-action header-action--plain"
-                >
-                  Your Courses
-                </Link>
+                  <button
+                    type="button"
+                    className="header-action header-action--filled"
+                    onClick={logoutHandler}
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="header-action header-action--filled"
+                  >
+                    Login
+                  </Link>
 
-                <Link
-                  href="/profile"
-                  className="header-action header-action--filled"
-                >
-                  Profile
-                </Link>
-
-                <button
-                  type="button"
-                  className="header-action header-action--filled"
-                  onClick={logoutHandler}
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="header-action header-action--filled"
-                >
-                  Login
-                </Link>
-
-                <Link
-                  href="/signup"
-                  className="header-action header-action--filled"
-                >
-                  Signup
-                </Link>
-              </>
-            )}
+                  <Link
+                    href="/signup"
+                    className="header-action header-action--filled"
+                  >
+                    Signup
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Main Header */}

@@ -182,12 +182,20 @@ const SingupPageWrapper = () => {
               <div className="form-error">{errors.root.message}</div>
             )}
 
-            <input
+            <button
               type="submit"
-              value={isSubmitting ? "Signing up..." : "Signup"}
               disabled={isSubmitting}
               className="form-button"
-            />
+            >
+              {isSubmitting ? (
+                <span>
+                  <i className="fa-solid fa-spinner animate-spin"></i> Signing
+                  up
+                </span>
+              ) : (
+                <span>Signup</span>
+              )}
+            </button>
           </form>
         </div>
       </div>

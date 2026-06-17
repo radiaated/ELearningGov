@@ -57,7 +57,7 @@
   }
 
   .header-topbar {
-    @apply flex flex-col justify-between bg-primary-dark px-2 py-1 text-xs text-white md:flex-row md:items-center;
+    @apply flex flex-col justify-between h-8 bg-primary-dark px-2 py-1 text-xs text-white md:flex-row md:items-center;
   }
 
   .header-container {

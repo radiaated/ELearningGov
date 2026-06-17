@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,6 +18,8 @@ import updateUserPassword from "@/app/lib/updatePassword";
 import { academicLevelCategories, genderOptions } from "@/data/user";
 
 const ProfilePageWrapper = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+
   const {
     register,
     handleSubmit,
@@ -40,6 +42,7 @@ const ProfilePageWrapper = () => {
 
   const fetchUserProfile = async () => {
     try {
+      setLoading(true);
       const userProfile = await getUserProfile();
 
       reset({
@@ -54,6 +57,8 @@ const ProfilePageWrapper = () => {
     } catch (err) {
       toast.error("Failed to fetch profile");
       console.error("Failed to fetch profile:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,161 +117,184 @@ const ProfilePageWrapper = () => {
       <div className="section-container my-8 md:w-1/2">
         <div className="fixed bg-primary-light w-full h-[50%] top-0 left-0 -z-10" />
 
-        <div className="bg-white drop-shadow-2xl py-10 pb-12 px-12 rounded-md relative">
-          <h2 className="text-3xl font-semibold">Profile</h2>
-          <hr className="my-4 text-zinc-400" />
+        {loading ? (
+          <div className="text-4xl text-zinc-50 text-center">
+            <i className="fa-solid fa-spinner animate-spin"></i>
+          </div>
+        ) : (
+          <div className="bg-white drop-shadow-2xl py-10 pb-12 px-12 rounded-md relative">
+            <h2 className="text-3xl font-semibold">Profile</h2>
+            <hr className="my-4 text-zinc-400" />
 
-          {/* Profile form */}
-          <form
-            className="form-container"
-            onSubmit={handleSubmit(updateUserProfile)}
-          >
-            <div>
-              <label className="form-label">Username</label>
-              <input
-                {...register("username")}
-                className="form-input"
-                placeholder="Enter username"
-              />
-              <p className="form-error">{errors.username?.message}</p>
-            </div>
-
-            <div>
-              <label className="form-label">Email</label>
-              <input
-                {...register("email")}
-                className="form-input"
-                placeholder="Enter email address"
-              />
-              <p className="form-error">{errors.email?.message}</p>
-            </div>
-
-            <div>
-              <label className="form-label">Full Name</label>
-              <input
-                {...register("first_name")}
-                className="form-input"
-                placeholder="Enter full name"
-              />
-              <p className="form-error">{errors.first_name?.message}</p>
-            </div>
-
-            <div>
-              <label className="form-label">Gender</label>
-
-              <div className="flex gap-4 text-sm">
-                {genderOptions.map((g) => (
-                  <label key={g.value} className="form-radio-label">
-                    <input
-                      type="radio"
-                      value={g.value}
-                      {...register("gender")}
-                    />
-                    {g.label}
-                  </label>
-                ))}
+            {/* Profile form */}
+            <form
+              className="form-container"
+              onSubmit={handleSubmit(updateUserProfile)}
+            >
+              <div>
+                <label className="form-label">Username</label>
+                <input
+                  {...register("username")}
+                  className="form-input"
+                  placeholder="Enter username"
+                />
+                <p className="form-error">{errors.username?.message}</p>
               </div>
 
-              <p className="form-error">{errors.gender?.message}</p>
-            </div>
+              <div>
+                <label className="form-label">Email</label>
+                <input
+                  {...register("email")}
+                  className="form-input"
+                  placeholder="Enter email address"
+                />
+                <p className="form-error">{errors.email?.message}</p>
+              </div>
 
-            <div>
-              <label className="form-label">Address</label>
-              <input
-                {...register("address")}
-                className="form-input"
-                placeholder="Enter address"
-              />
-              <p className="form-error">{errors.address?.message}</p>
-            </div>
+              <div>
+                <label className="form-label">Full Name</label>
+                <input
+                  {...register("first_name")}
+                  className="form-input"
+                  placeholder="Enter full name"
+                />
+                <p className="form-error">{errors.first_name?.message}</p>
+              </div>
 
-            <div>
-              <label className="form-label">Phone</label>
-              <input
-                {...register("phone")}
-                className="form-input"
-                placeholder="Enter phone number"
-              />
-              <p className="form-error">{errors.phone?.message}</p>
-            </div>
+              <div>
+                <label className="form-label">Gender</label>
 
-            <div>
-              <label className="form-label">Academic Level</label>
-              <select {...register("academic_level")} className="form-input">
-                <option value="">Select</option>
-                {academicLevelCategories.map((item, idx) => (
-                  <option key={idx} value={item.value}>
-                    {item.label}
-                  </option>
-                ))}
-              </select>
-              <p className="form-error">{errors.academic_level?.message}</p>
-            </div>
-            {errors.root?.message && (
-              <div className="form-error">{errors.root.message}</div>
-            )}
-            <input
-              type="submit"
-              value={isSubmitting ? "Updating..." : "Update Profile"}
-              disabled={isSubmitting}
-              className="form-button"
-            />
-          </form>
+                <div className="flex gap-4 text-sm">
+                  {genderOptions.map((g) => (
+                    <label key={g.value} className="form-radio-label">
+                      <input
+                        type="radio"
+                        value={g.value}
+                        {...register("gender")}
+                      />
+                      {g.label}
+                    </label>
+                  ))}
+                </div>
 
-          <hr className="my-8 text-zinc-300" />
+                <p className="form-error">{errors.gender?.message}</p>
+              </div>
 
-          {/* Password form */}
-          <h3 className="text-2xl font-semibold mb-4">Change Password</h3>
+              <div>
+                <label className="form-label">Address</label>
+                <input
+                  {...register("address")}
+                  className="form-input"
+                  placeholder="Enter address"
+                />
+                <p className="form-error">{errors.address?.message}</p>
+              </div>
 
-          <form
-            className="form-container"
-            onSubmit={handlePwdSubmit(updatePassword)}
-          >
-            <div>
-              <label className="form-label">Old Password</label>
-              <input
-                type="password"
-                {...registerPwd("old_password")}
-                className="form-input"
-                placeholder="Enter old password"
-              />
-              <p className="form-error">{pwdErrors.old_password?.message}</p>
-            </div>
+              <div>
+                <label className="form-label">Phone</label>
+                <input
+                  {...register("phone")}
+                  className="form-input"
+                  placeholder="Enter phone number"
+                />
+                <p className="form-error">{errors.phone?.message}</p>
+              </div>
 
-            <div>
-              <label className="form-label">New Password</label>
-              <input
-                type="password"
-                {...registerPwd("password")}
-                className="form-input"
-                placeholder="Enter new password"
-              />
-              <p className="form-error">{pwdErrors.password?.message}</p>
-            </div>
+              <div>
+                <label className="form-label">Academic Level</label>
+                <select {...register("academic_level")} className="form-input">
+                  <option value="">Select</option>
+                  {academicLevelCategories.map((item, idx) => (
+                    <option key={idx} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="form-error">{errors.academic_level?.message}</p>
+              </div>
+              {errors.root?.message && (
+                <div className="form-error">{errors.root.message}</div>
+              )}
 
-            <div>
-              <label className="form-label">Confirm Password</label>
-              <input
-                type="password"
-                {...registerPwd("password2")}
-                className="form-input"
-                placeholder="Confirm new password"
-              />
-              <p className="form-error">{pwdErrors.password2?.message}</p>
-            </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="form-button"
+              >
+                {isSubmitting ? (
+                  <span>
+                    <i className="fa-solid fa-spinner animate-spin"></i>{" "}
+                    Updating
+                  </span>
+                ) : (
+                  <span>Update</span>
+                )}
+              </button>
+            </form>
 
-            {pwdErrors.root?.message && (
-              <div className="form-error">{pwdErrors.root.message}</div>
-            )}
+            <hr className="my-8 text-zinc-300" />
 
-            <input
-              type="submit"
-              value={pwdSubmitting ? "Updating..." : "Update Password"}
-              disabled={pwdSubmitting}
-              className="form-button"
-            />
-          </form>
-        </div>
+            {/* Password form */}
+            <h3 className="text-2xl font-semibold mb-4">Change Password</h3>
+
+            <form
+              className="form-container"
+              onSubmit={handlePwdSubmit(updatePassword)}
+            >
+              <div>
+                <label className="form-label">Old Password</label>
+                <input
+                  type="password"
+                  {...registerPwd("old_password")}
+                  className="form-input"
+                  placeholder="Enter old password"
+                />
+                <p className="form-error">{pwdErrors.old_password?.message}</p>
+              </div>
+
+              <div>
+                <label className="form-label">New Password</label>
+                <input
+                  type="password"
+                  {...registerPwd("password")}
+                  className="form-input"
+                  placeholder="Enter new password"
+                />
+                <p className="form-error">{pwdErrors.password?.message}</p>
+              </div>
+
+              <div>
+                <label className="form-label">Confirm Password</label>
+                <input
+                  type="password"
+                  {...registerPwd("password2")}
+                  className="form-input"
+                  placeholder="Confirm new password"
+                />
+                <p className="form-error">{pwdErrors.password2?.message}</p>
+              </div>
+
+              {pwdErrors.root?.message && (
+                <div className="form-error">{pwdErrors.root.message}</div>
+              )}
+
+              <button
+                type="submit"
+                disabled={pwdSubmitting}
+                className="form-button"
+              >
+                {pwdSubmitting ? (
+                  <span>
+                    <i className="fa-solid fa-spinner animate-spin"></i>{" "}
+                    Updating
+                  </span>
+                ) : (
+                  <span>Update</span>
+                )}
+              </button>
+            </form>
+          </div>
+        )}
       </div>
     </section>
   );

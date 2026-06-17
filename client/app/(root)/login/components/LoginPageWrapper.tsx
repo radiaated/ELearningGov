@@ -94,12 +94,20 @@ const LoginPageWrapper = () => {
             )}
 
             {/* Submit */}
-            <input
+            <button
               type="submit"
-              value={isSubmitting ? "Logging in..." : "Login"}
               disabled={isSubmitting}
               className="form-button"
-            />
+            >
+              {isSubmitting ? (
+                <span>
+                  <i className="fa-solid fa-spinner animate-spin"></i> Logging
+                  in
+                </span>
+              ) : (
+                <span>Login</span>
+              )}
+            </button>
           </form>
         </div>
       </div>
